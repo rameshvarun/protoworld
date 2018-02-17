@@ -14,4 +14,7 @@ export default class ProtoObject {
   AddSlot(name, value) {
     this.slots.push(new Slot(name, value));
   }
+  Clone() {
+    return new ProtoObject();
+  }
 }
