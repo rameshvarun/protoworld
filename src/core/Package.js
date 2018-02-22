@@ -1,10 +1,10 @@
 export default class Package {
   constructor() {
-    this.subpackages = [];
-    this.objects = [];
+    this.docstring = "";
+    this.components = new Map();
   }
 
-  AddObject(object) {
-    this.objects.push(object);
+  AddComponent(name ,object) {
+    this.components[name] = object;
   }
 }
