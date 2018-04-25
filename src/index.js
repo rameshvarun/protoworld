@@ -2,6 +2,11 @@ import {makeMessageHandler} from './core/MessageHandler';
 require('./core/object');
 import {serialize, deserialize} from './core/serializer';
 
+window.h = require('virtual-dom/h');
+var diff = require('virtual-dom/diff');
+var patch = require('virtual-dom/patch');
+var createElement = require('virtual-dom/create-element');
+
 // const TopObject = _EmptyObject();
 // _AddSlot(TopObject, 'AddSlot', _MakeMessageHandler(`function(name, value) {
 //   _AddSlot(this, name, value);
@@ -30,5 +35,20 @@ window.writeImage = function() {
   console.log(serialize(RootPackage));
 }
 
-
 window.RootPackage = deserialize(require('./defaultimage.json'));
+
+
+var tree = RootPackage.InterfacePackage.WindowManager.Render();
+var rootNode = createElement(tree);
+document.body.appendChild(rootNode);
+
+import MainLoop from 'mainloop.js';
+
+MainLoop.setUpdate(function(dt) {
+  RootPackage.InterfacePackage.WindowManager.Update(dt)
+}).setDraw(function() {
+  var newTree = RootPackage.InterfacePackage.WindowManager.Render();
+  var patches = diff(tree, newTree);
+  rootNode = patch(rootNode, patches);
+  tree = newTree;
+}).start();

@@ -49,6 +49,15 @@
                     "name": "WindowManager"
                   },
                   "slot_values": {
+                    "windows": [],
+                    "Render": {
+                      "@t": "MessageHandler",
+                      "data": "function() { return h('div', null, ['Open Windows:', this.windows.map(w => w.render(dt)) ]); }"
+                    },
+                    "Update": {
+                      "@t": "MessageHandler",
+                      "data": "function(dt) { this.windows.forEach(w => w.update(dt)); }"
+                    },
                     "parent": {
                       "@r": 2
                     }
