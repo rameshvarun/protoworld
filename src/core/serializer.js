@@ -30,7 +30,7 @@ replicator.addTransforms([
       return getHandlerCode(val);
     },
     fromSerializable (val){
-      return makeMessageHandler;
+      return makeMessageHandler(val);
     }
   },
 ]);
