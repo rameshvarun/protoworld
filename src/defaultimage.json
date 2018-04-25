@@ -118,11 +118,11 @@
                     },
                     "GetTitle": {
                       "@t": "MessageHandler",
-                      "data": "function() { return this.target.GetAnnotation('name'); }"
+                      "data": "function() {\n    return 'ObjectEditor: ' + (this.target.GetAnnotation('name') || \"Unnamed Object\");\n}"
                     },
                     "RenderContent": {
                       "@t": "MessageHandler",
-                      "data": "function() { return h('div', null, [this.target.GetAnnotation('description'), this.target.GetSlotNames().map(slot => { let value = this.target[slot]; if (_IsMessageHandler(value)) { return [h('div', null, slot), h('button', {onclick: () => RootPackage.InterfacePackage.HandlerEditor.New(this.target, slot).Open() }, ['Edit Code'])] }; return h('div', null, [slot, value.toString() ]); } )]); }"
+                      "data": "function() {\n  return h('div', null, [\n    this.target.GetAnnotation('description'),\n    this.target.GetSlotNames().map(slot => {\n      let value = this.target[slot]; \n      if (_IsMessageHandler(value)) {\n        return [h('div', null, slot), h('button', {onclick: () => RootPackage.InterfacePackage.HandlerEditor.New(this.target, slot).Open() }, ['Edit Code'])];\n      }\n      if (_IsProtoObject(value)) {\n        return h('div', null, [slot + \" \", h('button', {onclick: () => value.OpenEditor() }, value.toString()) ]);\n      }\n      return h('div', null, [slot, value.toString() ]);\n   } )]);\n}"
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -192,6 +192,14 @@
         "GetSlotNames": {
           "@t": "MessageHandler",
           "data": "\nfunction() {\n\treturn _GetSlotNames(this);\n}\n"
+        },
+        "CreateEditor": {
+          "@t": "MessageHandler",
+          "data": "\nfunction() {\n\treturn RootPackage.InterfacePackage.ObjectEditor.New(this);\n}\n"
+        },
+        "OpenEditor": {
+          "@t": "MessageHandler",
+          "data": "\nfunction() {\n\treturn this.CreateEditor().Open();\n}\n"
         }
       },
       "slot_annotations": {},

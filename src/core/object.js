@@ -31,6 +31,10 @@ window._EmptyObject = function() {
   }, ObjectLookupHandler);
 }
 
+window._IsProtoObject = function(obj) {
+  return typeof obj == "object" && obj.__isProtoObject__;
+}
+
 window._AddSlot = function(object, name, value) {
   object.__repr__.slot_values[name] = value;
 }
