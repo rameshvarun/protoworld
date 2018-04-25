@@ -52,11 +52,15 @@
                     "windows": [],
                     "Render": {
                       "@t": "MessageHandler",
-                      "data": "function() { return h('div', null, ['Open Windows:', this.windows.map(w => w.render(dt)) ]); }"
+                      "data": "function() { return h('div', null, ['Open Windows:', this.windows.map(w => w.Render()) ]); }"
                     },
                     "Update": {
                       "@t": "MessageHandler",
-                      "data": "function(dt) { this.windows.forEach(w => w.update(dt)); }"
+                      "data": "function(dt) { this.windows.forEach(w => w.Update(dt)); }"
+                    },
+                    "AddWindow": {
+                      "@t": "MessageHandler",
+                      "data": "function(window) { this.windows.push(window); }"
                     },
                     "parent": {
                       "@r": 2
@@ -69,14 +73,30 @@
                 }
               },
               "TraitsWindow": {
+                "@r": 3
+              },
+              "ObjectEditor": {
                 "@t": "ProtoObject",
                 "data": {
                   "annotations": {
-                    "name": "TraitsWindow"
+                    "name": "ObjectEditor",
+                    "description": "The default editor for objects."
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 2
+                      "@r": 3
+                    },
+                    "GetTitle": {
+                      "@t": "MessageHandler",
+                      "data": "function() { return this.target.GetAnnotation('name'); }"
+                    },
+                    "Render": {
+                      "@t": "MessageHandler",
+                      "data": "function() { return h('div', null, [this.target.GetAnnotation('description'), this.target.GetSlotNames().map(slot => { let value = this.target[slot]; if (_IsMessageHandler(value)) { return [h('div', null, slot), h('textarea', {}, _GetMessageHandlerCode(value)), h('button', {onclick: () => console.log('save')}, 'Save')] }; return h('div', null, [slot, value.toString() ]); } )]); }"
+                    },
+                    "New": {
+                      "@t": "MessageHandler",
+                      "data": "function(target) { let inst = this.Extend(); inst.AddSlot('target', target); return inst; }"
                     }
                   },
                   "slot_annotations": {},
@@ -134,10 +154,47 @@
         "SetAnnotation": {
           "@t": "MessageHandler",
           "data": "\nfunction(name, value) {\n\t_SetAnnotation(this, name, value);\n}\n"
+        },
+        "GetAnnotation": {
+          "@t": "MessageHandler",
+          "data": "\nfunction(name) {\n\treturn _GetAnnotation(this, name);\n}\n"
+        },
+        "GetSlotNames": {
+          "@t": "MessageHandler",
+          "data": "\nfunction() {\n\treturn _GetSlotNames(this);\n}\n"
         }
       },
       "slot_annotations": {},
       "prototype_slots": []
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "TraitsWindow"
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 2
+        },
+        "Open": {
+          "@t": "MessageHandler",
+          "data": "function() { RootPackage.InterfacePackage.WindowManager.AddWindow(this) }"
+        },
+        "Update": {
+          "@t": "MessageHandler",
+          "data": "function(dt) {}"
+        },
+        "Render": {
+          "@t": "MessageHandler",
+          "data": "function() {}"
+        }
+      },
+      "slot_annotations": {},
+      "prototype_slots": [
+        "parent"
+      ]
     }
   }
 ]

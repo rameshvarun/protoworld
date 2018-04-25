@@ -35,6 +35,13 @@ window._AddSlot = function(object, name, value) {
 window._SetAnnotation = function(object, name, value) {
   object.__repr__.annotations[name] = value;
 }
+window._GetAnnotation = function(object, name) {
+  return object.__repr__.annotations[name];
+}
+
+window._GetSlotNames = function(object) {
+  return Object.keys(object.__repr__.slot_values);
+}
 
 window._AddPrototypeSlot = function(object, name) {
   object.__repr__.prototype_slots.push(name)
