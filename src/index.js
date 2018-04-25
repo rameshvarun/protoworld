@@ -1,8 +1,7 @@
-import Package from './core/Package';
 import RootObject from './core/RootObject';
 import MessageHandler from './core/MessageHandler';
 
-import serialize from './core/serialize';
+import {serialize, deserialize} from './core/serializer';
 
 // const WindowManager = new ProtoObject();
 // WindowManager.AddSlot('windows', []);
@@ -18,6 +17,17 @@ import serialize from './core/serialize';
 // const ReactWindow = Window.Clone();
 // const CanvasWindow = Window.Clone();
 
-const rootPackage = new Package();
-rootPackage.AddComponent('RootObject', RootObject);
-console.log(serialize(rootPackage));
+var PackageTrait = RootObject.Extend();
+
+var PackageCore = PackageTrait.Extend();
+PackageCore.AddSlot('TopObject', RootObject);
+PackageCore.AddSlot('PackageTrait', PackageTrait);
+
+var PackageRoot = PackageTrait.Extend();
+PackageRoot.AddSlot('Core', PackageCore);
+
+window.ProtoRoot = PackageRoot;
+
+var image = serialize(PackageRoot);
+console.log(image);
+console.log(deserialize(image));

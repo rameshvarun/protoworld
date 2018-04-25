@@ -12,5 +12,8 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --open"
+  },
+  "dependencies": {
+    "replicator": "^1.0.1"
   }
 }
