@@ -12,6 +12,9 @@ const ObjectLookupHandler = {
         return target.slot_values[slot][prop];
       }
     }
+  },
+  set: function(target, property, value, receiver) {
+    return Reflect.set(target.slot_values, property, value);
   }
 };
 

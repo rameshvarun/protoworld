@@ -62,6 +62,10 @@
                       "@t": "MessageHandler",
                       "data": "function(window) { this.windows.push(window); }"
                     },
+                    "RemoveWindow": {
+                      "@t": "MessageHandler",
+                      "data": "function(window) { this.windows = this.windows.filter(item => item !== window); }"
+                    },
                     "parent": {
                       "@r": 2
                     }
@@ -74,6 +78,32 @@
               },
               "TraitsWindow": {
                 "@r": 3
+              },
+              "HandlerEditor": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {
+                    "name": "HandlerEditor",
+                    "description": "The default editor for message handlers."
+                  },
+                  "slot_values": {
+                    "parent": {
+                      "@r": 3
+                    },
+                    "RenderContent": {
+                      "@t": "MessageHandler",
+                      "data": "function() { return [h('div', null, ['Editing Slot ', this.slot]), h('textarea', {onkeyup: (e) => this.code = e.target.value}, this.code), h('button', {onclick: () => this.target[this.slot] = _MakeMessageHandler(this.code)}, 'Save')]; }"
+                    },
+                    "New": {
+                      "@t": "MessageHandler",
+                      "data": "function(target, slot) { let inst = this.Extend(); inst.AddSlot('target', target); inst.AddSlot('slot', slot); inst.AddSlot('code', _GetMessageHandlerCode(target[slot])); return inst; }"
+                    }
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
               },
               "ObjectEditor": {
                 "@t": "ProtoObject",
@@ -90,9 +120,9 @@
                       "@t": "MessageHandler",
                       "data": "function() { return this.target.GetAnnotation('name'); }"
                     },
-                    "Render": {
+                    "RenderContent": {
                       "@t": "MessageHandler",
-                      "data": "function() { return h('div', null, [this.target.GetAnnotation('description'), this.target.GetSlotNames().map(slot => { let value = this.target[slot]; if (_IsMessageHandler(value)) { return [h('div', null, slot), h('textarea', {}, _GetMessageHandlerCode(value)), h('button', {onclick: () => console.log('save')}, 'Save')] }; return h('div', null, [slot, value.toString() ]); } )]); }"
+                      "data": "function() { return h('div', null, [this.target.GetAnnotation('description'), this.target.GetSlotNames().map(slot => { let value = this.target[slot]; if (_IsMessageHandler(value)) { return [h('div', null, slot), h('button', {onclick: () => RootPackage.InterfacePackage.HandlerEditor.New(this.target, slot).Open() }, ['Edit Code'])] }; return h('div', null, [slot, value.toString() ]); } )]); }"
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -182,13 +212,25 @@
           "@t": "MessageHandler",
           "data": "function() { RootPackage.InterfacePackage.WindowManager.AddWindow(this) }"
         },
+        "Close": {
+          "@t": "MessageHandler",
+          "data": "function() { RootPackage.InterfacePackage.WindowManager.RemoveWindow(this) }"
+        },
         "Update": {
           "@t": "MessageHandler",
           "data": "function(dt) {}"
         },
+        "RenderContent": {
+          "@t": "MessageHandler",
+          "data": "function() { }"
+        },
+        "GetTitle": {
+          "@t": "MessageHandler",
+          "data": "function() { return 'Untitled Window'; }"
+        },
         "Render": {
           "@t": "MessageHandler",
-          "data": "function() {}"
+          "data": "function() { return [h('hr'), this.GetTitle(), h('button', {onclick: () => RootPackage.InterfacePackage.ObjectEditor.New(this).Open()}, 'Inspect Window Object'), h('button', {onclick: () => this.Close()}, 'Close'), this.RenderContent(), h('hr')]; }"
         }
       },
       "slot_annotations": {},
