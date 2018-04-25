@@ -1,0 +1,79 @@
+[
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "RootPackage"
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 1
+        },
+        "CorePackage": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {
+              "name": "CorePackage"
+            },
+            "slot_values": {
+              "parent": {
+                "@r": 1
+              },
+              "TopObject": {
+                "@r": 2
+              },
+              "TraitsPackage": {
+                "@r": 1
+              }
+            },
+            "slot_annotations": {},
+            "prototype_slots": [
+              "parent"
+            ]
+          }
+        }
+      },
+      "slot_annotations": {},
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "TraitsPackage"
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 2
+        }
+      },
+      "slot_annotations": {},
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "TopObject"
+      },
+      "slot_values": {
+        "AddSlot": {
+          "@t": "MessageHandler",
+          "data": "function(name, value) {\n  _AddSlot(this, name, value);\n}"
+        },
+        "Extend": {
+          "@t": "MessageHandler",
+          "data": "function(name, value) {\n  let child = _EmptyObject();\n  _AddSlot(child, 'parent', this)\n  _AddPrototypeSlot(child, 'parent')\n  return child;\n}"
+        }
+      },
+      "slot_annotations": {},
+      "prototype_slots": []
+    }
+  }
+]

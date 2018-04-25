@@ -6,6 +6,10 @@ export function makeMessageHandler(code) {
   return impl;
 }
 
+window._MakeMessageHandler = function(code) {
+  return makeMessageHandler(code);
+};
+
 export function isMessageHandler(func) {
   return codeMap.has(func);
 }

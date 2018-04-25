@@ -15,31 +15,27 @@ const ObjectLookupHandler = {
   }
 };
 
-
-window.makeObjectFromRepr = function(repr) {
+window._ObjectFromRepr = function(repr) {
   return new Proxy(repr, ObjectLookupHandler);
 }
 
-const RootObjectRepr = {
+window._EmptyObject = function() {
+  return new Proxy({
     annotations: {},
-    slot_values: {
-      AddSlot: makeMessageHandler(`function(name, value) {
-        this.__repr__.slot_values.name = value;
-      }`),
-      Extend: makeMessageHandler(`function() {
-        let repr = {
-          slot_values: {
-            parent: this
-          },
-          slot_annotations: {},
-          prototype_slots: ['parent']
-        };
-        return makeObjectFromRepr(repr);
-      }`),
-    },
+    slot_values: {},
     slot_annotations: {},
     prototype_slots: []
+  }, ObjectLookupHandler);
 }
 
-const RootObject = makeObjectFromRepr(RootObjectRepr);
-export default RootObject;
+window._AddSlot = function(object, name, value) {
+  object.__repr__.slot_values[name] = value;
+}
+
+window._SetAnnotation = function(object, name, value) {
+  object.__repr__.annotations[name] = value;
+}
+
+window._AddPrototypeSlot = function(object, name) {
+  object.__repr__.prototype_slots.push(name)
+}

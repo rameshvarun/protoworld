@@ -1,33 +1,34 @@
-import RootObject from './core/RootObject';
-import MessageHandler from './core/MessageHandler';
-
+import {makeMessageHandler} from './core/MessageHandler';
+require('./core/object');
 import {serialize, deserialize} from './core/serializer';
 
-// const WindowManager = new ProtoObject();
-// WindowManager.AddSlot('windows', []);
+// const TopObject = _EmptyObject();
+// _AddSlot(TopObject, 'AddSlot', _MakeMessageHandler(`function(name, value) {
+//   _AddSlot(this, name, value);
+// }`));
+// _AddSlot(TopObject, 'Extend', _MakeMessageHandler(`function(name, value) {
+//   let child = _EmptyObject();
+//   _AddSlot(child, 'parent', this)
+//   _AddPrototypeSlot(child, 'parent')
+//   return child;
+// }`));
+// _SetAnnotation(TopObject, 'name', 'TopObject')
 //
-// const Window = new ProtoObject();
-// Window.AddSlot('Mount', new MessageHandler(`return function () {
-//   WindowManager.push(this);
-//   var root = document.createElement("div");
+// const TraitsPackage = TopObject.Extend()
+// _SetAnnotation(TraitsPackage, 'name', 'TraitsPackage')
 //
-//   document.getElementById("screen").appendChild(root);
-// })`);
+// const CorePackage = TraitsPackage.Extend()
+// _SetAnnotation(CorePackage, 'name', 'CorePackage')
+// CorePackage.AddSlot('TopObject', TopObject)
+// CorePackage.AddSlot('TraitsPackage', TraitsPackage)
 //
-// const ReactWindow = Window.Clone();
-// const CanvasWindow = Window.Clone();
+// const RootPackage = TraitsPackage.Extend()
+// _SetAnnotation(RootPackage, 'name', 'RootPackage')
+// RootPackage.AddSlot('CorePackage', CorePackage)
 
-var PackageTrait = RootObject.Extend();
+window.writeImage = function() {
+  console.log(serialize(RootPackage));
+}
 
-var PackageCore = PackageTrait.Extend();
-PackageCore.AddSlot('TopObject', RootObject);
-PackageCore.AddSlot('PackageTrait', PackageTrait);
 
-var PackageRoot = PackageTrait.Extend();
-PackageRoot.AddSlot('Core', PackageCore);
-
-window.ProtoRoot = PackageRoot;
-
-var image = serialize(PackageRoot);
-console.log(image);
-console.log(deserialize(image));
+window.RootPackage = deserialize(require('./defaultimage.json'));

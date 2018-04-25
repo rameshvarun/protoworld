@@ -3,7 +3,7 @@ const replicator = new Replicator({
     serialize (val) {
         return JSON.stringify(val, undefined, 2);
     },
-    deserialize: JSON.parse
+    deserialize: x => x
 });
 
 import {getHandlerCode, isMessageHandler, makeMessageHandler} from './MessageHandler';
@@ -18,7 +18,7 @@ replicator.addTransforms([
       return val.__repr__;
     },
     fromSerializable (val){
-      return makeObjectFromRepr(val);
+      return _ObjectFromRepr(val);
     }
   },
   {
