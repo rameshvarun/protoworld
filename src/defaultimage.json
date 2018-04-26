@@ -38,7 +38,7 @@
                     },
                     "New": {
                       "@t": "MessageHandler",
-                      "data": "function(object, slot) {\n  this.object = object;\n  this.slot = slot;\n}"
+                      "data": "function(object, slot) {\n  let inst = this.Extend();\n  inst.AddSlot('object', object);\n  inst.AddSlot('slot', slot);\n  return inst;\n}"
                     }
                   },
                   "slot_annotations": {},
@@ -125,7 +125,7 @@
                     },
                     "New": {
                       "@t": "MessageHandler",
-                      "data": "function(target, slot) { let inst = this.Extend(); inst.AddSlot('target', target); inst.AddSlot('slot', slot); inst.AddSlot('code', _GetMessageHandlerCode(target[slot])); return inst; }"
+                      "data": "function(target, slot) {\n  let inst = this.Extend();\n  inst.AddSlot('target', target);\n  inst.AddSlot('slot', slot);\n  inst.AddSlot('code', _GetMessageHandlerCode(target[slot]));\n  return inst;\n}"
                     },
                     "GetTitle": {
                       "@t": "MessageHandler",
