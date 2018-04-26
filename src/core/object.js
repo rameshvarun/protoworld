@@ -4,6 +4,7 @@ const ObjectLookupHandler = {
   get: function(target, prop, receiver) {
     if (prop === "__repr__") return target;
     if (prop === "__isProtoObject__") return true;
+    if (prop === "toString") prop = "ToString";
 
     if (prop in target.slot_values) {
       return Reflect.get(target.slot_values, prop, receiver);

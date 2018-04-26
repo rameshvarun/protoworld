@@ -212,7 +212,8 @@
     "@t": "ProtoObject",
     "data": {
       "annotations": {
-        "name": "TopObject"
+        "name": "TopObject",
+        "description": "The Object at the top of the inheritance heirarchy."
       },
       "slot_values": {
         "AddSlot": {
@@ -242,6 +243,10 @@
         "OpenEditor": {
           "@t": "MessageHandler",
           "data": "\nfunction() {\n\treturn this.CreateEditor().Open();\n}\n"
+        },
+        "ToString": {
+          "@t": "MessageHandler",
+          "data": "\nfunction() {\n\treturn this.GetAnnotation('name') || 'Unnamed Object';\n}\n"
         }
       },
       "slot_annotations": {},
