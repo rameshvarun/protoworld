@@ -16,7 +16,7 @@
   "dependencies": {
     "file-saver": "^1.3.8",
     "mainloop.js": "^1.0.4",
-    "replicator": "^1.0.1",
+    "replicator": "git://github.com/rameshvarun/replicator.git#44b448cb3039b7216ea9774176af6afaf867b9e5",
     "virtual-dom": "^2.1.1"
   }
 }
