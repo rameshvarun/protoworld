@@ -97,6 +97,10 @@
                     "New": {
                       "@t": "MessageHandler",
                       "data": "function(target, slot) { let inst = this.Extend(); inst.AddSlot('target', target); inst.AddSlot('slot', slot); inst.AddSlot('code', _GetMessageHandlerCode(target[slot])); return inst; }"
+                    },
+                    "GetTitle": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n return \"HandlerEditor: \" + this.target.toString() + \"->\" + this.slot;\n}"
                     }
                   },
                   "slot_annotations": {},
@@ -216,6 +220,8 @@
         "parent": {
           "@r": 2
         },
+        "top": 0,
+        "left": 0,
         "Open": {
           "@t": "MessageHandler",
           "data": "function() { RootPackage.InterfacePackage.WindowManager.AddWindow(this) }"
@@ -238,7 +244,7 @@
         },
         "Render": {
           "@t": "MessageHandler",
-          "data": "function() { return [h('hr'), this.GetTitle(), h('button', {onclick: () => RootPackage.InterfacePackage.ObjectEditor.New(this).Open()}, 'Inspect Window Object'), h('button', {onclick: () => this.Close()}, 'Close'), this.RenderContent(), h('hr')]; }"
+          "data": "function() {\n  return h('div', { style: {\n      resize: 'both',\n      overflow: 'auto',\n      border: '1px solid black',\n      position: 'absolute',\n      'background-color': '#f1f1f1',\n      top: this.top + 'px',\n      left: this.left + 'px',\n    } }, [\n    h('div', {style: {\n       'background-color': '#285477', padding: '3px', color: 'white', cursor: 'move',\n       display: 'flex', 'justify-content': 'space-between' },\n       onmousedown: (e) => {\n         var x = e.clientX;\n         var y = e.clientY;\n\n         document.onmousemove = (e) => {\n           var dx = e.clientX - x;\n           var dy = e.clientY - y;\n           x = e.clientX;\n           y = e.clientY;\n\n           this.left = this.left + dx;\n           this.top = this.top + dy;\n         };\n\n         document.onmouseup = () => {\n            document.onmouseup = null;\n            document.onmousemove = null;\n         };\n       }}, [\n      this.GetTitle(),\n      h('span', {}, [\n        h('i.fas.fa-search', {style: {cursor: 'default', 'margin-right': '5px'}, onclick: () => RootPackage.InterfacePackage.ObjectEditor.New(this).Open() }),\n        h('i.fas.fa-times', {style: {cursor: 'default'}, onclick: () => this.Close()}),\n        ]),\n    ]),\n    h('div', {style: {padding: '5px'}}, this.RenderContent())\n  ]);\n}"
         }
       },
       "slot_annotations": {},
