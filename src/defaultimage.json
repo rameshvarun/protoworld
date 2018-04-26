@@ -3,7 +3,8 @@
     "@t": "ProtoObject",
     "data": {
       "annotations": {
-        "name": "RootPackage"
+        "name": "RootPackage",
+        "description": "The root package. All objects in the world should be accessible from here. If not, they will not be persisited in the live image."
       },
       "slot_values": {
         "parent": {
@@ -126,11 +127,11 @@
                     },
                     "GetTitle": {
                       "@t": "MessageHandler",
-                      "data": "function() {\n    return 'ObjectEditor: ' + (this.target.GetAnnotation('name') || \"Unnamed Object\");\n}"
+                      "data": "function() {\n    return `${(this.target.GetAnnotation('name') || \"Unnamed Object\")} (Object Editor)`;\n}"
                     },
                     "RenderContent": {
                       "@t": "MessageHandler",
-                      "data": "function() {\n  return h('div', null, [\n    this.target.GetAnnotation('description'),\n    this.target.GetSlotNames().map(slot => {\n      let value = this.target[slot]; \n      if (_IsMessageHandler(value)) {\n        return [h('div', null, slot), h('button', {onclick: () => RootPackage.InterfacePackage.HandlerEditor.New(this.target, slot).Open() }, ['Edit Code'])];\n      }\n      if (_IsProtoObject(value)) {\n        return h('div', null, [slot + \" \", h('button', {onclick: () => value.OpenEditor() }, value.toString()) ]);\n      }\n      return h('div', null, [slot, value.toString() ]);\n   } )]);\n}"
+                      "data": "function() {\n  let description = this.target.GetAnnotation('description');\n  return h('div', null, [\n    description ? [\n      description,\n      h('hr')\n    ] : null,\n    h('div', null, h('b', null, 'Slots')),\n    this.target.GetSlotNames().map(slot => {\n      let value = this.target[slot]; \n      if (_IsMessageHandler(value)) {\n        return [h('div', null, slot), h('button', {onclick: () => RootPackage.InterfacePackage.HandlerEditor.New(this.target, slot).Open() }, ['Edit Code'])];\n      }\n      if (_IsProtoObject(value)) {\n        return h('div', null, [slot + \" \", h('button', {onclick: () => value.OpenEditor() }, value.toString()) ]);\n      }\n      return h('div', null, [slot, value.toString() ]);\n   }),\n     h('hr')\n   ]);\n}"
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -251,7 +252,7 @@
         },
         "Render": {
           "@t": "MessageHandler",
-          "data": "function() {\n  return h('div', { style: {\n      resize: 'both',\n      overflow: 'auto',\n      border: '1px solid black',\n      position: 'absolute',\n      'background-color': '#f1f1f1',\n      top: this.top + 'px',\n      left: this.left + 'px',\n      'box-shadow': '5px 5px 5px rgba(0, 0, 0, 0.5)'\n    } }, [\n    h('div', {style: {\n       'background-color': '#285477', padding: '3px', color: 'white', cursor: 'move',\n       display: 'flex', 'justify-content': 'space-between' },\n       onmousedown: (e) => {\n         var x = e.clientX;\n         var y = e.clientY;\n\n         document.onmousemove = (e) => {\n           var dx = e.clientX - x;\n           var dy = e.clientY - y;\n           x = e.clientX;\n           y = e.clientY;\n\n           this.left = this.left + dx;\n           this.top = this.top + dy;\n         };\n\n         document.onmouseup = () => {\n            document.onmouseup = null;\n            document.onmousemove = null;\n         };\n       }}, [\n      this.GetTitle(),\n      h('span', {}, [\n        h('i.fas.fa-search', {title: \"Inspect Window Object\", style: {cursor: 'default', 'margin-right': '5px'}, onclick: () => RootPackage.InterfacePackage.ObjectEditor.New(this).Open() }),\n        h('i.fas.fa-times', {title: \"Close Window\", style: {cursor: 'default'}, onclick: () => this.Close()}),\n        ]),\n    ]),\n    h('div', { style: {padding: '5px'}}, this.RenderContent())\n  ]);\n}"
+          "data": "function() {\n  return h('div', { style: {\n      resize: 'both',\n      overflow: 'auto',\n      border: '1px solid black',\n      position: 'absolute',\n      'background-color': '#f1f1f1',\n      top: this.top + 'px',\n      left: this.left + 'px',\n      'box-shadow': '5px 5px 5px rgba(0, 0, 0, 0.5)'\n    } }, [\n    h('div', {style: {\n       'background-color': '#285477', padding: '3px', color: 'white', cursor: 'move',\n       display: 'flex', 'justify-content': 'space-between' },\n       onmousedown: (e) => {\n         var x = e.clientX;\n         var y = e.clientY;\n\n         document.onmousemove = (e) => {\n           var dx = e.clientX - x;\n           var dy = e.clientY - y;\n           x = e.clientX;\n           y = e.clientY;\n\n           this.left = this.left + dx;\n           this.top = this.top + dy;\n         };\n\n         document.onmouseup = () => {\n            document.onmouseup = null;\n            document.onmousemove = null;\n         };\n       }}, [\n      h('b', null, this.GetTitle()),\n      h('span', {}, [\n        h('i.fas.fa-search', {title: \"Inspect Window Object\", style: {cursor: 'default', 'margin-right': '5px'}, onclick: () => RootPackage.InterfacePackage.ObjectEditor.New(this).Open() }),\n        h('i.fas.fa-times', {title: \"Close Window\", style: {cursor: 'default'}, onclick: () => this.Close()}),\n        ]),\n    ]),\n    h('div', { style: {padding: '5px'}}, this.RenderContent())\n  ]);\n}"
         }
       },
       "slot_annotations": {},
