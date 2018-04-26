@@ -31,12 +31,17 @@ var createElement = require('virtual-dom/create-element');
 // _SetAnnotation(RootPackage, 'name', 'RootPackage')
 // RootPackage.AddSlot('CorePackage', CorePackage)
 
-window.writeImage = function() {
-  console.log(serialize(RootPackage));
+window._SaveImage = function() {
+  return serialize(RootPackage);
+}
+
+window._LoadImage = function(json) {
+  window.RootPackage = deserialize(json);
 }
 
 window.RootPackage = deserialize(require('./defaultimage.json'));
 
+window.FileSaver = require('file-saver');
 
 var tree = RootPackage.InterfacePackage.WindowManager.Render();
 var rootNode = createElement(tree);

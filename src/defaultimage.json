@@ -49,7 +49,11 @@
                     "name": "WindowManager"
                   },
                   "slot_values": {
-                    "windows": [],
+                    "windows": [
+                      {
+                        "@r": 4
+                      }
+                    ],
                     "Render": {
                       "@t": "MessageHandler",
                       "data": "function() { return h('div', null, this.windows.map(w => w.Render())); }"
@@ -138,6 +142,9 @@
                     "parent"
                   ]
                 }
+              },
+              "MainMenu": {
+                "@r": 4
               }
             },
             "slot_annotations": {},
@@ -245,6 +252,27 @@
         "Render": {
           "@t": "MessageHandler",
           "data": "function() {\n  return h('div', { style: {\n      resize: 'both',\n      overflow: 'auto',\n      border: '1px solid black',\n      position: 'absolute',\n      'background-color': '#f1f1f1',\n      top: this.top + 'px',\n      left: this.left + 'px',\n      'box-shadow': '5px 5px 5px rgba(0, 0, 0, 0.5)'\n    } }, [\n    h('div', {style: {\n       'background-color': '#285477', padding: '3px', color: 'white', cursor: 'move',\n       display: 'flex', 'justify-content': 'space-between' },\n       onmousedown: (e) => {\n         var x = e.clientX;\n         var y = e.clientY;\n\n         document.onmousemove = (e) => {\n           var dx = e.clientX - x;\n           var dy = e.clientY - y;\n           x = e.clientX;\n           y = e.clientY;\n\n           this.left = this.left + dx;\n           this.top = this.top + dy;\n         };\n\n         document.onmouseup = () => {\n            document.onmouseup = null;\n            document.onmousemove = null;\n         };\n       }}, [\n      this.GetTitle(),\n      h('span', {}, [\n        h('i.fas.fa-search', {title: \"Inspect Window Object\", style: {cursor: 'default', 'margin-right': '5px'}, onclick: () => RootPackage.InterfacePackage.ObjectEditor.New(this).Open() }),\n        h('i.fas.fa-times', {title: \"Close Window\", style: {cursor: 'default'}, onclick: () => this.Close()}),\n        ]),\n    ]),\n    h('div', { style: {padding: '5px'}}, this.RenderContent())\n  ]);\n}"
+        }
+      },
+      "slot_annotations": {},
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {},
+      "slot_values": {
+        "parent": {
+          "@r": 3
+        },
+        "left": 0,
+        "top": 0,
+        "Render": {
+          "@t": "MessageHandler",
+          "data": "function() {\n  return h('div', {\n    style: {\n     'background-color': '#285477',\n     'position': 'fixed',\n     top: '0px',\n     left: '0px',\n     width: '100%',\n     display: 'flex'\n    }\n   }, [\n   h('button', {onclick: () => {\n     var blob = new Blob([_SaveImage(RootPackage)], {type: \"text/plain;charset=utf-8\"});\n     FileSaver.saveAs(blob, \"image.json\");\n   }}, 'Save Image'),\n   h('button', {onclick: () => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.(txt|json)$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              // console.log(JSON.parse(reader.result));\n              _LoadImage(JSON.parse(reader.result));\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .txt or .json files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n\n   }}, 'Open Image'),\n   h('button', {onclick: () => {\n     RootPackage.InterfacePackage.ObjectEditor.New(RootPackage).Open();\n   }}, 'Open Root Package'),\n   h('button', null, 'About')\n  ]);\n}"
         }
       },
       "slot_annotations": {},
