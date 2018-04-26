@@ -11,185 +11,24 @@
           "@r": 3
         },
         "CorePackage": {
-          "@t": "ProtoObject",
-          "data": {
-            "annotations": {
-              "name": "CorePackage"
-            },
-            "slot_values": {
-              "parent": {
-                "@r": 3
-              },
-              "TopObject": {
-                "@r": 1
-              },
-              "TraitsPackage": {
-                "@r": 3
-              },
-              "CreatorAnnotation": {
-                "@t": "ProtoObject",
-                "data": {
-                  "annotations": {
-                    "name": "CreatorAnnotation"
-                  },
-                  "slot_values": {
-                    "parent": {
-                      "@r": 1
-                    },
-                    "New": {
-                      "@t": "MessageHandler",
-                      "data": "function(object, slot) {\n  let inst = this.Extend();\n  inst.AddSlot('object', object);\n  inst.AddSlot('slot', slot);\n  return inst;\n}"
-                    }
-                  },
-                  "slot_annotations": {},
-                  "prototype_slots": [
-                    "parent"
-                  ]
-                }
-              },
-              "Module": {
-                "@r": 4
-              }
-            },
-            "slot_annotations": {},
-            "prototype_slots": [
-              "parent"
-            ]
-          }
+          "@r": 6
         },
         "InterfacePackage": {
-          "@t": "ProtoObject",
-          "data": {
-            "annotations": {
-              "name": "InterfacePackage"
-            },
-            "slot_values": {
-              "parent": {
-                "@r": 3
-              },
-              "WindowManager": {
-                "@t": "ProtoObject",
-                "data": {
-                  "annotations": {
-                    "name": "WindowManager"
-                  },
-                  "slot_values": {
-                    "windows": [
-                      {
-                        "@r": 6
-                      }
-                    ],
-                    "Render": {
-                      "@t": "MessageHandler",
-                      "data": "function() { return h('div', null, this.windows.map(w => w.Render())); }"
-                    },
-                    "Update": {
-                      "@t": "MessageHandler",
-                      "data": "function(dt) { this.windows.forEach(w => w.Update(dt)); }"
-                    },
-                    "AddWindow": {
-                      "@t": "MessageHandler",
-                      "data": "function(window) { this.windows.push(window); }"
-                    },
-                    "RemoveWindow": {
-                      "@t": "MessageHandler",
-                      "data": "function(window) { this.windows = this.windows.filter(item => item !== window); }"
-                    },
-                    "parent": {
-                      "@r": 1
-                    }
-                  },
-                  "slot_annotations": {},
-                  "prototype_slots": [
-                    "parent"
-                  ]
-                }
-              },
-              "TraitsWindow": {
-                "@r": 5
-              },
-              "HandlerEditor": {
-                "@t": "ProtoObject",
-                "data": {
-                  "annotations": {
-                    "name": "HandlerEditor",
-                    "description": "The default editor for message handlers."
-                  },
-                  "slot_values": {
-                    "parent": {
-                      "@r": 5
-                    },
-                    "RenderContent": {
-                      "@t": "MessageHandler",
-                      "data": "function() {\n  return [\n    h('div', null, ['Editing Slot ', this.slot]),\n    h('textarea', {onkeyup: (e) => this.code = e.target.value}, this.code),\n    h('button', {onclick: () => this.target[this.slot] = _MakeMessageHandler(this.code)}, 'Save')\n  ];\n}"
-                    },
-                    "New": {
-                      "@t": "MessageHandler",
-                      "data": "function(target, slot) {\n  let inst = this.Extend();\n  inst.AddSlot('target', target);\n  inst.AddSlot('slot', slot);\n  inst.AddSlot('code', _GetMessageHandlerCode(target[slot]));\n  return inst;\n}"
-                    },
-                    "GetTitle": {
-                      "@t": "MessageHandler",
-                      "data": "function() {\n return \"HandlerEditor: \" + this.target.toString() + \"->\" + this.slot;\n}"
-                    }
-                  },
-                  "slot_annotations": {},
-                  "prototype_slots": [
-                    "parent"
-                  ]
-                }
-              },
-              "ObjectEditor": {
-                "@t": "ProtoObject",
-                "data": {
-                  "annotations": {
-                    "name": "ObjectEditor",
-                    "description": "The default editor for objects."
-                  },
-                  "slot_values": {
-                    "parent": {
-                      "@r": 5
-                    },
-                    "GetTitle": {
-                      "@t": "MessageHandler",
-                      "data": "function() {\n    return `${(this.target.GetAnnotation('name') || \"Unnamed Object\")} (Object Editor)`;\n}"
-                    },
-                    "RenderContent": {
-                      "@t": "MessageHandler",
-                      "data": "function() {\n  let description = this.target.GetAnnotation('description');\n  \n  return h('div', null, [\n    description ? [\n      description,\n      h('hr')\n    ] : null,\n    h('div', null, h('b', null, 'Slots')),\n    this.target.GetSlotNames().map(slot => {\n      let value = this.target[slot]; \n      if (_IsMessageHandler(value)) {\n        return [h('div', null, slot), h('button', {onclick: () => RootPackage.InterfacePackage.HandlerEditor.New(this.target, slot).Open() }, ['Edit Code'])];\n      }\n      if (_IsProtoObject(value)) {\n        return h('div', null, [slot + \" \", h('button', {onclick: () => value.OpenEditor() }, value.toString()) ]);\n      }\n      return h('div', null, [slot, value.toString() ]);\n   }),\n     h('hr'),\n     h('textarea', {onkeyup: (e) => this.evaulatorCode = e.target.value}),\n     h('button', {onclick: () => {\n       let code = this.evaulatorCode;\n       function evalInContext() {\n         return eval(code);\n       }\n       console.log(evalInContext.call(this.target));\n     }}, 'Run')\n   ]);\n}"
-                    },
-                    "New": {
-                      "@t": "MessageHandler",
-                      "data": "function(target) { let inst = this.Extend(); inst.AddSlot('target', target); return inst; }"
-                    }
-                  },
-                  "slot_annotations": {},
-                  "prototype_slots": [
-                    "parent"
-                  ]
-                }
-              },
-              "MainMenu": {
-                "@r": 6
-              }
-            },
-            "slot_annotations": {},
-            "prototype_slots": [
-              "parent"
-            ]
-          }
+          "@r": 7
         },
         "Modules": {
           "@t": "ProtoObject",
           "data": {
             "annotations": {
-              "name": "Modules"
+              "name": "Modules",
+              "description": "An object that contains all of the modules currently loaded into the program. You can launch modules from here in order to write them out to a file."
             },
             "slot_values": {
               "parent": {
                 "@r": 1
               },
               "interface": {
-                "@r": 2
+                "@r": 5
               },
               "init": {
                 "@t": "ProtoObject",
@@ -225,7 +64,26 @@
     "data": {
       "annotations": {
         "name": "TopObject",
-        "description": "The Object at the top of the inheritance heirarchy."
+        "description": "The Object at the top of the inheritance heirarchy.",
+        "creator": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {},
+            "slot_values": {
+              "parent": {
+                "@r": 2
+              },
+              "object": {
+                "@r": 6
+              },
+              "slot": "TopObject"
+            },
+            "slot_annotations": {},
+            "prototype_slots": [
+              "parent"
+            ]
+          }
+        }
       },
       "slot_values": {
         "AddSlot": {
@@ -263,17 +121,33 @@
         "SetName": {
           "@t": "MessageHandler",
           "data": "function(name) {\n  this.SetAnnotation('name', name);\n}"
+        },
+        "SetDescription": {
+          "@t": "MessageHandler",
+          "data": "function(desc) {\n  this.SetAnnotation('description', desc);\n}"
+        },
+        "SetSlotAnnotation": {
+          "@t": "MessageHandler",
+          "data": "function(slot, name, value) { _SetSlotAnnotation(this, slot, name, value); }"
+        },
+        "SetSlotModule": {
+          "@t": "MessageHandler",
+          "data": "function(slot, module) { this.SetSlotAnnotation(slot, 'module', module); }"
+        },
+        "SetCreator": {
+          "@t": "MessageHandler",
+          "data": "function(object, slot) {\n  this.SetAnnotation('creator', RootPackage.CorePackage.CreatorAnnotation.New(object, slot))\n}"
         }
       },
       "slot_annotations": {
         "OpenEditor": {
           "module": {
-            "@r": 2
+            "@r": 5
           }
         },
         "CreateEditor": {
           "module": {
-            "@r": 2
+            "@r": 5
           }
         }
       },
@@ -283,10 +157,16 @@
   {
     "@t": "ProtoObject",
     "data": {
-      "annotations": {},
+      "annotations": {
+        "name": "CreatorAnnotation"
+      },
       "slot_values": {
         "parent": {
-          "@r": 4
+          "@r": 1
+        },
+        "New": {
+          "@t": "MessageHandler",
+          "data": "function(object, slot) {\n  let inst = this.Extend();\n  inst.AddSlot('object', object);\n  inst.AddSlot('slot', slot);\n  return inst;\n}"
         }
       },
       "slot_annotations": {},
@@ -322,9 +202,261 @@
         "parent": {
           "@r": 1
         },
-        "Write": {
+        "FindSlots": {
           "@t": "MessageHandler",
-          "data": "function() {\n  // Get all slots in objects tagged with the module.\n  let visited = new Set();\n  let slots = [];\n\n  var findSlots = (object) => {\n    if(!_IsProtoObject(object)) return;\n    if(visited.has(object)) return;\n\n    visited.add(object);\n    for(let slot of object.GetSlotNames()) {\n      if (_GetSlotAnnotation(object, slot, 'module') == this) {\n        slots.push({object, slot});\n      }\n      findSlots(object[slot]);\n    }\n  }\n\n  findSlots(RootPackage);\n\n  var tracePath = (object) => {\n   if (object == RootPackage) return ['RootPackage'];\n   else {\n     let creator = _GetAnnotation(object, 'creator');\n     if (!creator) throw new Error('Object missing creator slot.');\n     // TODO: Confirm that creator slot exists.\n     var path = tracePath(creator.object);\n     path.push(creator.slot);\n     return path;\n   }\n  }\n\n  let code = \"\";\n  for (let {object, slot} of slots) {\n    let path = tracePath(object);\n    for(let i = 0; i < path.length; ++i) {\n      let subpath = path.slice(0, i + 1);\n      let objpath = `window.${subpath.join('.')}`;\n      code += `${objpath} = ${objpath} || _EmptyObject();\\n`;\n    }\n\n    let value = object[slot];\n    let objpath = `window.${path.join('.')}`;\n    if (_IsMessageHandler(value)) {\n      code += `_AddSlot(${objpath}, \"${slot}\", _MakeMessageHandler(\\`${_GetMessageHandlerCode(value)}\\`))`\n    }\n  }\n\n  return code;\n}"
+          "data": "function() {\n  // Get all slots in objects tagged with the module.\n  let visited = new Set();\n  let slots = [];\n\n  var findSlots = (object) => {\n    if(!_IsProtoObject(object)) return;\n    if(visited.has(object)) return;\n\n    visited.add(object);\n    for(let slot of object.GetSlotNames()) {\n      if (_GetSlotAnnotation(object, slot, 'module') == this) {\n        slots.push({object, slot});\n      }\n      findSlots(object[slot]);\n    }\n  }\n\n  findSlots(RootPackage);\n  return slots;\n}"
+        },
+        "GenerateCode": {
+          "@t": "MessageHandler",
+          "data": "function() {\n  let slots = this.FindSlots();\n\n  var tracePath = (object) => {\n   if (object == RootPackage) return ['RootPackage'];\n   else {\n     let creator = _GetAnnotation(object, 'creator');\n     if (!creator) throw new Error(`${object.ToString()} missing creator slot.`);\n     // TODO: Confirm that creator slot exists.\n     var path = tracePath(creator.object);\n     path.push(creator.slot);\n     return path;\n   }\n  }\n\n  let code = \"\";\n  for (let {object, slot} of slots) {\n    let path = tracePath(object);\n    for(let i = 0; i < path.length; ++i) {\n      let subpath = path.slice(0, i + 1);\n      let objpath = `window.${subpath.join('.')}`;\n      code += `${objpath} = ${objpath} || _EmptyObject();\\n`;\n    }\n\n    let value = object[slot];\n    let objpath = `window.${path.join('.')}`;\n    if (_IsMessageHandler(value)) {\n      code += `_AddSlot(${objpath}, \"${slot}\", _MakeMessageHandler(\\`${_GetMessageHandlerCode(value)}\\`));\\n`\n    }\n\n    code += '\\n';\n  }\n\n  return code;\n}"
+        },
+        "Export": {
+          "@t": "MessageHandler",
+          "data": "function() {\n  let code = this.GenerateCode();\n  var blob = new Blob([code], {type: \"text/plain;charset=utf-8\"});\n  FileSaver.saveAs(blob, \"module.js\");\n}"
+        }
+      },
+      "slot_annotations": {},
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {},
+      "slot_values": {
+        "parent": {
+          "@r": 4
+        }
+      },
+      "slot_annotations": {},
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "CorePackage",
+        "creator": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {},
+            "slot_values": {
+              "parent": {
+                "@r": 2
+              },
+              "object": {
+                "@r": 0
+              },
+              "slot": "CorePackage"
+            },
+            "slot_annotations": {},
+            "prototype_slots": [
+              "parent"
+            ]
+          }
+        }
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 3
+        },
+        "TopObject": {
+          "@r": 1
+        },
+        "TraitsPackage": {
+          "@r": 3
+        },
+        "CreatorAnnotation": {
+          "@r": 2
+        },
+        "Module": {
+          "@r": 4
+        }
+      },
+      "slot_annotations": {},
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "InterfacePackage",
+        "creator": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {},
+            "slot_values": {
+              "parent": {
+                "@r": 2
+              },
+              "object": {
+                "@r": 0
+              },
+              "slot": "InterfacePackage"
+            },
+            "slot_annotations": {},
+            "prototype_slots": [
+              "parent"
+            ]
+          }
+        }
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 3
+        },
+        "WindowManager": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {
+              "name": "WindowManager",
+              "creator": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {},
+                  "slot_values": {
+                    "parent": {
+                      "@r": 2
+                    },
+                    "object": {
+                      "@r": 7
+                    },
+                    "slot": "WindowManager"
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
+              },
+              "description": "The window manager and entry point for the render and update main loop."
+            },
+            "slot_values": {
+              "windows": [
+                {
+                  "@r": 9
+                }
+              ],
+              "Render": {
+                "@t": "MessageHandler",
+                "data": "function() { return h('div', null, this.windows.map(w => w.Render())); }"
+              },
+              "Update": {
+                "@t": "MessageHandler",
+                "data": "function(dt) { this.windows.forEach(w => w.Update(dt)); }"
+              },
+              "AddWindow": {
+                "@t": "MessageHandler",
+                "data": "function(window) { this.windows.push(window); }"
+              },
+              "RemoveWindow": {
+                "@t": "MessageHandler",
+                "data": "function(window) { this.windows = this.windows.filter(item => item !== window); }"
+              },
+              "parent": {
+                "@r": 1
+              }
+            },
+            "slot_annotations": {
+              "RemoveWindow": {
+                "module": {
+                  "@r": 5
+                }
+              },
+              "AddWindow": {
+                "module": {
+                  "@r": 5
+                }
+              },
+              "Update": {
+                "module": {
+                  "@r": 5
+                }
+              },
+              "Render": {
+                "module": {
+                  "@r": 5
+                }
+              }
+            },
+            "prototype_slots": [
+              "parent"
+            ]
+          }
+        },
+        "TraitsWindow": {
+          "@r": 8
+        },
+        "HandlerEditor": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {
+              "name": "HandlerEditor",
+              "description": "The default editor for message handlers."
+            },
+            "slot_values": {
+              "parent": {
+                "@r": 8
+              },
+              "RenderContent": {
+                "@t": "MessageHandler",
+                "data": "function() {\n  return [\n    h('div', null, ['Editing Slot ', this.slot]),\n    h('textarea', {onkeyup: (e) => this.code = e.target.value}, this.code),\n    h('button', {onclick: () => this.target[this.slot] = _MakeMessageHandler(this.code)}, 'Save')\n  ];\n}"
+              },
+              "New": {
+                "@t": "MessageHandler",
+                "data": "function(target, slot) {\n  let inst = this.Extend();\n  inst.AddSlot('target', target);\n  inst.AddSlot('slot', slot);\n  inst.AddSlot('code', _GetMessageHandlerCode(target[slot]));\n  return inst;\n}"
+              },
+              "GetTitle": {
+                "@t": "MessageHandler",
+                "data": "function() {\n return \"HandlerEditor: \" + this.target.toString() + \"->\" + this.slot;\n}"
+              }
+            },
+            "slot_annotations": {},
+            "prototype_slots": [
+              "parent"
+            ]
+          }
+        },
+        "ObjectEditor": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {
+              "name": "ObjectEditor",
+              "description": "The default editor for objects."
+            },
+            "slot_values": {
+              "parent": {
+                "@r": 8
+              },
+              "GetTitle": {
+                "@t": "MessageHandler",
+                "data": "function() {\n    return `${(this.target.GetAnnotation('name') || \"Unnamed Object\")} (Object Editor)`;\n}"
+              },
+              "RenderContent": {
+                "@t": "MessageHandler",
+                "data": "function() {\n  let description = this.target.GetAnnotation('description');\n  \n  return h('div', null, [\n    description ? [\n      description,\n      h('hr')\n    ] : null,\n    h('div', null, h('b', null, 'Slots')),\n    this.target.GetSlotNames().map(slot => {\n      let value = this.target[slot]; \n      if (_IsMessageHandler(value)) {\n        return [h('div', null, slot), h('button', {onclick: () => RootPackage.InterfacePackage.HandlerEditor.New(this.target, slot).Open() }, ['Edit Code'])];\n      }\n      if (_IsProtoObject(value)) {\n        return h('div', null, [slot + \" \", h('button', {onclick: () => value.OpenEditor() }, value.toString()) ]);\n      }\n      return h('div', null, [slot, value.toString() ]);\n   }),\n     h('hr'),\n     h('textarea', {onkeyup: (e) => this.evaulatorCode = e.target.value}),\n     h('button', {onclick: () => {\n       let code = this.evaulatorCode;\n       function evalInContext() {\n         return eval(code);\n       }\n       console.log(evalInContext.call(this.target));\n     }}, 'Run')\n   ]);\n}"
+              },
+              "New": {
+                "@t": "MessageHandler",
+                "data": "function(target) { let inst = this.Extend(); inst.AddSlot('target', target); return inst; }"
+              }
+            },
+            "slot_annotations": {},
+            "prototype_slots": [
+              "parent"
+            ]
+          }
+        },
+        "MainMenu": {
+          "@r": 9
         }
       },
       "slot_annotations": {},
@@ -382,7 +514,7 @@
       "annotations": {},
       "slot_values": {
         "parent": {
-          "@r": 5
+          "@r": 8
         },
         "left": 0,
         "top": 0,
