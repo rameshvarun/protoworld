@@ -4,7 +4,7 @@
     "data": {
       "annotations": {
         "name": "RootPackage",
-        "description": "The root package. All objects in the world should be accessible from here. If not, they will not be persisited in the live image."
+        "description": "The root package. All objects in the world should be accessible from here. If not, they will not be persisted in the live image."
       },
       "slot_values": {
         "parent": {
@@ -25,6 +25,36 @@
               },
               "TraitsPackage": {
                 "@r": 1
+              },
+              "CreatorAnnotation": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {},
+                  "slot_values": {
+                    "parent": {
+                      "@r": 2
+                    }
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
+              },
+              "Module": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {},
+                  "slot_values": {
+                    "parent": {
+                      "@r": 2
+                    }
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
               }
             },
             "slot_annotations": {},
@@ -97,7 +127,7 @@
                     },
                     "RenderContent": {
                       "@t": "MessageHandler",
-                      "data": "function() { return [h('div', null, ['Editing Slot ', this.slot]), h('textarea', {onkeyup: (e) => this.code = e.target.value}, this.code), h('button', {onclick: () => this.target[this.slot] = _MakeMessageHandler(this.code)}, 'Save')]; }"
+                      "data": "function() {\n  return [\n    h('div', null, ['Editing Slot ', this.slot]),\n    h('textarea', {onkeyup: (e) => this.code = e.target.value}, this.code),\n    h('button', {onclick: () => this.target[this.slot] = _MakeMessageHandler(this.code)}, 'Save')\n  ];\n}"
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -131,7 +161,7 @@
                     },
                     "RenderContent": {
                       "@t": "MessageHandler",
-                      "data": "function() {\n  let description = this.target.GetAnnotation('description');\n  return h('div', null, [\n    description ? [\n      description,\n      h('hr')\n    ] : null,\n    h('div', null, h('b', null, 'Slots')),\n    this.target.GetSlotNames().map(slot => {\n      let value = this.target[slot]; \n      if (_IsMessageHandler(value)) {\n        return [h('div', null, slot), h('button', {onclick: () => RootPackage.InterfacePackage.HandlerEditor.New(this.target, slot).Open() }, ['Edit Code'])];\n      }\n      if (_IsProtoObject(value)) {\n        return h('div', null, [slot + \" \", h('button', {onclick: () => value.OpenEditor() }, value.toString()) ]);\n      }\n      return h('div', null, [slot, value.toString() ]);\n   }),\n     h('hr')\n   ]);\n}"
+                      "data": "function() {\n  let description = this.target.GetAnnotation('description');\n  \n  return h('div', null, [\n    description ? [\n      description,\n      h('hr')\n    ] : null,\n    h('div', null, h('b', null, 'Slots')),\n    this.target.GetSlotNames().map(slot => {\n      let value = this.target[slot]; \n      if (_IsMessageHandler(value)) {\n        return [h('div', null, slot), h('button', {onclick: () => RootPackage.InterfacePackage.HandlerEditor.New(this.target, slot).Open() }, ['Edit Code'])];\n      }\n      if (_IsProtoObject(value)) {\n        return h('div', null, [slot + \" \", h('button', {onclick: () => value.OpenEditor() }, value.toString()) ]);\n      }\n      return h('div', null, [slot, value.toString() ]);\n   }),\n     h('hr'),\n     h('textarea', {onkeyup: (e) => this.evaulatorCode = e.target.value}),\n     h('button', {onclick: () => {\n       let code = this.evaulatorCode;\n       function evalInContext() {\n         return eval(code);\n       }\n       console.log(evalInContext.call(this.target));\n     }}, 'Run')\n   ]);\n}"
                     },
                     "New": {
                       "@t": "MessageHandler",
