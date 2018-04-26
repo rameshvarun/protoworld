@@ -1,7 +1,19 @@
+var babel = require("@babel/standalone");
+
 const codeMap = new WeakMap();
 
 export function makeMessageHandler(code) {
-  const impl = eval(`(${code})`);
+  let expression = `(${code})`;
+
+  let transformed = babel.transform(expression, {
+    "plugins": [
+      ["transform-react-jsx", {
+        "pragma": "h"
+      }]
+    ]
+  }).code;
+
+  const impl = eval(transformed);
   codeMap.set(impl, code);
   return impl;
 }
