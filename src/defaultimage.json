@@ -52,7 +52,7 @@
                     "windows": [],
                     "Render": {
                       "@t": "MessageHandler",
-                      "data": "function() { return h('div', null, ['Open Windows:', this.windows.map(w => w.Render()) ]); }"
+                      "data": "function() { return h('div', null, this.windows.map(w => w.Render())); }"
                     },
                     "Update": {
                       "@t": "MessageHandler",
