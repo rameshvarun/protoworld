@@ -2,10 +2,8 @@ import {makeMessageHandler} from './core/MessageHandler';
 require('./core/object');
 import {serialize, deserialize} from './core/serializer';
 
-window.h = require('virtual-dom/h');
-var diff = require('virtual-dom/diff');
-var patch = require('virtual-dom/patch');
-var createElement = require('virtual-dom/create-element');
+import ReactDOM from 'react-dom';
+import MainLoop from 'mainloop.js';
 
 // const TopObject = _EmptyObject();
 // _AddSlot(TopObject, 'AddSlot', _MakeMessageHandler(`function(name, value) {
@@ -42,6 +40,7 @@ window._LoadImage = function(json) {
 window.RootPackage = deserialize(require('./defaultimage.json'));
 
 window.FileSaver = require('file-saver');
+window.React = require('react');
 
 window.addEventListener("beforeunload", function (e) {
     var confirmationMessage = 'If you leave before saving, your changes will be lost.';
@@ -49,17 +48,13 @@ window.addEventListener("beforeunload", function (e) {
     return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
 });
 
-var tree = RootPackage.InterfacePackage.WindowManager.Render();
-var rootNode = createElement(tree);
-document.body.appendChild(rootNode);
 
-import MainLoop from 'mainloop.js';
+window.h = React.createElement
+
 
 MainLoop.setUpdate(function(dt) {
   RootPackage.InterfacePackage.WindowManager.Update(dt)
 }).setDraw(function() {
-  var newTree = RootPackage.InterfacePackage.WindowManager.Render();
-  var patches = diff(tree, newTree);
-  rootNode = patch(rootNode, patches);
-  tree = newTree;
+  var tree = RootPackage.InterfacePackage.WindowManager.Render();
+  ReactDOM.render(tree, document.getElementById('root'));
 }).start();
