@@ -408,7 +408,7 @@
               },
               "RenderContent": {
                 "@t": "MessageHandler",
-                "data": "function() {\n  return [\n    h('div', null, ['Editing Slot ', this.slot]),\n    h('textarea', {onKeyUp: (e) => this.code = e.target.value}, this.code),\n    h('button', {onClick: () => this.target[this.slot] = _MakeMessageHandler(this.code)}, 'Save')\n  ];\n}"
+                "data": "function() {\n  return [\n    <AceEditor style={{width: '100%'}} mode=\"jsx\" theme=\"monokai\" value={this.code} onChange={(value) => this.code = value}/>,\n    <button onClick={() => this.target[this.slot] = _MakeMessageHandler(this.code)}>Save</button>\n  ];\n}"
               },
               "New": {
                 "@t": "MessageHandler",
