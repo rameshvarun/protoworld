@@ -7,9 +7,7 @@ export function makeMessageHandler(code) {
 
   let transformed = babel.transform(expression, {
     "plugins": [
-      ["transform-react-jsx", {
-        "pragma": "h"
-      }]
+      ["transform-react-jsx"]
     ]
   }).code;
 
