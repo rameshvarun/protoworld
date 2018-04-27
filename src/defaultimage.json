@@ -146,7 +146,8 @@
     "@t": "ProtoObject",
     "data": {
       "annotations": {
-        "name": "CreatorAnnotation"
+        "name": "CreatorAnnotation",
+        "description": "Used to annotate an object with the slot that 'creates' it. By following 'creator' annotations, the module exporter can determine the path of the object from World."
       },
       "slot_values": {
         "parent": {
@@ -203,7 +204,8 @@
               "parent"
             ]
           }
-        }
+        },
+        "description": "A collection of core objects that should exist in every world."
       },
       "slot_values": {
         "parent": {
