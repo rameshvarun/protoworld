@@ -33,7 +33,7 @@ window._EmptyObject = function() {
 }
 
 window._IsProtoObject = function(obj) {
-  return typeof obj == "object" && obj.__isProtoObject__;
+  return typeof obj == "object" && obj !== null && obj.__isProtoObject__;
 }
 
 window._AddSlot = function(object, name, value) {

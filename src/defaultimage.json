@@ -52,7 +52,7 @@
     "data": {
       "annotations": {
         "name": "TopObject",
-        "description": "The Object at the top of the inheritance heirarchy.",
+        "description": "The Object at the top of the inheritance heirarchy. All objects should descend from this.",
         "creator": {
           "@t": "ProtoObject",
           "data": {
@@ -125,6 +125,18 @@
         "SetCreator": {
           "@t": "MessageHandler",
           "data": "function(object, slot) {\n  this.SetAnnotation('creator', World.CorePackage.CreatorAnnotation.New(object, slot))\n}"
+        },
+        "GetCreator": {
+          "@t": "MessageHandler",
+          "data": "function() {\n    return this.GetAnnotation('creator');\n}"
+        },
+        "GetName": {
+          "@t": "MessageHandler",
+          "data": "function() {\n    return this.GetAnnotation('name');\n}"
+        },
+        "GetDescription": {
+          "@t": "MessageHandler",
+          "data": "function() {\n    return this.GetAnnotation('description');\n}"
         }
       },
       "slot_annotations": {
@@ -156,6 +168,10 @@
         "New": {
           "@t": "MessageHandler",
           "data": "function(object, slot) {\n  let inst = this.Extend();\n  inst.AddSlot('object', object);\n  inst.AddSlot('slot', slot);\n  return inst;\n}"
+        },
+        "ToString": {
+          "@t": "MessageHandler",
+          "data": "function() {\n    let objectName = this.object ? this.object.ToString() : \"Missing\";\n    let slotName = this.slot || \"Missing\";\n    return `CreatorAnnotation(${objectName}, ${slotName})`;\n}"
         }
       },
       "slot_annotations": {},
@@ -224,7 +240,13 @@
           "@r": 5
         }
       },
-      "slot_annotations": {},
+      "slot_annotations": {
+        "TopObject": {
+          "module": {
+            "@r": 6
+          }
+        }
+      },
       "prototype_slots": [
         "parent"
       ]
@@ -266,11 +288,15 @@
         },
         "GenerateCode": {
           "@t": "MessageHandler",
-          "data": "function() {\n  let slots = this.FindSlots();\n\n  var tracePath = (object) => {\n   if (object == World) return ['World'];\n   else {\n     let creator = _GetAnnotation(object, 'creator');\n     if (!creator)\n       throw new Error(`${object.ToString()} missing creator slot.`);\n     if (creator.object[creator.slot] != object)\n       throw new Error(`${object.ToString()}'s creator slot is invalid.`);\n     var path = tracePath(creator.object);\n     path.push(creator.slot);\n     return path;\n   }\n  }\n\n  let code = \"\";\n  for (let {object, slot} of slots) {\n    let path = tracePath(object);\n    for(let i = 0; i < path.length; ++i) {\n      let subpath = path.slice(0, i + 1);\n      let objpath = `window.${subpath.join('.')}`;\n      code += `${objpath} = ${objpath} || _EmptyObject();\\n`;\n    }\n\n    let value = object[slot];\n    let objpath = `window.${path.join('.')}`;\n    if (_IsMessageHandler(value)) {\n      let handlerCode = _GetMessageHandlerCode(value);\n      let escapedCode = escapeTemplateString(handlerCode);\n      code += `_AddSlot(${objpath}, \"${slot}\", _MakeMessageHandler(${escapedCode}));\\n`\n    }\n\n    code += '\\n';\n  }\n\n  return code;\n}"
+          "data": "function() {\n  let slots = this.FindSlots();\n\n  let code = \"\";\n  for (let {object, slot} of slots) {\n    let path = this.TracePath(object);\n    for(let i = 0; i < path.length; ++i) {\n      let subpath = path.slice(0, i + 1);\n      let objpath = `window.${subpath.join('.')}`;\n      code += `${objpath} = ${objpath} || _EmptyObject();\\n`;\n    }\n\n    let value = object[slot];\n    let objpath = `window.${path.join('.')}`;\n    if (_IsMessageHandler(value)) {\n      let handlerCode = _GetMessageHandlerCode(value);\n      let escapedCode = escapeTemplateString(handlerCode);\n      code += `_AddSlot(${objpath}, \"${slot}\", _MakeMessageHandler(${escapedCode}));\\n`\n    } else if (_IsProtoObject(value)) {\n        let creator = value.GetCreator();\n        let isCreator = creator.object == object && creator.slot == slot;\n        if (isCreator) {\n         code += `if(!${objpath}.${slot}) _AddSlot(${objpath}, \"${slot}\", _EmptyObject());\\n`;\n         if(value.GetName())\n            code += `${objpath}.${slot}.SetName(${escapeTemplateString(value.GetName())});\\n`;\n        if(value.GetDescription())\n            code += `${objpath}.${slot}.SetDescription(${escapeTemplateString(value.GetDescription())});\\n`;\n        } else {\n         code += `_AddSlot(${objpath}, \"${slot}\", window.${this.TracePath(value).join('.')});\\n`\n        }\n        \n    } else {\n      throw new Error(`Encountered an object of Unknown type.`);\n    }\n\n    code += '\\n';\n  }\n\n  return code;\n}"
         },
         "Export": {
           "@t": "MessageHandler",
           "data": "function() {\n  let code = this.GenerateCode();\n  var blob = new Blob([code], {type: \"text/plain;charset=utf-8\"});\n  FileSaver.saveAs(blob, \"module.js\");\n}"
+        },
+        "TracePath": {
+          "@t": "MessageHandler",
+          "data": "function(object) {\n    if (object == World) return ['World'];\n    else {\n        let creator = _GetAnnotation(object, 'creator');\n        if (!creator)\n            throw new Error(`${object.ToString()} missing creator slot.`);\n        if (creator.object[creator.slot] != object)\n            throw new Error(`${object.ToString()}'s creator slot is invalid.`);\n        \n        var path = this.TracePath(creator.object);\n        path.push(creator.slot);\n        return path;\n    }\n}"
         }
       },
       "slot_annotations": {
@@ -287,6 +313,11 @@
         "Export": {
           "module": {
             "@r": 7
+          }
+        },
+        "parent": {
+          "module": {
+            "@r": 6
           }
         }
       },
