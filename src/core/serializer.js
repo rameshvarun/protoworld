@@ -12,7 +12,7 @@ replicator.addTransforms([
   {
     type: 'ProtoObject',
     shouldTransform (type, val) {
-      return type == "object" && val.__isProtoObject__;
+      return type == "object" && val !== null && val.__isProtoObject__;
     },
     toSerializable (val) {
       return val.__repr__;

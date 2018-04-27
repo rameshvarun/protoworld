@@ -348,7 +348,8 @@
               "parent"
             ]
           }
-        }
+        },
+        "description": "A collection of objects related to the user interface."
       },
       "slot_values": {
         "parent": {
@@ -554,7 +555,10 @@
   {
     "@t": "ProtoObject",
     "data": {
-      "annotations": {},
+      "annotations": {
+        "description": "The Main Menu at the top of the screen.",
+        "name": "MainMenu"
+      },
       "slot_values": {
         "parent": {
           "@r": 9
