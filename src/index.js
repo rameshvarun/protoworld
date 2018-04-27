@@ -57,6 +57,7 @@ window.addEventListener("beforeunload", function (e) {
 
 window.h = React.createElement
 
+window.jsesc = require('jsesc');
 
 MainLoop.setUpdate(function(dt) {
   RootPackage.InterfacePackage.WindowManager.Update(dt)
