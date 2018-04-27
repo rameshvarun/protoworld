@@ -12,14 +12,14 @@ import AceEditor from 'react-ace';
 window.AceEditor = AceEditor;
 
 window._SaveImage = function() {
-  return serialize(RootPackage);
+  return serialize(World);
 }
 
 window._LoadImage = function(json) {
-  window.RootPackage = deserialize(json);
+  window.World = deserialize(json);
 }
 
-window.RootPackage = deserialize(require('./defaultimage.json'));
+window.World = deserialize(require('./defaultimage.json'));
 
 window.FileSaver = require('file-saver');
 window.React = require('react');
@@ -45,8 +45,8 @@ window.uuid = {
 }
 
 MainLoop.setUpdate(function(dt) {
-  RootPackage.InterfacePackage.WindowManager.Update(dt)
+  World.InterfacePackage.WindowManager.Update(dt)
 }).setDraw(function() {
-  var tree = RootPackage.InterfacePackage.WindowManager.Render();
+  var tree = World.InterfacePackage.WindowManager.Render();
   ReactDOM.render(tree, document.getElementById('root'));
 }).start();
