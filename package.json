@@ -24,6 +24,7 @@
     "mainloop.js": "^1.0.4",
     "react-ace": "^6.1.0",
     "replicator": "git://github.com/rameshvarun/replicator.git#44b448cb3039b7216ea9774176af6afaf867b9e5",
+    "uuid": "^3.2.1",
     "virtual-dom": "^2.1.1"
   }
 }

@@ -39,6 +39,11 @@ import Console from 'react-console-component';
 import 'react-console-component/main.css';
 window.ReactConsole = Console;
 
+window.uuid = {
+  v1: require('uuid/v1'),
+  v4: require('uuid/v4')
+}
+
 MainLoop.setUpdate(function(dt) {
   RootPackage.InterfacePackage.WindowManager.Update(dt)
 }).setDraw(function() {
