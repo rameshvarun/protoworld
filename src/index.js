@@ -29,6 +29,12 @@ import MainLoop from 'mainloop.js';
 // _SetAnnotation(RootPackage, 'name', 'RootPackage')
 // RootPackage.AddSlot('CorePackage', CorePackage)
 
+import brace from 'brace';
+import 'brace/mode/jsx';
+import 'brace/theme/monokai';
+import AceEditor from 'react-ace';
+window.AceEditor = AceEditor;
+
 window._SaveImage = function() {
   return serialize(RootPackage);
 }
