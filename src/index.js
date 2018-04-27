@@ -33,11 +33,11 @@ window.addEventListener("beforeunload", function (e) {
 
 window.h = React.createElement
 
-window.jsesc = require('jsesc');
-
 import Console from 'react-console-component';
 import 'react-console-component/main.css';
 window.ReactConsole = Console;
+
+window.escapeTemplateString = require('escape-template-string');
 
 window.uuid = {
   v1: require('uuid/v1'),
