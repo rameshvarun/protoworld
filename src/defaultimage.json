@@ -10,7 +10,7 @@
         "parent": {
           "@r": 3
         },
-        "CorePackage": {
+        "Core": {
           "@r": 4
         },
         "InterfacePackage": {
@@ -124,7 +124,7 @@
         },
         "SetCreator": {
           "@t": "MessageHandler",
-          "data": "function(object, slot) {\n  this.SetAnnotation('creator', World.CorePackage.CreatorAnnotation.New(object, slot))\n}"
+          "data": "function(object, slot) {\n  this.SetAnnotation('creator', World.Core.CreatorAnnotation.New(object, slot))\n}"
         },
         "GetCreator": {
           "@t": "MessageHandler",
@@ -201,7 +201,7 @@
     "@t": "ProtoObject",
     "data": {
       "annotations": {
-        "name": "CorePackage",
+        "name": "Core",
         "creator": {
           "@t": "ProtoObject",
           "data": {
@@ -213,7 +213,7 @@
               "object": {
                 "@r": 0
               },
-              "slot": "CorePackage"
+              "slot": "Core"
             },
             "slot_annotations": {},
             "prototype_slots": [
