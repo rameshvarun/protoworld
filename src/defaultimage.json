@@ -152,7 +152,7 @@
         },
         "RenderWidget": {
           "@t": "MessageHandler",
-          "data": "function() {\n    return <button\n              onClick={() => this.OpenEditor()}>\n              {this.ToString()}\n            </button>;\n}"
+          "data": "function() {\n    return <button\n              title={this.GetDescription()}\n              onClick={() => this.OpenEditor()}>\n              {this.ToString()}\n            </button>;\n}"
         },
         "SetSlotDescription": {
           "@t": "MessageHandler",
@@ -161,24 +161,61 @@
         "GetSlotDescription": {
           "@t": "MessageHandler",
           "data": "function(slot) {\n    return this.GetSlotAnnotation(slot, 'description')\n}"
+        },
+        "AddMessageHandler": {
+          "@t": "MessageHandler",
+          "data": "function(slot) {\n    this.AddSlot(slot, _MakeMessageHandler('function() {\\n}'))\n}"
+        },
+        "SetSlotCategory": {
+          "@t": "MessageHandler",
+          "data": "function(slot, category) {\n    this.SetSlotAnnotation(slot, \"category\", category);\n}"
+        },
+        "GetSlotCategory": {
+          "@t": "MessageHandler",
+          "data": "function(slot) {\n    return this.GetSlotAnnotation(slot, \"category\");\n}"
+        },
+        "ListCategories": {
+          "@t": "MessageHandler",
+          "data": "function() {\n    let categories = new Set();\n    for (let slot of this.GetSlotNames()) {\n        let cat = this.GetSlotCategory(slot);\n        if (cat) categories.add(cat);\n    }\n    return categories;\n}"
+        },
+        "GetSlotsByCategory": {
+          "@t": "MessageHandler",
+          "data": "function(cat) {\n    return this.GetSlotNames().filter(slot => this.GetSlotCategory(slot) == cat)\n}"
         }
       },
       "slot_annotations": {
         "OpenEditor": {
           "module": {
             "@r": 7
-          }
+          },
+          "category": "editor"
         },
         "CreateEditor": {
           "module": {
             "@r": 7
-          }
+          },
+          "category": "editor"
         },
         "AddSlot": {
           "description": "Takes in a slot name and value, and creates a slot on this object."
         },
         "Extend": {
           "description": "Creates a new object with this object as a parent."
+        },
+        "RenderWidget": {
+          "category": "editor"
+        },
+        "SetSlotCategory": {
+          "category": "categories"
+        },
+        "GetSlotCategory": {
+          "category": "categories"
+        },
+        "ListCategories": {
+          "category": "categories"
+        },
+        "GetSlotsByCategory": {
+          "category": "categories"
         }
       },
       "prototype_slots": []
@@ -549,7 +586,7 @@
               },
               "RenderContent": {
                 "@t": "MessageHandler",
-                "data": "function() {\n  let description = this.target.GetAnnotation(\"description\");\n  let modules = Array.from(this.target.ListModules());\n\n  return (\n    <div>\n      {description ? (\n        <>\n          <div>{description}</div>\n          <hr />\n        </>\n      ) : null}\n      <div>\n        <b>Creator:</b>{\" \"}\n        {this.target.GetCreator() ? (\n          <>\n            {this.target.GetCreator().object.RenderWidget()}->{this.target.GetCreator().slot}\n          </>\n        ) : (\n          \"none\"\n        )}\n      </div>\n      <div>\n        <b>Modules:</b>\n        {modules.length > 0 ? (\n          modules.map(m => m.RenderWidget())\n        ) : (\n          <span> none</span>\n        )}\n      </div>\n      <hr />\n      <div>\n        <b>Slots</b>\n      </div>\n      {this.target.GetSlotNames().map(slot => this.RenderSlot(slot))}\n      <hr />\n      <ReactConsole\n        welcomeMessage={`Evaluator for ${this.target.ToString()}.`}\n        ref={e => (this.evaluator = e)}\n        handler={code => {\n          function evalInContext() {\n            return eval(code);\n          }\n\n          this.evaluator.log(evalInContext.call(this.target));\n          this.evaluator.return();\n        }}\n      />\n    </div>\n  );\n}"
+                "data": "function() {\n  let description = this.target.GetAnnotation(\"description\");\n  let modules = Array.from(this.target.ListModules());\n  let categories = Array.from(this.target.ListCategories());\n\n  return (\n    <div>\n      {description ? (\n        <>\n          <div>{description}</div>\n          <hr />\n        </>\n      ) : null}\n      <div>\n        <b>Creator:</b>{\" \"}\n        {this.target.GetCreator() ? (\n          <>\n            {this.target.GetCreator().object.RenderWidget()}->{this.target.GetCreator().slot}\n          </>\n        ) : (\n          \"none\"\n        )}\n      </div>\n      <div>\n        <b>Modules:</b>\n        {modules.length > 0 ? (\n          modules.map(m => m.RenderWidget())\n        ) : (\n          <span> none</span>\n        )}\n      </div>\n      <hr />\n      <div><b>Slots</b></div>\n      <div style={{ paddingTop: '5px'}}>\n        <div ><em>uncategorized</em></div>\n        <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(null).map(slot => this.RenderSlot(slot))}</div>\n      </div>\n      {categories.map(cat => <div style={{ paddingTop: '5px'}}>\n          <div ><em>{cat}</em></div>\n          <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(cat).map(slot => this.RenderSlot(slot))}</div>\n      </div>)}\n      <hr />\n      <ReactConsole\n        welcomeMessage={`Evaluator for ${this.target.ToString()}.`}\n        ref={e => (this.evaluator = e)}\n        handler={code => {\n          function evalInContext() {\n            return eval(code);\n          }\n\n          this.evaluator.log(evalInContext.call(this.target));\n          this.evaluator.return();\n        }}\n      />\n    </div>\n  );\n}"
               },
               "New": {
                 "@t": "MessageHandler",
