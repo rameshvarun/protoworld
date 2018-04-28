@@ -36,6 +36,10 @@ window._IsProtoObject = function(obj) {
   return typeof obj == "object" && obj !== null && obj.__isProtoObject__;
 }
 
+window._IsPrototypeSlot = function(obj, slot) {
+  return obj.__repr__.prototype_slots.includes(slot);
+}
+
 window._AddSlot = function(object, name, value) {
   object.__repr__.slot_values[name] = value;
 }

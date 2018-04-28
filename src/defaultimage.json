@@ -467,7 +467,7 @@
             ]
           }
         },
-        "TraitsWindow": {
+        "Window": {
           "@r": 9
         },
         "HandlerEditor": {
@@ -544,7 +544,7 @@
     "@t": "ProtoObject",
     "data": {
       "annotations": {
-        "name": "TraitsWindow"
+        "name": "Window"
       },
       "slot_values": {
         "parent": {
