@@ -153,6 +153,14 @@
         "RenderWidget": {
           "@t": "MessageHandler",
           "data": "function() {\n    return <button\n              onClick={() => this.OpenEditor()}>\n              {this.ToString()}\n            </button>;\n}"
+        },
+        "SetSlotDescription": {
+          "@t": "MessageHandler",
+          "data": "function(slot, desc) {\n    this.SetSlotAnnotation(slot, \"description\", desc);\n}"
+        },
+        "GetSlotDescription": {
+          "@t": "MessageHandler",
+          "data": "function(slot) {\n    return this.GetSlotAnnotation(slot, 'description')\n}"
         }
       },
       "slot_annotations": {
@@ -165,6 +173,12 @@
           "module": {
             "@r": 7
           }
+        },
+        "AddSlot": {
+          "description": "Takes in a slot name and value, and creates a slot on this object."
+        },
+        "Extend": {
+          "description": "Creates a new object with this object as a parent."
         }
       },
       "prototype_slots": []
@@ -543,7 +557,7 @@
               },
               "RenderSlot": {
                 "@t": "MessageHandler",
-                "data": "function(slot) {\n    let value = this.target[slot];\n    \n    let namespan = _IsPrototypeSlot(this.target, slot) ? <b>{slot}*</b> : slot;\n    \n    let slotspan = null;\n    if (_IsMessageHandler(value)) {\n      slotspan = <button onClick= {() =>\n              World.Interface.HandlerEditor.New(this.target, slot).Open()}>Edit Code</button>;\n    } else if (_IsProtoObject(value)) {\n      slotspan = value.RenderWidget();\n    } else if (typeof value == \"number\") {\n        slotspan = value;\n    }else {\n        slotspan = value.toString();\n    }\n    \n    return <div key={slot} style={{\n            paddingBottom: '5px',\n            display: 'flex',\n            'justifyContent': 'space-between',\n            'alignItems': 'flex-end',\n            'flexWrap': 'wrap'\n    }}>\n        <span>{namespan}</span>\n        <span>{slotspan}</span>\n    </div>;\n}"
+                "data": "function(slot) {\n    let value = this.target[slot];\n    let description = this.target.GetSlotDescription(slot);\n    \n    let namespan = _IsPrototypeSlot(this.target, slot) ? <b>{slot}*</b> : slot;\n    \n    let slotspan = null;\n    if (_IsMessageHandler(value)) {\n      slotspan = <button onClick= {() =>\n              World.Interface.HandlerEditor.New(this.target, slot).Open()}>Edit Code</button>;\n    } else if (_IsProtoObject(value)) {\n      slotspan = value.RenderWidget();\n    } else if (typeof value == \"number\") {\n        slotspan = value;\n    } else {\n        slotspan = Object.toString(value);\n    }\n    \n    return <div key={slot} style={{\n            paddingBottom: '5px',\n            display: 'flex',\n            'justifyContent': 'space-between',\n            'alignItems': 'flex-end',\n            'flexWrap': 'wrap'\n    }}>\n        <span title={description}>{namespan}</span>\n        <span>{slotspan}</span>\n    </div>;\n}"
               }
             },
             "slot_annotations": {
