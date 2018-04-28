@@ -13,7 +13,7 @@
         "Core": {
           "@r": 4
         },
-        "InterfacePackage": {
+        "Interface": {
           "@r": 8
         },
         "Modules": {
@@ -96,7 +96,7 @@
         },
         "CreateEditor": {
           "@t": "MessageHandler",
-          "data": "\nfunction() {\n\treturn World.InterfacePackage.ObjectEditor.New(this);\n}\n"
+          "data": "\nfunction() {\n\treturn World.Interface.ObjectEditor.New(this);\n}\n"
         },
         "OpenEditor": {
           "@t": "MessageHandler",
@@ -362,7 +362,7 @@
     "@t": "ProtoObject",
     "data": {
       "annotations": {
-        "name": "InterfacePackage",
+        "name": "Interface",
         "creator": {
           "@t": "ProtoObject",
           "data": {
@@ -374,7 +374,7 @@
               "object": {
                 "@r": 0
               },
-              "slot": "InterfacePackage"
+              "slot": "Interface"
             },
             "slot_annotations": {},
             "prototype_slots": [
@@ -517,7 +517,7 @@
               },
               "RenderContent": {
                 "@t": "MessageHandler",
-                "data": "function() {\n  let description = this.target.GetAnnotation(\"description\");\n\n  return (\n    <div>\n      {description ? (\n        <>\n          {description}\n          <hr />\n        </>\n      ) : null}\n      <div>\n        <b>Slots</b>\n      </div>\n      {this.target.GetSlotNames().map(slot => {\n        let value = this.target[slot];\n        if (_IsMessageHandler(value)) {\n          return [\n            h(\"div\", null, slot),\n            h(\n              \"button\",\n              {\n                onClick: () =>\n                  World.InterfacePackage.HandlerEditor.New(\n                    this.target,\n                    slot\n                  ).Open()\n              },\n              [\"Edit Code\"]\n            )\n          ];\n        }\n        if (_IsProtoObject(value)) {\n          return h(\"div\", null, [\n            slot + \" \",\n            h(\"button\", { onClick: () => value.OpenEditor() }, value.toString())\n          ]);\n        }\n        return h(\"div\", null, [slot, value.toString()]);\n      })}\n      <hr />\n      <ReactConsole\n        welcomeMessage={`Evaluator for ${this.target.ToString()}.`}\n        ref={(e) => this.evaluator = e}\n        handler={(code) => {\n            function evalInContext() {\n                return eval(code);\n            }\n            \n            this.evaluator.log(evalInContext.call(this.target));\n            this.evaluator.return();\n        }}\n        />\n    </div>\n  );\n}"
+                "data": "function() {\n  let description = this.target.GetAnnotation(\"description\");\n\n  return (\n    <div>\n      {description ? (\n        <>\n          {description}\n          <hr />\n        </>\n      ) : null}\n      <div>\n        <b>Slots</b>\n      </div>\n      {this.target.GetSlotNames().map(slot => {\n        let value = this.target[slot];\n        if (_IsMessageHandler(value)) {\n          return [\n            h(\"div\", null, slot),\n            h(\n              \"button\",\n              {\n                onClick: () =>\n                  World.Interface.HandlerEditor.New(\n                    this.target,\n                    slot\n                  ).Open()\n              },\n              [\"Edit Code\"]\n            )\n          ];\n        }\n        if (_IsProtoObject(value)) {\n          return h(\"div\", null, [\n            slot + \" \",\n            h(\"button\", { onClick: () => value.OpenEditor() }, value.toString())\n          ]);\n        }\n        return h(\"div\", null, [slot, value.toString()]);\n      })}\n      <hr />\n      <ReactConsole\n        welcomeMessage={`Evaluator for ${this.target.ToString()}.`}\n        ref={(e) => this.evaluator = e}\n        handler={(code) => {\n            function evalInContext() {\n                return eval(code);\n            }\n            \n            this.evaluator.log(evalInContext.call(this.target));\n            this.evaluator.return();\n        }}\n        />\n    </div>\n  );\n}"
               },
               "New": {
                 "@t": "MessageHandler",
@@ -554,11 +554,11 @@
         "left": 0,
         "Open": {
           "@t": "MessageHandler",
-          "data": "function() { World.InterfacePackage.WindowManager.AddWindow(this) }"
+          "data": "function() { World.Interface.WindowManager.AddWindow(this) }"
         },
         "Close": {
           "@t": "MessageHandler",
-          "data": "function() { World.InterfacePackage.WindowManager.RemoveWindow(this) }"
+          "data": "function() { World.Interface.WindowManager.RemoveWindow(this) }"
         },
         "Update": {
           "@t": "MessageHandler",
@@ -574,7 +574,7 @@
         },
         "Render": {
           "@t": "MessageHandler",
-          "data": "function() {\n  return (\n    <div\n      key={this.windowID}\n      style={{\n        resize: \"both\",\n        overflow: \"auto\",\n        border: \"1px solid black\",\n        position: \"absolute\",\n        backgroundColor: \"#f1f1f1\",\n        top: this.top + \"px\",\n        left: this.left + \"px\",\n        width: this.width + \"px\",\n        height: this.height + \"px\",\n        boxShadow: \"5px 5px 5px rgba(0, 0, 0, 0.5)\"\n      }}\n    >\n      <div\n        style={{\n          \"backgroundColor\": \"#285477\",\n          padding: \"3px\",\n          color: \"white\",\n          cursor: \"move\",\n          display: \"flex\",\n          justifyContent: \"space-between\"\n        }}\n        onMouseDown={e => {\n          var x = e.clientX;\n          var y = e.clientY;\n\n          document.onmousemove = e => {\n            var dx = e.clientX - x;\n            var dy = e.clientY - y;\n            x = e.clientX;\n            y = e.clientY;\n\n            this.left = this.left + dx;\n            this.top = this.top + dy;\n          };\n\n          document.onmouseup = () => {\n            document.onmouseup = null;\n            document.onmousemove = null;\n          };\n        }}\n      >\n        <b>{this.GetTitle()}</b>\n        <span>\n          <i\n            className=\"fas fa-search\"\n            title=\"Inspect Window Object\"\n            style={{ cursor: \"default\", marginRight: \"5px\" }}\n            onClick={() =>\n              World.InterfacePackage.ObjectEditor.New(this).Open()\n            }\n          />\n          <i\n            className=\"fas fa-times\"\n            title=\"Close Window\"\n            style={{ cursor: \"default\" }}\n            onClick={() => this.Close()}\n          />\n        </span>\n      </div>\n      <div style={{ padding: \"5px\" }}>{this.RenderContent()}</div>\n    </div>\n  );\n}"
+          "data": "function() {\n  return (\n    <div\n      key={this.windowID}\n      style={{\n        resize: \"both\",\n        overflow: \"auto\",\n        border: \"1px solid black\",\n        position: \"absolute\",\n        backgroundColor: \"#f1f1f1\",\n        top: this.top + \"px\",\n        left: this.left + \"px\",\n        width: this.width + \"px\",\n        height: this.height + \"px\",\n        boxShadow: \"5px 5px 5px rgba(0, 0, 0, 0.5)\"\n      }}\n    >\n      <div\n        style={{\n          \"backgroundColor\": \"#285477\",\n          padding: \"3px\",\n          color: \"white\",\n          cursor: \"move\",\n          display: \"flex\",\n          justifyContent: \"space-between\"\n        }}\n        onMouseDown={e => {\n          var x = e.clientX;\n          var y = e.clientY;\n\n          document.onmousemove = e => {\n            var dx = e.clientX - x;\n            var dy = e.clientY - y;\n            x = e.clientX;\n            y = e.clientY;\n\n            this.left = this.left + dx;\n            this.top = this.top + dy;\n          };\n\n          document.onmouseup = () => {\n            document.onmouseup = null;\n            document.onmousemove = null;\n          };\n        }}\n      >\n        <b>{this.GetTitle()}</b>\n        <span>\n          <i\n            className=\"fas fa-search\"\n            title=\"Inspect Window Object\"\n            style={{ cursor: \"default\", marginRight: \"5px\" }}\n            onClick={() =>\n              World.Interface.ObjectEditor.New(this).Open()\n            }\n          />\n          <i\n            className=\"fas fa-times\"\n            title=\"Close Window\"\n            style={{ cursor: \"default\" }}\n            onClick={() => this.Close()}\n          />\n        </span>\n      </div>\n      <div style={{ padding: \"5px\" }}>{this.RenderContent()}</div>\n    </div>\n  );\n}"
         },
         "width": 400,
         "height": 400
@@ -600,7 +600,7 @@
         "top": 0,
         "Render": {
           "@t": "MessageHandler",
-          "data": "function() {\n  return <div\n    style={{\n     'backgroundColor': '#285477',\n     'position': 'fixed',\n     top: '0px',\n     left: '0px',\n     width: '100%',\n     display: 'flex'\n   }}>\n   <button onClick={() => {\n     var blob = new Blob([_SaveImage(World)], {type: \"text/plain;charset=utf-8\"});\n     FileSaver.saveAs(blob, \"image.json\");\n   }}>Save Image</button>\n   <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.(txt|json)$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              // console.log(JSON.parse(reader.result));\n              _LoadImage(JSON.parse(reader.result));\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .txt or .json files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Open Image</button>\n   <button onClick={() => {\n     World.InterfacePackage.ObjectEditor.New(World).Open();\n   }}>Open World</button>\n    <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.js$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              eval(reader.result);\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .js files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Load Module</button>\n  </div>;\n}"
+          "data": "function() {\n  return <div\n    style={{\n     'backgroundColor': '#285477',\n     'position': 'fixed',\n     top: '0px',\n     left: '0px',\n     width: '100%',\n     display: 'flex'\n   }}>\n   <button onClick={() => {\n     var blob = new Blob([_SaveImage(World)], {type: \"text/plain;charset=utf-8\"});\n     FileSaver.saveAs(blob, \"image.json\");\n   }}>Save Image</button>\n   <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.(txt|json)$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              // console.log(JSON.parse(reader.result));\n              _LoadImage(JSON.parse(reader.result));\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .txt or .json files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Open Image</button>\n   <button onClick={() => {\n     World.Interface.ObjectEditor.New(World).Open();\n   }}>Open World</button>\n    <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.js$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              eval(reader.result);\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .js files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Load Module</button>\n  </div>;\n}"
         },
         "windowID": "mainmenu"
       },

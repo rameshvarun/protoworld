@@ -45,8 +45,8 @@ window.uuid = {
 }
 
 MainLoop.setUpdate(function(dt) {
-  World.InterfacePackage.WindowManager.Update(dt)
+  World.Interface.WindowManager.Update(dt)
 }).setDraw(function() {
-  var tree = World.InterfacePackage.WindowManager.Render();
+  var tree = World.Interface.WindowManager.Render();
   ReactDOM.render(tree, document.getElementById('root'));
 }).start();
