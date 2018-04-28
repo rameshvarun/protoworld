@@ -32,6 +32,11 @@ window._EmptyObject = function() {
   }, ObjectLookupHandler);
 }
 
+window._RemoveSlot = function(object, slot) {
+  delete object.__repr__.slot_values[slot];
+  delete object.__repr__.slot_annotations[slot];
+}
+
 window._IsProtoObject = function(obj) {
   return typeof obj == "object" && obj !== null && obj.__isProtoObject__;
 }
