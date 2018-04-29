@@ -534,7 +534,7 @@
             ]
           }
         },
-        "debug": true
+        "debug": false
       },
       "slot_annotations": {},
       "prototype_slots": [
