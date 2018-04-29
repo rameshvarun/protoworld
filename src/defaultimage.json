@@ -459,6 +459,73 @@
               },
               "BoarEncounter": {
                 "@r": 13
+              },
+              "Terrain": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {},
+                  "slot_values": {
+                    "parent": {
+                      "@r": 1
+                    },
+                    "Ground": {
+                      "@r": 14
+                    },
+                    "TallGrass": {
+                      "@t": "ProtoObject",
+                      "data": {
+                        "annotations": {
+                          "name": "TallGrass"
+                        },
+                        "slot_values": {
+                          "parent": {
+                            "@r": 14
+                          }
+                        },
+                        "slot_annotations": {},
+                        "prototype_slots": [
+                          "parent"
+                        ]
+                      }
+                    },
+                    "Rocks": {
+                      "@t": "ProtoObject",
+                      "data": {
+                        "annotations": {
+                          "name": "Rocks"
+                        },
+                        "slot_values": {
+                          "parent": {
+                            "@r": 14
+                          }
+                        },
+                        "slot_annotations": {},
+                        "prototype_slots": [
+                          "parent"
+                        ]
+                      }
+                    },
+                    "Trees": {
+                      "@t": "ProtoObject",
+                      "data": {
+                        "annotations": {},
+                        "slot_values": {
+                          "parent": {
+                            "@r": 14
+                          }
+                        },
+                        "slot_annotations": {},
+                        "prototype_slots": [
+                          "parent"
+                        ]
+                      }
+                    }
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
               }
             },
             "slot_annotations": {},
@@ -467,7 +534,7 @@
             ]
           }
         },
-        "debug": false
+        "debug": true
       },
       "slot_annotations": {},
       "prototype_slots": [
@@ -1084,7 +1151,7 @@
         },
         "Update": {
           "@t": "MessageHandler",
-          "data": "function(dt) {}"
+          "data": "function(dt) {\n    if (this.windowDiv && this.windowDiv instanceof HTMLElement) {\n        this.width = this.windowDiv.offsetWidth;\n        this.height = this.windowDiv.offsetHeight;\n    }\n}"
         },
         "RenderContent": {
           "@t": "MessageHandler",
@@ -1096,7 +1163,7 @@
         },
         "Render": {
           "@t": "MessageHandler",
-          "data": "function() {\n  let isMobile = MobileDetect.mobile() !== null;\n  \n  let windowStyle = isMobile ? {\n        border: \"1px solid black\",\n        boxShadow: \"5px 5px 5px rgba(0, 0, 0, 0.5)\",\n        overflow: 'hidden',\n        display: 'flex',\n        flexDirection: 'column',\n        backgroundColor: \"#f1f1f1\",\n        marginTop: '10px',\n        marginBottom: '10px',\n      } : {\n        resize: \"both\",\n        overflow: \"auto\",\n        border: \"1px solid black\",\n        position: \"absolute\",\n        backgroundColor: \"#f1f1f1\",\n        top: this.top + \"px\",\n        left: this.left + \"px\",\n        width: this.width + \"px\",\n        height: this.height + \"px\",\n        boxShadow: \"5px 5px 5px rgba(0, 0, 0, 0.5)\",\n        overflow: 'hidden',\n        display: 'flex',\n        flexDirection: 'column'\n      };\n      \n  return (\n    <div\n      key={this.windowID}\n      style={windowStyle}\n    >\n      <div\n        style={{\n          \"backgroundColor\": \"#285477\",\n          padding: \"3px\",\n          color: \"white\",\n          cursor: \"move\",\n          display: \"flex\",\n          justifyContent: \"space-between\",\n          flexShrink: 0\n        }}\n        onMouseDown={e => {\n          var x = e.clientX;\n          var y = e.clientY;\n\n          document.onmousemove = e => {\n            var dx = e.clientX - x;\n            var dy = e.clientY - y;\n            x = e.clientX;\n            y = e.clientY;\n\n            this.left = this.left + dx;\n            this.top = this.top + dy;\n          };\n\n          document.onmouseup = () => {\n            document.onmouseup = null;\n            document.onmousemove = null;\n          };\n        }}\n      >\n        <b>{this.GetTitle()}</b>\n        <span>\n          <i\n            className=\"fas fa-search\"\n            title=\"Inspect Window Object\"\n            style={{ cursor: \"default\", marginRight: \"5px\" }}\n            onClick={() =>\n              World.Interface.ObjectEditor.New(this).Open()\n            }\n          />\n          <i\n            className=\"fas fa-times\"\n            title=\"Close Window\"\n            style={{ cursor: \"default\" }}\n            onClick={() => this.Close()}\n          />\n        </span>\n      </div>\n      <div style={{ padding: \"5px\", flexGrow: 1, overflow: 'auto', marginBottom: '10px' }}>{this.RenderContent()}</div>\n    </div>\n  );\n}"
+          "data": "function() {\n  let isMobile = MobileDetect.mobile() !== null;\n  \n  let windowStyle = isMobile ? {\n        border: \"1px solid black\",\n        boxShadow: \"5px 5px 5px rgba(0, 0, 0, 0.5)\",\n        overflow: 'hidden',\n        display: 'flex',\n        flexDirection: 'column',\n        backgroundColor: \"#f1f1f1\",\n        marginTop: '10px',\n        marginBottom: '10px',\n      } : {\n        resize: \"both\",\n        overflow: \"auto\",\n        border: \"1px solid black\",\n        position: \"absolute\",\n        backgroundColor: \"#f1f1f1\",\n        top: this.top + \"px\",\n        left: this.left + \"px\",\n        width: this.width + \"px\",\n        height: this.height + \"px\",\n        boxShadow: \"5px 5px 5px rgba(0, 0, 0, 0.5)\",\n        overflow: 'hidden',\n        display: 'flex',\n        flexDirection: 'column',\n        boxSizing: 'border-box'\n      };\n      \n  return (\n    <div\n      key={this.windowID}\n      style={windowStyle}\n      ref={(div) => this.windowDiv = div}\n    >\n      <div\n        style={{\n          \"backgroundColor\": \"#285477\",\n          padding: \"3px\",\n          color: \"white\",\n          cursor: \"move\",\n          display: \"flex\",\n          justifyContent: \"space-between\",\n          flexShrink: 0\n        }}\n        onMouseDown={e => {\n          var x = e.clientX;\n          var y = e.clientY;\n\n          document.onmousemove = e => {\n            var dx = e.clientX - x;\n            var dy = e.clientY - y;\n            x = e.clientX;\n            y = e.clientY;\n\n            this.left = this.left + dx;\n            this.top = this.top + dy;\n          };\n\n          document.onmouseup = () => {\n            document.onmouseup = null;\n            document.onmousemove = null;\n          };\n        }}\n      >\n        <b>{this.GetTitle()}</b>\n        <span>\n          <i\n            className=\"fas fa-search\"\n            title=\"Inspect Window Object\"\n            style={{ cursor: \"default\", marginRight: \"5px\" }}\n            onClick={() =>\n              World.Interface.ObjectEditor.New(this).Open()\n            }\n          />\n          <i\n            className=\"fas fa-times\"\n            title=\"Close Window\"\n            style={{ cursor: \"default\" }}\n            onClick={() => this.Close()}\n          />\n        </span>\n      </div>\n      <div style={{ padding: \"5px\", flexGrow: 1, overflow: 'auto', marginBottom: '10px' }}>{this.RenderContent()}</div>\n    </div>\n  );\n}"
         },
         "width": 400,
         "height": 400
@@ -1174,6 +1241,23 @@
       "slot_values": {
         "parent": {
           "@r": 12
+        }
+      },
+      "slot_annotations": {},
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "Ground"
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 1
         }
       },
       "slot_annotations": {},
