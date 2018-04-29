@@ -24,6 +24,10 @@ window.World = deserialize(require('./defaultimage.json'));
 window.FileSaver = require('file-saver');
 window.React = require('react');
 
+// MobileDetect
+var MobileDetect = require('mobile-detect');
+window.MobileDetect = new MobileDetect(window.navigator.userAgent);
+
 window.addEventListener("beforeunload", function (e) {
     var confirmationMessage = 'If you leave before saving, your changes will be lost.';
     (e || window.event).returnValue = confirmationMessage; //Gecko + IE
