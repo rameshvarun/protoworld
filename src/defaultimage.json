@@ -88,7 +88,10 @@
         "FTS": {
           "@t": "ProtoObject",
           "data": {
-            "annotations": {},
+            "annotations": {
+              "name": "FTS",
+              "description": "From the Stars - an X-Com inspired tactical strategy game."
+            },
             "slot_values": {
               "parent": {
                 "@r": 1
@@ -239,10 +242,16 @@
               "Archer": {
                 "@t": "ProtoObject",
                 "data": {
-                  "annotations": {},
+                  "annotations": {
+                    "name": "Archer"
+                  },
                   "slot_values": {
                     "parent": {
                       "@r": 11
+                    },
+                    "ClassName": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    return \"Archer\";\n}"
                     }
                   },
                   "slot_annotations": {},
@@ -254,10 +263,16 @@
               "Spearman": {
                 "@t": "ProtoObject",
                 "data": {
-                  "annotations": {},
+                  "annotations": {
+                    "name": "Spearman"
+                  },
                   "slot_values": {
                     "parent": {
                       "@r": 11
+                    },
+                    "ClassName": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    return \"Spearman\"\n}"
                     }
                   },
                   "slot_annotations": {},
@@ -275,6 +290,10 @@
                   "slot_values": {
                     "parent": {
                       "@r": 11
+                    },
+                    "ClassName": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    return 'Tracker';\n}"
                     }
                   },
                   "slot_annotations": {},
@@ -292,6 +311,10 @@
                   "slot_values": {
                     "parent": {
                       "@r": 11
+                    },
+                    "ClassName": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    return \"Healer\";\n}"
                     }
                   },
                   "slot_annotations": {},
@@ -303,10 +326,117 @@
               "GameWindow": {
                 "@t": "ProtoObject",
                 "data": {
-                  "annotations": {},
+                  "annotations": {
+                    "name": "GameWindow",
+                    "description": "The main window where an in-progress game will be shown."
+                  },
                   "slot_values": {
                     "parent": {
                       "@r": 9
+                    },
+                    "New": {
+                      "@t": "MessageHandler",
+                      "data": "function(state) {\n    let inst = this.Extend();\n    inst.state = state;\n    return inst;\n}"
+                    },
+                    "RenderContent": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    return this.state.Render();\n}"
+                    },
+                    "GetTitle": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    return \"GameWindow\"\n}"
+                    }
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
+              },
+              "GameState": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {
+                    "name": "GameState"
+                  },
+                  "slot_values": {
+                    "parent": {
+                      "@r": 1
+                    },
+                    "New": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    let inst = this.Extend()\n    inst.day = 1;\n    inst.phase = World.FTS.MorningPhase.New(inst);\n    inst.tribe = World.FTS.Generators.Hunter.GenerateTribe()\n    inst.food = 4 * inst.tribe.length;\n    return inst;\n}"
+                    },
+                    "OpenGameWindow": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    World.FTS.GameWindow.New(this).Open()\n}"
+                    },
+                    "Render": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    return this.phase.Render()\n}"
+                    }
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
+              },
+              "MorningPhase": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {
+                    "name": "MorningPhase",
+                    "description": "During this phase, you determine the hunting party assignment of the tribe members."
+                  },
+                  "slot_values": {
+                    "parent": {
+                      "@r": 1
+                    },
+                    "Render": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n  return (\n    <>\n      <h1>Morning (Day {this.state.day})</h1>\n      {World.debug && (\n        <div>\n          Game State: {this.state.RenderWidget()}, Phase: {this.RenderWidget()}\n        </div>\n      )}\n      <h2>Food {this.state.food}</h2>\n      Durng this phase, you assign your tribe members to hunting parties.\n      Wounded members cannot be asigned to a party.\n      <h2>Staying at Camp</h2>\n      {this.GetAvailableHunters().map(h => (\n        <>\n          <div>\n            {h.name} ({h.ClassName()})\n          </div>\n          {World.debug && h.RenderWidget()}\n        </>\n      ))}\n      <h2>Parties</h2>\n      <button onClick={() => this.parties.push(new Set())}>\n        Create a Party\n      </button>\n      {this.parties.map((p, i) => (\n        <>\n          <h2>\n            Party #{i + 1} (Size: {p.size}{p.size > 0 && <span>, Encounter Prob: {this.GetGameEncounterProb(p)}</span>}){\" \"}\n            <small>\n              <button\n                onClick={() =>\n                  (this.parties = this.parties.filter(other => other !== p))\n                }\n              >\n                Remove Party\n              </button>\n            </small>\n          </h2>\n\n\n            \n            {Array.from(p).map(h => <div>{h.name} ({h.ClassName()}) <button onClick={() => p.delete(h)}>Remove</button></div>)}\n            \n           {this.GetAvailableHunters().map(h => <button\n           onClick={() => p.add(h)}>Add {h.name} ({h.ClassName()})</button>)}\n          \n        </>\n      ))}\n      <hr />\n      <button onClick={() => this.AdvancePhase()}>Confirm Party Selection</button>\n    </>\n  );\n}"
+                    },
+                    "New": {
+                      "@t": "MessageHandler",
+                      "data": "function(state) {\n    let inst = this.Extend();\n    inst.state = state;\n    inst.parties = [];\n    return inst;\n}"
+                    },
+                    "GetAvailableHunters": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    return this.state.tribe.filter(h => {\n        for (let party of this.parties) {\n            if (party.has(h)) return false;\n        }\n        return true;\n    });\n}"
+                    },
+                    "GetGameEncounterProb": {
+                      "@t": "MessageHandler",
+                      "data": "function(party) {\n    let baseProb = 0.5;\n    \n    let hasTracker = false;\n    for (let h of party.values()) {\n     // TODO: Check if anybody is a tracker. \n    }\n    \n    return 0.5;\n}"
+                    },
+                    "AdvancePhase": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    this.state.phase = World.FTS.DaytimePhase.New(this.parties)\n}"
+                    }
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
+              },
+              "DaytimePhase": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {
+                    "name": "DaytimePhase"
+                  },
+                  "slot_values": {
+                    "parent": {
+                      "@r": 1
+                    },
+                    "New": {
+                      "@t": "MessageHandler",
+                      "data": "function(state, parties) {\n    let inst = this.Extend();\n    inst.state = state;\n    inst.parties = parties;\n    return inst;\n}"
+                    },
+                    "Render": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    return <><h1>Daytime</h1></>\n}"
                     }
                   },
                   "slot_annotations": {},
@@ -321,7 +451,8 @@
               "parent"
             ]
           }
-        }
+        },
+        "debug": false
       },
       "slot_annotations": {},
       "prototype_slots": [
@@ -976,7 +1107,7 @@
         "top": 0,
         "Render": {
           "@t": "MessageHandler",
-          "data": "function() {\n  return <div\n    style={{\n     'backgroundColor': '#285477',\n     'position': 'fixed',\n     top: '0px',\n     left: '0px',\n     width: '100%',\n     display: 'flex'\n   }}>\n   <button onClick={() => {\n     var blob = new Blob([_SaveImage(World)], {type: \"text/plain;charset=utf-8\"});\n     FileSaver.saveAs(blob, \"image.json\");\n   }}>Save Image</button>\n   <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.(txt|json)$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              // console.log(JSON.parse(reader.result));\n              _LoadImage(JSON.parse(reader.result));\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .txt or .json files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Open Image</button>\n   <button onClick={() => {\n     World.Interface.ObjectEditor.New(World).Open();\n   }}>Open World</button>\n    <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.js$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              eval(reader.result);\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .js files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Load Module</button>\n  </div>;\n}"
+          "data": "function() {\n  return <div\n    style={{\n     'backgroundColor': '#285477',\n     'position': 'fixed',\n     top: '0px',\n     left: '0px',\n     width: '100%',\n     display: 'flex'\n   }}>\n   <button onClick={() => {\n     var blob = new Blob([_SaveImage(World)], {type: \"text/plain;charset=utf-8\"});\n     FileSaver.saveAs(blob, \"image.json\");\n   }}>Save Image</button>\n   <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.(txt|json)$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              // console.log(JSON.parse(reader.result));\n              _LoadImage(JSON.parse(reader.result));\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .txt or .json files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Open Image</button>\n   <button onClick={() => {\n     World.Interface.ObjectEditor.New(World).Open();\n   }}>Open World</button>\n    <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.js$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              eval(reader.result);\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .js files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Load Module</button>\n    <button onClick={() => {\n     World.debug = !World.debug;\n   }}>Toggle Debug</button>\n   \n    <button onClick={() => {\n     World.FTS.GameState.New().OpenGameWindow()\n   }}>From the Stars</button>\n  </div>;\n}"
         },
         "windowID": "mainmenu"
       },
