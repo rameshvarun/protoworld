@@ -4,7 +4,11 @@
     "data": {
       "annotations": {
         "name": "World",
-        "description": "The world. All objects in the world should be accessible from here. If not, they will not be persisted in the live image."
+        "description": "The world. All objects in the world should be accessible from here. If not, they will not be persisted in the live image.",
+        "creator": {
+          "@r": 0
+        },
+        "creatorSlot": "World"
       },
       "slot_values": {
         "parent": {
@@ -643,7 +647,10 @@
             ]
           }
         },
-        "debug": false
+        "debug": false,
+        "World": {
+          "@r": 0
+        }
       },
       "slot_annotations": {
         "Core": {
@@ -659,6 +666,16 @@
         "Interface": {
           "module": {
             "@r": 4
+          }
+        },
+        "parent": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "World": {
+          "module": {
+            "@r": 6
           }
         }
       },

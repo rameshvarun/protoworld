@@ -7,6 +7,10 @@ function ref(path) {
 	return current;
 }
 
+_AddSlot(ref("World"), "parent", ref("World.Core.Namespace"));
+_AddPrototypeSlot(ref("World"), "parent")
+_SetSlotAnnotation(ref("World"), "parent", "module", ref("World.Modules.init"));
+
 _AddSlot(ref("World.Core.Namespace"), "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Core.Namespace"), "parent")
 _SetSlotAnnotation(ref("World.Core.Namespace"), "parent", "module", ref("World.Modules.init"));
@@ -362,3 +366,14 @@ _SetSlotAnnotation(ref("World.Modules"), "init", "module", ref("World.Modules.in
 _AddSlot(ref("World.Modules.init"), "parent", ref("World.Core.Module"));
 _AddPrototypeSlot(ref("World.Modules.init"), "parent")
 _SetSlotAnnotation(ref("World.Modules.init"), "parent", "module", ref("World.Modules.init"));
+
+_AddSlot(ref("World"), "World", (function() {
+            let object = ref("World");
+            _SetAnnotation(object, "name", `World`)
+_SetAnnotation(object, "description", `The world. All objects in the world should be accessible from here. If not, they will not be persisted in the live image.`)
+_SetAnnotation(object, "creator", ref("World"))
+_SetAnnotation(object, "creatorSlot", `World`)
+
+            return object;
+        })());
+_SetSlotAnnotation(ref("World"), "World", "module", ref("World.Modules.init"));

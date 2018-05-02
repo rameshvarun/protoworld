@@ -69,20 +69,26 @@ _SetSlotAnnotation(ref("World.Interface"), "WindowManager", "module", ref("World
 _AddSlot(ref("World.Interface.WindowManager"), "Render", _MakeMessageHandler(`function() {
   return <>
     {World.Interface.MainMenu.Render()}
-    {this.windows.map(w => w.Render())}</>
+    {(this.windows || []).map(w => w.Render())}</>
 }`));
 _SetSlotAnnotation(ref("World.Interface.WindowManager"), "Render", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface.WindowManager"), "Update", _MakeMessageHandler(`function(dt) {
-    World.Interface.MainMenu.Update(dt)
-    this.windows.forEach(w => w.Update(dt));
+    World.Interface.MainMenu.Update(dt);
+    (this.windows || []).forEach(w => w.Update(dt));
 }`));
 _SetSlotAnnotation(ref("World.Interface.WindowManager"), "Update", "module", ref("World.Modules.interface"));
 
-_AddSlot(ref("World.Interface.WindowManager"), "AddWindow", _MakeMessageHandler(`function(window) { this.windows.push(window); }`));
+_AddSlot(ref("World.Interface.WindowManager"), "AddWindow", _MakeMessageHandler(`function(window) {
+    this.windows = this.windows || [];
+    this.windows.push(window);
+}`));
 _SetSlotAnnotation(ref("World.Interface.WindowManager"), "AddWindow", "module", ref("World.Modules.interface"));
 
-_AddSlot(ref("World.Interface.WindowManager"), "RemoveWindow", _MakeMessageHandler(`function(window) { this.windows = this.windows.filter(item => item !== window); }`));
+_AddSlot(ref("World.Interface.WindowManager"), "RemoveWindow", _MakeMessageHandler(`function(window) {
+    this.windows = this.windows || [];
+    this.windows = this.windows.filter(item => item !== window);
+}`));
 _SetSlotAnnotation(ref("World.Interface.WindowManager"), "RemoveWindow", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface.WindowManager"), "parent", ref("World.Core.TopObject"));
@@ -235,6 +241,33 @@ _SetAnnotation(object, "creatorSlot", `HandlerEditor`)
         })());
 _SetSlotAnnotation(ref("World.Interface"), "HandlerEditor", "module", ref("World.Modules.interface"));
 
+_AddSlot(ref("World.Interface.HandlerEditor"), "parent", ref("World.Interface.Window"));
+_AddPrototypeSlot(ref("World.Interface.HandlerEditor"), "parent")
+_SetSlotAnnotation(ref("World.Interface.HandlerEditor"), "parent", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.HandlerEditor"), "RenderContent", _MakeMessageHandler(`function() {
+  return [
+    <AceEditor style={{width: '100%'}} mode="jsx" theme="monokai" value={this.code} onChange={(value) => this.code = value}/>,
+    <button onClick={() => this.target[this.slot] = _MakeMessageHandler(this.code)}>Save</button>
+  ];
+}`));
+_SetSlotAnnotation(ref("World.Interface.HandlerEditor"), "RenderContent", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.HandlerEditor"), "New", _MakeMessageHandler(`function(target, slot) {
+  let inst = this.Extend();
+  inst.AddSlot('target', target);
+  inst.AddSlot('slot', slot);
+  inst.AddSlot('code', _GetMessageHandlerCode(target[slot]));
+  inst.AddSlot('windowID', uuid.v1());
+  return inst;
+}`));
+_SetSlotAnnotation(ref("World.Interface.HandlerEditor"), "New", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.HandlerEditor"), "GetTitle", _MakeMessageHandler(`function() {
+ return "HandlerEditor: " + this.target.toString() + "->" + this.slot;
+}`));
+_SetSlotAnnotation(ref("World.Interface.HandlerEditor"), "GetTitle", "module", ref("World.Modules.interface"));
+
 _AddSlot(ref("World.Interface"), "ObjectEditor", (function() {
             let object = ref("World.Interface.ObjectEditor");
             _SetAnnotation(object, "name", `ObjectEditor`)
@@ -245,6 +278,108 @@ _SetAnnotation(object, "creatorSlot", `ObjectEditor`)
             return object;
         })());
 _SetSlotAnnotation(ref("World.Interface"), "ObjectEditor", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.ObjectEditor"), "parent", ref("World.Interface.Window"));
+_AddPrototypeSlot(ref("World.Interface.ObjectEditor"), "parent")
+_SetSlotAnnotation(ref("World.Interface.ObjectEditor"), "parent", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.ObjectEditor"), "GetTitle", _MakeMessageHandler(`function() {
+    return \`\${(this.target.GetAnnotation('name') || "Unnamed Object")} (Object Editor)\`;
+}`));
+_SetSlotAnnotation(ref("World.Interface.ObjectEditor"), "GetTitle", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.ObjectEditor"), "RenderContent", _MakeMessageHandler(`function() {
+  let description = this.target.GetAnnotation("description");
+  let modules = Array.from(this.target.ListModules());
+  let categories = Array.from(this.target.ListCategories());
+
+  return (
+    <div>
+      {description ? (
+        <>
+          <div>{description}</div>
+          <hr />
+        </>
+      ) : null}
+      <div>
+        <b>Modules:</b>
+        {modules.length > 0 ? (
+          modules.map(m => m.RenderWidget())
+        ) : (
+          <span> none</span>
+        )}
+      </div>
+      <hr />
+      <div><b>Slots</b></div>
+      <div style={{ paddingTop: '5px'}}>
+        <div ><em>uncategorized</em></div>
+        <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(null).map(slot => this.RenderSlot(slot))}</div>
+      </div>
+      {categories.map(cat => <div style={{ paddingTop: '5px'}}>
+          <div ><em>{cat}</em></div>
+          <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(cat).map(slot => this.RenderSlot(slot))}</div>
+      </div>)}
+      <hr />
+      <ReactConsole
+        welcomeMessage={\`Evaluator for \${this.target.ToString()}.\`}
+        ref={e => (this.evaluator = e)}
+        handler={code => {
+          function evalInContext() {
+            return eval(code);
+          }
+
+          try {
+             let result = evalInContext.call(this.target);
+             this.evaluator.log(new String(result));
+          } catch (e) {
+            this.evaluator.log(new String(e));
+          }
+          this.evaluator.return();
+        }}
+      />
+    </div>
+  );
+}`));
+_SetSlotAnnotation(ref("World.Interface.ObjectEditor"), "RenderContent", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.ObjectEditor"), "New", _MakeMessageHandler(`function(target) {
+    let inst = this.Extend();
+    inst.AddSlot('target', target);
+    inst.AddSlot('windowID', uuid.v1());
+    return inst;
+}`));
+_SetSlotAnnotation(ref("World.Interface.ObjectEditor"), "New", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.ObjectEditor"), "RenderSlot", _MakeMessageHandler(`function(slot) {
+    let value = this.target[slot];
+    let description = this.target.GetSlotDescription(slot);
+
+    let namespan = _IsPrototypeSlot(this.target, slot) ? <b>{slot}*</b> : slot;
+
+    let slotspan = null;
+    if (_IsMessageHandler(value)) {
+      slotspan = <button onClick= {() =>
+              World.Interface.HandlerEditor.New(this.target, slot).Open()}>Edit Code</button>;
+    } else if (_IsProtoObject(value)) {
+      slotspan = value.RenderWidget();
+    } else if (typeof value == "number") {
+        slotspan = value;
+    } else {
+        slotspan = new String(value);
+    }
+
+    return <div key={slot} style={{
+            paddingBottom: '5px',
+            display: 'flex',
+            'justifyContent': 'space-between',
+            'alignItems': 'flex-end',
+            'flexWrap': 'wrap'
+    }}>
+        <span title={description}>{namespan}</span>
+        <span>{slotspan}</span>
+    </div>;
+}`));
+_SetSlotAnnotation(ref("World.Interface.ObjectEditor"), "RenderSlot", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface"), "MainMenu", (function() {
             let object = ref("World.Interface.MainMenu");
