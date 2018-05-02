@@ -463,7 +463,9 @@
               "Terrain": {
                 "@t": "ProtoObject",
                 "data": {
-                  "annotations": {},
+                  "annotations": {
+                    "name": "TerrainTypes"
+                  },
                   "slot_values": {
                     "parent": {
                       "@r": 1
@@ -480,7 +482,9 @@
                         "slot_values": {
                           "parent": {
                             "@r": 14
-                          }
+                          },
+                          "backgroundColor": "green",
+                          "description": "Tall Grass. Targets in tall grass have a lower chance of being hit by ranged weapons."
                         },
                         "slot_annotations": {},
                         "prototype_slots": [
@@ -497,7 +501,9 @@
                         "slot_values": {
                           "parent": {
                             "@r": 14
-                          }
+                          },
+                          "backgroundColor": "grey",
+                          "description": "Rocks. Provides half cover."
                         },
                         "slot_annotations": {},
                         "prototype_slots": [
@@ -505,14 +511,138 @@
                         ]
                       }
                     },
-                    "Trees": {
+                    "Tree": {
                       "@t": "ProtoObject",
                       "data": {
                         "annotations": {},
                         "slot_values": {
                           "parent": {
                             "@r": 14
-                          }
+                          },
+                          "backgroundColor": "#460C00",
+                          "description": "Trees. Provides full cover."
+                        },
+                        "slot_annotations": {},
+                        "prototype_slots": [
+                          "parent"
+                        ]
+                      }
+                    }
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
+              },
+              "Grid": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {
+                    "name": "Grid"
+                  },
+                  "slot_values": {
+                    "parent": {
+                      "@r": 1
+                    },
+                    "New": {
+                      "@t": "MessageHandler",
+                      "data": "function(width, height) {\n    let inst = this.Extend();\n    \n    inst.width = width;\n    inst.height = height;\n    \n    inst.terrain = new Array(width * height);\n    inst.terrain.fill(World.FTS.Terrain.Ground);\n    inst.entities = new Map();\n    return inst;\n}"
+                    },
+                    "GetTerrainAt": {
+                      "@t": "MessageHandler",
+                      "data": "function(i, j) {\n    return this.terrain[i * this.width + j];\n}"
+                    },
+                    "SetTerrainAt": {
+                      "@t": "MessageHandler",
+                      "data": "function(i, j, terrain) {\n    this.terrain[i * this.width + j] = terrain;\n}"
+                    },
+                    "InBounds": {
+                      "@t": "MessageHandler",
+                      "data": "function(i, j) {\n    if (i < 0 || i >= this.height) return false;\n    if (j < 0 || j >= this.width) return false;\n    return true;\n}"
+                    },
+                    "AddEntityAt": {
+                      "@t": "MessageHandler",
+                      "data": "function(i, j, entity) {\n    this.entities.set(`${i},${j}`, entity);\n}"
+                    },
+                    "GetEntityAt": {
+                      "@t": "MessageHandler",
+                      "data": "function(i, j) {\n    return this.entities.get(`${i},${j}`);\n}"
+                    }
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
+              },
+              "CombatWindow": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {},
+                  "slot_values": {
+                    "parent": {
+                      "@r": 9
+                    },
+                    "New": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    let inst = this.Extend();\n    inst.grid = World.FTS.Grid.New(10, 10);\n    return inst;\n}"
+                    },
+                    "RenderContent": {
+                      "@t": "MessageHandler",
+                      "data": "function() {\n    let rows = [];\n    for (let i = 0; i < this.grid.height; ++i) {\n        let cells = [];\n        for (let j = 0; j < this.grid.width; ++j) {\n            let terrain = this.grid.GetTerrainAt(i, j);\n            let entity = this.grid.GetEntityAt(i, j);\n            cells.push(<th\n                title={terrain.description}\n                style={{width: '40px',\n                        height: '40px',\n                        backgroundColor: terrain.backgroundColor}}>\n                        {entity ? <span title={entity.GetDescription()} style={{'fontSize': '30px', color: entity.color, textShadow: '1px 1px #000000'}}>{entity.character}</span> : \"\"}</th>);\n        }\n        rows.push(<tr>{cells}</tr>);\n    }\n    \n    return <table>{rows}</table>;\n}"
+                    }
+                  },
+                  "slot_annotations": {},
+                  "prototype_slots": [
+                    "parent"
+                  ]
+                }
+              },
+              "Units": {
+                "@t": "ProtoObject",
+                "data": {
+                  "annotations": {
+                    "name": "Units"
+                  },
+                  "slot_values": {
+                    "parent": {
+                      "@r": 1
+                    },
+                    "Unit": {
+                      "@r": 15
+                    },
+                    "Alien": {
+                      "@r": 16
+                    },
+                    "Hunter": {
+                      "@t": "ProtoObject",
+                      "data": {
+                        "annotations": {},
+                        "slot_values": {
+                          "parent": {
+                            "@r": 15
+                          },
+                          "color": "green",
+                          "character": "H",
+                          "baseHP": 10
+                        },
+                        "slot_annotations": {},
+                        "prototype_slots": [
+                          "parent"
+                        ]
+                      }
+                    },
+                    "BlueMan": {
+                      "@t": "ProtoObject",
+                      "data": {
+                        "annotations": {},
+                        "slot_values": {
+                          "parent": {
+                            "@r": 16
+                          },
+                          "character": "B",
+                          "color": "blue"
                         },
                         "slot_annotations": {},
                         "prototype_slots": [
@@ -1258,6 +1388,48 @@
       "slot_values": {
         "parent": {
           "@r": 1
+        },
+        "backgroundColor": "white",
+        "character": "",
+        "description": "Ground. Provides no cover."
+      },
+      "slot_annotations": {},
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "Unit",
+        "description": "The base unit class."
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 1
+        },
+        "character": "U",
+        "color": "black",
+        "GetDescription": {
+          "@t": "MessageHandler",
+          "data": "function() {\n    return \"Default Unit Description\";\n}"
+        }
+      },
+      "slot_annotations": {},
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {},
+      "slot_values": {
+        "parent": {
+          "@r": 15
         }
       },
       "slot_annotations": {},
