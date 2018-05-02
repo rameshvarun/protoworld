@@ -63,6 +63,11 @@ window._SetSlotAnnotation = function(object, slot, name, value) {
   object.__repr__.slot_annotations[slot][name] = value;
 }
 
+window._GetAnnotations = function(object) {
+  return Object.keys(object.__repr__.annotations);
+}
+
+
 window._GetSlotAnnotation = function(object, slot, name) {
   if (slot in object.__repr__.slot_annotations) {
     return object.__repr__.slot_annotations[slot][name];
@@ -72,6 +77,10 @@ window._GetSlotAnnotation = function(object, slot, name) {
 
 window._GetSlotNames = function(object) {
   return Object.keys(object.__repr__.slot_values);
+}
+
+window._GetSlotAnnotations = function(object, slot) {
+  return Object.keys(object.__repr__.slot_annotations[slot] || {});
 }
 
 window._AddPrototypeSlot = function(object, name) {
