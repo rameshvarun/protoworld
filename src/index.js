@@ -20,6 +20,8 @@ window._LoadImage = function(json) {
 }
 
 window.World = deserialize(require('./defaultimage.json'));
+// require('./modules/init.js')
+// require('./modules/interface.js')
 
 window.FileSaver = require('file-saver');
 window.React = require('react');

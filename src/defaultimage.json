@@ -1448,32 +1448,27 @@
             "slot_annotations": {
               "parent": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "left": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "top": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "Render": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "windowID": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               }
             },
