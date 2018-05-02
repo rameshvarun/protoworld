@@ -11,179 +11,13 @@
           "@r": 1
         },
         "Core": {
-          "@r": 3
+          "@r": 2
         },
         "Interface": {
-          "@t": "ProtoObject",
-          "data": {
-            "annotations": {
-              "name": "Interface",
-              "description": "A collection of objects related to the user interface."
-            },
-            "slot_values": {
-              "parent": {
-                "@r": 1
-              },
-              "WindowManager": {
-                "@t": "ProtoObject",
-                "data": {
-                  "annotations": {
-                    "name": "WindowManager",
-                    "description": "The window manager and entry point for the render and update main loop."
-                  },
-                  "slot_values": {
-                    "windows": [
-                      {
-                        "@r": 8
-                      }
-                    ],
-                    "Render": {
-                      "@t": "MessageHandler",
-                      "data": "function() {\n  return this.windows.map(w => w.Render());\n}"
-                    },
-                    "Update": {
-                      "@t": "MessageHandler",
-                      "data": "function(dt) { this.windows.forEach(w => w.Update(dt)); }"
-                    },
-                    "AddWindow": {
-                      "@t": "MessageHandler",
-                      "data": "function(window) { this.windows.push(window); }"
-                    },
-                    "RemoveWindow": {
-                      "@t": "MessageHandler",
-                      "data": "function(window) { this.windows = this.windows.filter(item => item !== window); }"
-                    },
-                    "parent": {
-                      "@r": 2
-                    }
-                  },
-                  "slot_annotations": {
-                    "RemoveWindow": {
-                      "module": {
-                        "@r": 6
-                      }
-                    },
-                    "AddWindow": {
-                      "module": {
-                        "@r": 6
-                      }
-                    },
-                    "Update": {
-                      "module": {
-                        "@r": 6
-                      }
-                    },
-                    "Render": {
-                      "module": {
-                        "@r": 6
-                      }
-                    }
-                  },
-                  "prototype_slots": [
-                    "parent"
-                  ]
-                }
-              },
-              "Window": {
-                "@r": 7
-              },
-              "HandlerEditor": {
-                "@t": "ProtoObject",
-                "data": {
-                  "annotations": {
-                    "name": "HandlerEditor",
-                    "description": "The default editor for message handlers."
-                  },
-                  "slot_values": {
-                    "parent": {
-                      "@r": 7
-                    },
-                    "RenderContent": {
-                      "@t": "MessageHandler",
-                      "data": "function() {\n  return [\n    <AceEditor style={{width: '100%'}} mode=\"jsx\" theme=\"monokai\" value={this.code} onChange={(value) => this.code = value}/>,\n    <button onClick={() => this.target[this.slot] = _MakeMessageHandler(this.code)}>Save</button>\n  ];\n}"
-                    },
-                    "New": {
-                      "@t": "MessageHandler",
-                      "data": "function(target, slot) {\n  let inst = this.Extend();\n  inst.AddSlot('target', target);\n  inst.AddSlot('slot', slot);\n  inst.AddSlot('code', _GetMessageHandlerCode(target[slot]));\n  inst.AddSlot('windowID', uuid.v1());\n  return inst;\n}"
-                    },
-                    "GetTitle": {
-                      "@t": "MessageHandler",
-                      "data": "function() {\n return \"HandlerEditor: \" + this.target.toString() + \"->\" + this.slot;\n}"
-                    }
-                  },
-                  "slot_annotations": {},
-                  "prototype_slots": [
-                    "parent"
-                  ]
-                }
-              },
-              "ObjectEditor": {
-                "@t": "ProtoObject",
-                "data": {
-                  "annotations": {
-                    "name": "ObjectEditor",
-                    "description": "The default editor for objects."
-                  },
-                  "slot_values": {
-                    "parent": {
-                      "@r": 7
-                    },
-                    "GetTitle": {
-                      "@t": "MessageHandler",
-                      "data": "function() {\n    return `${(this.target.GetAnnotation('name') || \"Unnamed Object\")} (Object Editor)`;\n}"
-                    },
-                    "RenderContent": {
-                      "@t": "MessageHandler",
-                      "data": "function() {\n  let description = this.target.GetAnnotation(\"description\");\n  let modules = Array.from(this.target.ListModules());\n  let categories = Array.from(this.target.ListCategories());\n\n  return (\n    <div>\n      {description ? (\n        <>\n          <div>{description}</div>\n          <hr />\n        </>\n      ) : null}\n      <div>\n        <b>Modules:</b>\n        {modules.length > 0 ? (\n          modules.map(m => m.RenderWidget())\n        ) : (\n          <span> none</span>\n        )}\n      </div>\n      <hr />\n      <div><b>Slots</b></div>\n      <div style={{ paddingTop: '5px'}}>\n        <div ><em>uncategorized</em></div>\n        <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(null).map(slot => this.RenderSlot(slot))}</div>\n      </div>\n      {categories.map(cat => <div style={{ paddingTop: '5px'}}>\n          <div ><em>{cat}</em></div>\n          <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(cat).map(slot => this.RenderSlot(slot))}</div>\n      </div>)}\n      <hr />\n      <ReactConsole\n        welcomeMessage={`Evaluator for ${this.target.ToString()}.`}\n        ref={e => (this.evaluator = e)}\n        handler={code => {\n          function evalInContext() {\n            return eval(code);\n          }\n\n          try {\n             let result = evalInContext.call(this.target);\n             this.evaluator.log(new String(result));\n          } catch (e) {\n            this.evaluator.log(new String(e));\n          }\n          this.evaluator.return();\n        }}\n      />\n    </div>\n  );\n}"
-                    },
-                    "New": {
-                      "@t": "MessageHandler",
-                      "data": "function(target) {\n    let inst = this.Extend();\n    inst.AddSlot('target', target);\n    inst.AddSlot('windowID', uuid.v1());\n    return inst;\n}"
-                    },
-                    "RenderSlot": {
-                      "@t": "MessageHandler",
-                      "data": "function(slot) {\n    let value = this.target[slot];\n    let description = this.target.GetSlotDescription(slot);\n    \n    let namespan = _IsPrototypeSlot(this.target, slot) ? <b>{slot}*</b> : slot;\n    \n    let slotspan = null;\n    if (_IsMessageHandler(value)) {\n      slotspan = <button onClick= {() =>\n              World.Interface.HandlerEditor.New(this.target, slot).Open()}>Edit Code</button>;\n    } else if (_IsProtoObject(value)) {\n      slotspan = value.RenderWidget();\n    } else if (typeof value == \"number\") {\n        slotspan = value;\n    } else {\n        slotspan = new String(value);\n    }\n    \n    return <div key={slot} style={{\n            paddingBottom: '5px',\n            display: 'flex',\n            'justifyContent': 'space-between',\n            'alignItems': 'flex-end',\n            'flexWrap': 'wrap'\n    }}>\n        <span title={description}>{namespan}</span>\n        <span>{slotspan}</span>\n    </div>;\n}"
-                    }
-                  },
-                  "slot_annotations": {
-                    "GetTitle": {
-                      "module": {
-                        "@r": 6
-                      }
-                    },
-                    "RenderContent": {
-                      "module": {
-                        "@r": 6
-                      }
-                    },
-                    "New": {
-                      "module": {
-                        "@r": 6
-                      }
-                    },
-                    "parent": {
-                      "module": {
-                        "@r": 6
-                      }
-                    }
-                  },
-                  "prototype_slots": [
-                    "parent"
-                  ]
-                }
-              },
-              "MainMenu": {
-                "@r": 8
-              }
-            },
-            "slot_annotations": {},
-            "prototype_slots": [
-              "parent"
-            ]
-          }
+          "@r": 8
         },
         "Modules": {
-          "@r": 9
+          "@r": 5
         },
         "Random": {
           "@t": "ProtoObject",
@@ -194,7 +28,7 @@
             },
             "slot_values": {
               "parent": {
-                "@r": 2
+                "@r": 3
               },
               "Chance": {
                 "@t": "MessageHandler",
@@ -239,7 +73,7 @@
             },
             "slot_values": {
               "parent": {
-                "@r": 2
+                "@r": 3
               },
               "Generators": {
                 "@t": "ProtoObject",
@@ -249,7 +83,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 2
+                      "@r": 3
                     },
                     "Hunter": {
                       "@t": "ProtoObject",
@@ -259,7 +93,7 @@
                         },
                         "slot_values": {
                           "parent": {
-                            "@r": 2
+                            "@r": 3
                           },
                           "nameStarts": [
                             "aa",
@@ -477,7 +311,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 7
+                      "@r": 9
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -506,7 +340,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 2
+                      "@r": 3
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -540,7 +374,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 2
+                      "@r": 3
                     },
                     "Render": {
                       "@t": "MessageHandler",
@@ -573,7 +407,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 2
+                      "@r": 3
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -613,7 +447,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 2
+                      "@r": 3
                     },
                     "Ground": {
                       "@r": 13
@@ -688,7 +522,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 2
+                      "@r": 3
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -727,7 +561,7 @@
                   "annotations": {},
                   "slot_values": {
                     "parent": {
-                      "@r": 7
+                      "@r": 9
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -752,7 +586,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 2
+                      "@r": 3
                     },
                     "Unit": {
                       "@r": 14
@@ -811,7 +645,23 @@
         },
         "debug": false
       },
-      "slot_annotations": {},
+      "slot_annotations": {
+        "Core": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "Modules": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "Interface": {
+          "module": {
+            "@r": 4
+          }
+        }
+      },
       "prototype_slots": [
         "parent"
       ]
@@ -822,14 +672,76 @@
     "data": {
       "annotations": {
         "name": "Namespace",
-        "description": "A namespace is a logical grouping of objects. It is a distinct concept from modules."
+        "description": "A namespace is a logical grouping of objects. It is a distinct concept from modules.",
+        "creator": {
+          "@r": 2
+        },
+        "creatorSlot": "Namespace"
       },
       "slot_values": {
         "parent": {
-          "@r": 2
+          "@r": 3
         }
       },
-      "slot_annotations": {},
+      "slot_annotations": {
+        "parent": {
+          "module": {
+            "@r": 6
+          }
+        }
+      },
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "Core",
+        "description": "A collection of core objects that should exist in every world.",
+        "creator": {
+          "@r": 0
+        },
+        "creatorSlot": "Core"
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 1
+        },
+        "TopObject": {
+          "@r": 3
+        },
+        "Namespace": {
+          "@r": 1
+        },
+        "Module": {
+          "@r": 7
+        }
+      },
+      "slot_annotations": {
+        "TopObject": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "parent": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "Namespace": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "Module": {
+          "module": {
+            "@r": 6
+          }
+        }
+      },
       "prototype_slots": [
         "parent"
       ]
@@ -842,7 +754,7 @@
         "name": "TopObject",
         "description": "TopObject at the top of the inheritance heirarchy. All objects should descend from this.",
         "creator": {
-          "@r": 3
+          "@r": 2
         },
         "creatorSlot": "TopObject"
       },
@@ -958,41 +870,166 @@
         "GetSlotAnnotations": {
           "@t": "MessageHandler",
           "data": "function(slot) {\n    return _GetSlotAnnotations(this, slot)\n}"
+        },
+        "SetModule": {
+          "@t": "MessageHandler",
+          "data": "function(module) {\n    for (let slot of this.GetSlotNames()) {\n        this.SetSlotModule(slot, module);\n    }\n}"
         }
       },
       "slot_annotations": {
         "OpenEditor": {
           "module": {
-            "@r": 6
+            "@r": 4
           },
           "category": "editor"
         },
         "CreateEditor": {
           "module": {
-            "@r": 6
+            "@r": 4
           },
           "category": "editor"
         },
         "AddSlot": {
-          "description": "Takes in a slot name and value, and creates a slot on this object."
+          "description": "Takes in a slot name and value, and creates a slot on this object.",
+          "module": {
+            "@r": 6
+          }
         },
         "Extend": {
-          "description": "Creates a new object with this object as a parent."
+          "description": "Creates a new object with this object as a parent.",
+          "module": {
+            "@r": 6
+          }
         },
         "RenderWidget": {
-          "category": "editor"
+          "category": "editor",
+          "module": {
+            "@r": 4
+          }
         },
         "SetSlotCategory": {
-          "category": "categories"
+          "category": "categories",
+          "module": {
+            "@r": 6
+          }
         },
         "GetSlotCategory": {
-          "category": "categories"
+          "category": "categories",
+          "module": {
+            "@r": 6
+          }
         },
         "ListCategories": {
-          "category": "categories"
+          "category": "categories",
+          "module": {
+            "@r": 6
+          }
         },
         "GetSlotsByCategory": {
-          "category": "categories"
+          "category": "categories",
+          "module": {
+            "@r": 6
+          }
+        },
+        "SetAnnotation": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "GetAnnotation": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "GetSlotNames": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "ToString": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "SetName": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "SetDescription": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "SetSlotAnnotation": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "SetSlotModule": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "SetCreator": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "GetCreator": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "GetName": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "GetDescription": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "GetSlotAnnotation": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "GetSlotModule": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "ListModules": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "SetSlotDescription": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "GetSlotDescription": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "AddMessageHandler": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "GetSlotAnnotations": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "SetModule": {
+          "module": {
+            "@r": 6
+          }
         }
       },
       "prototype_slots": []
@@ -1002,31 +1039,87 @@
     "@t": "ProtoObject",
     "data": {
       "annotations": {
-        "name": "Core",
-        "description": "A collection of core objects that should exist in every world.",
+        "name": "InterfaceModule",
         "creator": {
-          "@r": 0
+          "@r": 5
         },
-        "creatorSlot": "Core"
+        "creatorSlot": "interface"
       },
       "slot_values": {
         "parent": {
-          "@r": 1
-        },
-        "TopObject": {
-          "@r": 2
-        },
-        "Namespace": {
-          "@r": 1
-        },
-        "Module": {
-          "@r": 4
+          "@r": 7
         }
       },
       "slot_annotations": {
-        "TopObject": {
+        "parent": {
           "module": {
-            "@r": 5
+            "@r": 4
+          }
+        }
+      },
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "Modules",
+        "description": "An object that contains all of the modules currently loaded into the program. You can launch modules from here in order to write them out to a file.",
+        "creator": {
+          "@r": 0
+        },
+        "creatorSlot": "Modules"
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 3
+        },
+        "interface": {
+          "@r": 4
+        },
+        "init": {
+          "@r": 6
+        }
+      },
+      "slot_annotations": {
+        "init": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "interface": {
+          "module": {
+            "@r": 4
+          }
+        }
+      },
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
+        "name": "InitModule",
+        "creator": {
+          "@r": 5
+        },
+        "creatorSlot": "init"
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 7
+        }
+      },
+      "slot_annotations": {
+        "parent": {
+          "module": {
+            "@r": 6
           }
         }
       },
@@ -1042,13 +1135,13 @@
         "name": "Module",
         "description": "The traits object for modules.",
         "creator": {
-          "@r": 3
+          "@r": 2
         },
         "creatorSlot": "Module"
       },
       "slot_values": {
         "parent": {
-          "@r": 2
+          "@r": 3
         },
         "FindSlots": {
           "@t": "MessageHandler",
@@ -1069,34 +1162,44 @@
         "prelude": "function ref(path) {\n    var parts = path.split('.');\n\tvar current = window;\n\tfor(let part of parts) {\n\t  current = (current[part] = current[part] || _EmptyObject());\n    }\n\treturn current;\n}\n\n",
         "GenerateValueExpression": {
           "@t": "MessageHandler",
-          "data": "function(value) {\n    if (_IsMessageHandler(value)) {\n      let handlerCode = _GetMessageHandlerCode(value);\n      let escapedCode = escapeTemplateString(handlerCode);\n      return `_MakeMessageHandler(${escapedCode})`\n    } else if (_IsProtoObject(value)) {\n      return `ref(\"${this.TracePath(value).join('.')}\")`;\n    } else if (typeof value == \"string\") {\n        return escapeTemplateString(value);\n    } else {\n      throw new Error(`Encountered an object of Unknown type.`);\n    }\n}"
+          "data": "function(value) {\n    if (_IsMessageHandler(value)) {\n      let handlerCode = _GetMessageHandlerCode(value);\n      let escapedCode = escapeTemplateString(handlerCode);\n      return `_MakeMessageHandler(${escapedCode})`\n    } else if (_IsProtoObject(value)) {\n      return `ref(\"${this.TracePath(value).join('.')}\")`;\n    } else if (typeof value == \"string\") {\n        return escapeTemplateString(value);\n    } else if (typeof value == \"number\") {\n        return JSON.stringify(value);\n    } else {\n      throw new Error(`Encountered an object of Unknown type.`);\n    }\n}"
         }
       },
       "slot_annotations": {
         "GenerateCode": {
           "module": {
-            "@r": 5
+            "@r": 6
           }
         },
         "FindSlots": {
           "module": {
-            "@r": 5
+            "@r": 6
           },
           "description": "Find all slots that have been annotated with this module."
         },
         "Export": {
           "module": {
-            "@r": 6
+            "@r": 4
           }
         },
         "parent": {
           "module": {
-            "@r": 5
+            "@r": 6
           }
         },
         "TracePath": {
           "module": {
-            "@r": 5
+            "@r": 6
+          }
+        },
+        "prelude": {
+          "module": {
+            "@r": 6
+          }
+        },
+        "GenerateValueExpression": {
+          "module": {
+            "@r": 6
           }
         }
       },
@@ -1109,18 +1212,309 @@
     "@t": "ProtoObject",
     "data": {
       "annotations": {
-        "name": "InitModule",
+        "name": "Interface",
+        "description": "A collection of objects related to the user interface.",
         "creator": {
+          "@r": 0
+        },
+        "creatorSlot": "Interface"
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 1
+        },
+        "WindowManager": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {
+              "name": "WindowManager",
+              "description": "The window manager and entry point for the render and update main loop.",
+              "creator": {
+                "@r": 8
+              },
+              "creatorSlot": "WindowManager"
+            },
+            "slot_values": {
+              "windows": [],
+              "Render": {
+                "@t": "MessageHandler",
+                "data": "function() {\n  return <>\n    {World.Interface.MainMenu.Render()}\n    {this.windows.map(w => w.Render())}</>\n}"
+              },
+              "Update": {
+                "@t": "MessageHandler",
+                "data": "function(dt) {\n    World.Interface.MainMenu.Update(dt)\n    this.windows.forEach(w => w.Update(dt));\n}"
+              },
+              "AddWindow": {
+                "@t": "MessageHandler",
+                "data": "function(window) { this.windows.push(window); }"
+              },
+              "RemoveWindow": {
+                "@t": "MessageHandler",
+                "data": "function(window) { this.windows = this.windows.filter(item => item !== window); }"
+              },
+              "parent": {
+                "@r": 3
+              }
+            },
+            "slot_annotations": {
+              "RemoveWindow": {
+                "module": {
+                  "@r": 4
+                }
+              },
+              "AddWindow": {
+                "module": {
+                  "@r": 4
+                }
+              },
+              "Update": {
+                "module": {
+                  "@r": 4
+                }
+              },
+              "Render": {
+                "module": {
+                  "@r": 4
+                }
+              },
+              "windows": {
+                "module": null
+              },
+              "parent": {
+                "module": {
+                  "@r": 4
+                }
+              }
+            },
+            "prototype_slots": [
+              "parent"
+            ]
+          }
+        },
+        "Window": {
           "@r": 9
         },
-        "creatorSlot": "init"
-      },
-      "slot_values": {
-        "parent": {
-          "@r": 4
+        "HandlerEditor": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {
+              "name": "HandlerEditor",
+              "description": "The default editor for message handlers.",
+              "creator": {
+                "@r": 8
+              },
+              "creatorSlot": "HandlerEditor"
+            },
+            "slot_values": {
+              "parent": {
+                "@r": 9
+              },
+              "RenderContent": {
+                "@t": "MessageHandler",
+                "data": "function() {\n  return [\n    <AceEditor style={{width: '100%'}} mode=\"jsx\" theme=\"monokai\" value={this.code} onChange={(value) => this.code = value}/>,\n    <button onClick={() => this.target[this.slot] = _MakeMessageHandler(this.code)}>Save</button>\n  ];\n}"
+              },
+              "New": {
+                "@t": "MessageHandler",
+                "data": "function(target, slot) {\n  let inst = this.Extend();\n  inst.AddSlot('target', target);\n  inst.AddSlot('slot', slot);\n  inst.AddSlot('code', _GetMessageHandlerCode(target[slot]));\n  inst.AddSlot('windowID', uuid.v1());\n  return inst;\n}"
+              },
+              "GetTitle": {
+                "@t": "MessageHandler",
+                "data": "function() {\n return \"HandlerEditor: \" + this.target.toString() + \"->\" + this.slot;\n}"
+              }
+            },
+            "slot_annotations": {
+              "parent": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "RenderContent": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "New": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "GetTitle": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              }
+            },
+            "prototype_slots": [
+              "parent"
+            ]
+          }
+        },
+        "ObjectEditor": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {
+              "name": "ObjectEditor",
+              "description": "The default editor for objects.",
+              "creator": {
+                "@r": 8
+              },
+              "creatorSlot": "ObjectEditor"
+            },
+            "slot_values": {
+              "parent": {
+                "@r": 9
+              },
+              "GetTitle": {
+                "@t": "MessageHandler",
+                "data": "function() {\n    return `${(this.target.GetAnnotation('name') || \"Unnamed Object\")} (Object Editor)`;\n}"
+              },
+              "RenderContent": {
+                "@t": "MessageHandler",
+                "data": "function() {\n  let description = this.target.GetAnnotation(\"description\");\n  let modules = Array.from(this.target.ListModules());\n  let categories = Array.from(this.target.ListCategories());\n\n  return (\n    <div>\n      {description ? (\n        <>\n          <div>{description}</div>\n          <hr />\n        </>\n      ) : null}\n      <div>\n        <b>Modules:</b>\n        {modules.length > 0 ? (\n          modules.map(m => m.RenderWidget())\n        ) : (\n          <span> none</span>\n        )}\n      </div>\n      <hr />\n      <div><b>Slots</b></div>\n      <div style={{ paddingTop: '5px'}}>\n        <div ><em>uncategorized</em></div>\n        <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(null).map(slot => this.RenderSlot(slot))}</div>\n      </div>\n      {categories.map(cat => <div style={{ paddingTop: '5px'}}>\n          <div ><em>{cat}</em></div>\n          <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(cat).map(slot => this.RenderSlot(slot))}</div>\n      </div>)}\n      <hr />\n      <ReactConsole\n        welcomeMessage={`Evaluator for ${this.target.ToString()}.`}\n        ref={e => (this.evaluator = e)}\n        handler={code => {\n          function evalInContext() {\n            return eval(code);\n          }\n\n          try {\n             let result = evalInContext.call(this.target);\n             this.evaluator.log(new String(result));\n          } catch (e) {\n            this.evaluator.log(new String(e));\n          }\n          this.evaluator.return();\n        }}\n      />\n    </div>\n  );\n}"
+              },
+              "New": {
+                "@t": "MessageHandler",
+                "data": "function(target) {\n    let inst = this.Extend();\n    inst.AddSlot('target', target);\n    inst.AddSlot('windowID', uuid.v1());\n    return inst;\n}"
+              },
+              "RenderSlot": {
+                "@t": "MessageHandler",
+                "data": "function(slot) {\n    let value = this.target[slot];\n    let description = this.target.GetSlotDescription(slot);\n    \n    let namespan = _IsPrototypeSlot(this.target, slot) ? <b>{slot}*</b> : slot;\n    \n    let slotspan = null;\n    if (_IsMessageHandler(value)) {\n      slotspan = <button onClick= {() =>\n              World.Interface.HandlerEditor.New(this.target, slot).Open()}>Edit Code</button>;\n    } else if (_IsProtoObject(value)) {\n      slotspan = value.RenderWidget();\n    } else if (typeof value == \"number\") {\n        slotspan = value;\n    } else {\n        slotspan = new String(value);\n    }\n    \n    return <div key={slot} style={{\n            paddingBottom: '5px',\n            display: 'flex',\n            'justifyContent': 'space-between',\n            'alignItems': 'flex-end',\n            'flexWrap': 'wrap'\n    }}>\n        <span title={description}>{namespan}</span>\n        <span>{slotspan}</span>\n    </div>;\n}"
+              }
+            },
+            "slot_annotations": {
+              "GetTitle": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "RenderContent": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "New": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "parent": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "RenderSlot": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              }
+            },
+            "prototype_slots": [
+              "parent"
+            ]
+          }
+        },
+        "MainMenu": {
+          "@t": "ProtoObject",
+          "data": {
+            "annotations": {
+              "description": "The Main Menu at the top of the screen.",
+              "name": "MainMenu",
+              "creator": {
+                "@r": 8
+              },
+              "creatorSlot": "MainMenu"
+            },
+            "slot_values": {
+              "parent": {
+                "@r": 9
+              },
+              "left": 0,
+              "top": 0,
+              "Render": {
+                "@t": "MessageHandler",
+                "data": "function() {\n  let isMobile = MobileDetect.mobile() !== null;\n  let barStyle = isMobile ? {\n     'backgroundColor': '#285477',\n     width: '100%',\n     display: 'flex'\n   } : {\n     'backgroundColor': '#285477',\n     'position': 'fixed',\n     top: '0px',\n     left: '0px',\n     width: '100%',\n     display: 'flex'\n   };\n   \n  return <div\n    style={barStyle}>\n   <button onClick={() => {\n     var blob = new Blob([_SaveImage(World)], {type: \"text/plain;charset=utf-8\"});\n     FileSaver.saveAs(blob, \"image.json\");\n   }}>Save Image</button>\n   <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.(txt|json)$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              // console.log(JSON.parse(reader.result));\n              _LoadImage(JSON.parse(reader.result));\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .txt or .json files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Open Image</button>\n   <button onClick={() => {\n     World.Interface.ObjectEditor.New(World).Open();\n   }}>Open World</button>\n    <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.js$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              eval(reader.result);\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .js files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Load Module</button>\n    <button onClick={() => {\n     World.debug = !World.debug;\n   }}>Toggle Debug</button>\n   \n    <button onClick={() => {\n     World.FTS.GameState.New().OpenGameWindow()\n   }}>From the Stars</button>\n  </div>;\n}"
+              },
+              "windowID": "mainmenu"
+            },
+            "slot_annotations": {
+              "parent": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "left": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "top": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "Render": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              },
+              "windowID": {
+                "module": {
+                  "@t": "[[undefined]]",
+                  "data": ""
+                }
+              }
+            },
+            "prototype_slots": [
+              "parent"
+            ]
+          }
         }
       },
-      "slot_annotations": {},
+      "slot_annotations": {
+        "parent": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "WindowManager": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "Window": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "HandlerEditor": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "ObjectEditor": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "MainMenu": {
+          "module": {
+            "@r": 4
+          }
+        }
+      },
       "prototype_slots": [
         "parent"
       ]
@@ -1130,28 +1524,15 @@
     "@t": "ProtoObject",
     "data": {
       "annotations": {
-        "name": "InterfaceModule"
+        "name": "Window",
+        "creator": {
+          "@r": 8
+        },
+        "creatorSlot": "Window"
       },
       "slot_values": {
         "parent": {
-          "@r": 4
-        }
-      },
-      "slot_annotations": {},
-      "prototype_slots": [
-        "parent"
-      ]
-    }
-  },
-  {
-    "@t": "ProtoObject",
-    "data": {
-      "annotations": {
-        "name": "Window"
-      },
-      "slot_values": {
-        "parent": {
-          "@r": 2
+          "@r": 3
         },
         "top": 0,
         "left": 0,
@@ -1182,60 +1563,63 @@
         "width": 400,
         "height": 400
       },
-      "slot_annotations": {},
-      "prototype_slots": [
-        "parent"
-      ]
-    }
-  },
-  {
-    "@t": "ProtoObject",
-    "data": {
-      "annotations": {
-        "description": "The Main Menu at the top of the screen.",
-        "name": "MainMenu"
-      },
-      "slot_values": {
+      "slot_annotations": {
         "parent": {
-          "@r": 7
+          "module": {
+            "@r": 4
+          }
         },
-        "left": 0,
-        "top": 0,
+        "top": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "left": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "Open": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "Close": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "Update": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "RenderContent": {
+          "module": {
+            "@r": 4
+          }
+        },
+        "GetTitle": {
+          "module": {
+            "@r": 4
+          }
+        },
         "Render": {
-          "@t": "MessageHandler",
-          "data": "function() {\n  let isMobile = MobileDetect.mobile() !== null;\n  let barStyle = isMobile ? {\n     'backgroundColor': '#285477',\n     width: '100%',\n     display: 'flex'\n   } : {\n     'backgroundColor': '#285477',\n     'position': 'fixed',\n     top: '0px',\n     left: '0px',\n     width: '100%',\n     display: 'flex'\n   };\n   \n  return <div\n    style={barStyle}>\n   <button onClick={() => {\n     var blob = new Blob([_SaveImage(World)], {type: \"text/plain;charset=utf-8\"});\n     FileSaver.saveAs(blob, \"image.json\");\n   }}>Save Image</button>\n   <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.(txt|json)$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              // console.log(JSON.parse(reader.result));\n              _LoadImage(JSON.parse(reader.result));\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .txt or .json files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Open Image</button>\n   <button onClick={() => {\n     World.Interface.ObjectEditor.New(World).Open();\n   }}>Open World</button>\n    <button onClick={() => {\n        var fileInput = document.getElementById('file-input');\n        var changeHandler = function() {\n          var file = fileInput.files[0];\n\n          if (file.name.match(/\\.js$/)) {\n            var reader = new FileReader();\n\n            reader.onload = function() {\n              eval(reader.result);\n            };\n\n            reader.readAsText(file);    \n          } else {\n           alert(\"File not supported, .js files only\");\n          }\n\n          fileInput.removeEventListener('change', changeHandler);\n          this.value = null;\n        }\n         \n        fileInput.addEventListener('change', changeHandler);\n\n       fileInput.click();\n   }}>Load Module</button>\n    <button onClick={() => {\n     World.debug = !World.debug;\n   }}>Toggle Debug</button>\n   \n    <button onClick={() => {\n     World.FTS.GameState.New().OpenGameWindow()\n   }}>From the Stars</button>\n  </div>;\n}"
+          "module": {
+            "@r": 4
+          }
         },
-        "windowID": "mainmenu"
-      },
-      "slot_annotations": {},
-      "prototype_slots": [
-        "parent"
-      ]
-    }
-  },
-  {
-    "@t": "ProtoObject",
-    "data": {
-      "annotations": {
-        "name": "Modules",
-        "description": "An object that contains all of the modules currently loaded into the program. You can launch modules from here in order to write them out to a file.",
-        "creator": {
-          "@r": 0
+        "width": {
+          "module": {
+            "@r": 4
+          }
         },
-        "creatorSlot": "Modules"
-      },
-      "slot_values": {
-        "parent": {
-          "@r": 2
-        },
-        "interface": {
-          "@r": 6
-        },
-        "init": {
-          "@r": 5
+        "height": {
+          "module": {
+            "@r": 4
+          }
         }
       },
-      "slot_annotations": {},
       "prototype_slots": [
         "parent"
       ]
@@ -1247,7 +1631,7 @@
       "annotations": {},
       "slot_values": {
         "parent": {
-          "@r": 2
+          "@r": 3
         }
       },
       "slot_annotations": {},
@@ -1265,7 +1649,7 @@
       },
       "slot_values": {
         "parent": {
-          "@r": 2
+          "@r": 3
         }
       },
       "slot_annotations": {},
@@ -1299,7 +1683,7 @@
       },
       "slot_values": {
         "parent": {
-          "@r": 2
+          "@r": 3
         },
         "backgroundColor": "white",
         "character": "",
@@ -1320,7 +1704,7 @@
       },
       "slot_values": {
         "parent": {
-          "@r": 2
+          "@r": 3
         },
         "character": "U",
         "color": "black",
