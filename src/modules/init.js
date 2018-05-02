@@ -353,6 +353,10 @@ _SetAnnotation(object, "creatorSlot", `Modules`)
         })());
 _SetSlotAnnotation(ref("World"), "Modules", "module", ref("World.Modules.init"));
 
+_AddSlot(ref("World.Modules"), "parent", ref("World.Core.TopObject"));
+_AddPrototypeSlot(ref("World.Modules"), "parent")
+_SetSlotAnnotation(ref("World.Modules"), "parent", "module", ref("World.Modules.init"));
+
 _AddSlot(ref("World.Modules"), "init", (function() {
             let object = ref("World.Modules.init");
             _SetAnnotation(object, "name", `InitModule`)

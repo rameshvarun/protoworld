@@ -1111,6 +1111,11 @@
           "module": {
             "@r": 4
           }
+        },
+        "parent": {
+          "module": {
+            "@r": 6
+          }
         }
       },
       "prototype_slots": [
