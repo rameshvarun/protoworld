@@ -18,7 +18,7 @@
           "@r": 2
         },
         "Interface": {
-          "@r": 8
+          "@r": 9
         },
         "Modules": {
           "@r": 5
@@ -28,11 +28,15 @@
           "data": {
             "annotations": {
               "name": "Random",
-              "description": "Utilities for generating random values."
+              "description": "Utilities for generating random values.",
+              "creator": {
+                "@r": 0
+              },
+              "creatorSlot": "Random"
             },
             "slot_values": {
               "parent": {
-                "@r": 3
+                "@r": 1
               },
               "Chance": {
                 "@t": "MessageHandler",
@@ -57,10 +61,36 @@
             },
             "slot_annotations": {
               "Chance": {
-                "description": "Takes in a probability `prob` and returns true with probability `prob`."
+                "description": "Takes in a probability `prob` and returns true with probability `prob`.",
+                "module": {
+                  "@r": 8
+                }
               },
               "Choice": {
-                "description": "Takes in an array and returns a random element from that array."
+                "description": "Takes in an array and returns a random element from that array.",
+                "module": {
+                  "@r": 8
+                }
+              },
+              "parent": {
+                "module": {
+                  "@r": 8
+                }
+              },
+              "Uniform": {
+                "module": {
+                  "@r": 8
+                }
+              },
+              "Integer": {
+                "module": {
+                  "@r": 8
+                }
+              },
+              "CharacterFromString": {
+                "module": {
+                  "@r": 8
+                }
               }
             },
             "prototype_slots": [
@@ -220,7 +250,7 @@
                 }
               },
               "Hunter": {
-                "@r": 10
+                "@r": 11
               },
               "Archer": {
                 "@t": "ProtoObject",
@@ -230,7 +260,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 10
+                      "@r": 11
                     },
                     "ClassName": {
                       "@t": "MessageHandler",
@@ -251,7 +281,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 10
+                      "@r": 11
                     },
                     "ClassName": {
                       "@t": "MessageHandler",
@@ -272,7 +302,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 10
+                      "@r": 11
                     },
                     "ClassName": {
                       "@t": "MessageHandler",
@@ -293,7 +323,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 10
+                      "@r": 11
                     },
                     "ClassName": {
                       "@t": "MessageHandler",
@@ -315,7 +345,7 @@
                   },
                   "slot_values": {
                     "parent": {
-                      "@r": 9
+                      "@r": 10
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -427,7 +457,7 @@
                     },
                     "gameEncounters": [
                       {
-                        "@r": 12
+                        "@r": 13
                       }
                     ]
                   },
@@ -438,10 +468,10 @@
                 }
               },
               "Encounter": {
-                "@r": 11
+                "@r": 12
               },
               "BoarEncounter": {
-                "@r": 12
+                "@r": 13
               },
               "Terrain": {
                 "@t": "ProtoObject",
@@ -454,7 +484,7 @@
                       "@r": 3
                     },
                     "Ground": {
-                      "@r": 13
+                      "@r": 14
                     },
                     "TallGrass": {
                       "@t": "ProtoObject",
@@ -464,7 +494,7 @@
                         },
                         "slot_values": {
                           "parent": {
-                            "@r": 13
+                            "@r": 14
                           },
                           "backgroundColor": "green",
                           "description": "Tall Grass. Targets in tall grass have a lower chance of being hit by ranged weapons."
@@ -483,7 +513,7 @@
                         },
                         "slot_values": {
                           "parent": {
-                            "@r": 13
+                            "@r": 14
                           },
                           "backgroundColor": "grey",
                           "description": "Rocks. Provides half cover."
@@ -500,7 +530,7 @@
                         "annotations": {},
                         "slot_values": {
                           "parent": {
-                            "@r": 13
+                            "@r": 14
                           },
                           "backgroundColor": "#460C00",
                           "description": "Trees. Provides full cover."
@@ -565,7 +595,7 @@
                   "annotations": {},
                   "slot_values": {
                     "parent": {
-                      "@r": 9
+                      "@r": 10
                     },
                     "New": {
                       "@t": "MessageHandler",
@@ -593,10 +623,10 @@
                       "@r": 3
                     },
                     "Unit": {
-                      "@r": 14
+                      "@r": 15
                     },
                     "Alien": {
-                      "@r": 15
+                      "@r": 16
                     },
                     "Hunter": {
                       "@t": "ProtoObject",
@@ -604,7 +634,7 @@
                         "annotations": {},
                         "slot_values": {
                           "parent": {
-                            "@r": 14
+                            "@r": 15
                           },
                           "color": "green",
                           "character": "H",
@@ -622,7 +652,7 @@
                         "annotations": {},
                         "slot_values": {
                           "parent": {
-                            "@r": 15
+                            "@r": 16
                           },
                           "character": "B",
                           "color": "blue"
@@ -676,6 +706,11 @@
         "World": {
           "module": {
             "@r": 6
+          }
+        },
+        "Random": {
+          "module": {
+            "@r": 8
           }
         }
       },
@@ -1099,6 +1134,9 @@
         },
         "init": {
           "@r": 6
+        },
+        "random": {
+          "@r": 8
         }
       },
       "slot_annotations": {
@@ -1115,6 +1153,11 @@
         "parent": {
           "module": {
             "@r": 6
+          }
+        },
+        "random": {
+          "module": {
+            "@r": 8
           }
         }
       },
@@ -1234,6 +1277,33 @@
     "@t": "ProtoObject",
     "data": {
       "annotations": {
+        "name": "RandomModule",
+        "creator": {
+          "@r": 5
+        },
+        "creatorSlot": "random"
+      },
+      "slot_values": {
+        "parent": {
+          "@r": 7
+        }
+      },
+      "slot_annotations": {
+        "parent": {
+          "module": {
+            "@r": 8
+          }
+        }
+      },
+      "prototype_slots": [
+        "parent"
+      ]
+    }
+  },
+  {
+    "@t": "ProtoObject",
+    "data": {
+      "annotations": {
         "name": "Interface",
         "description": "A collection of objects related to the user interface.",
         "creator": {
@@ -1252,7 +1322,7 @@
               "name": "WindowManager",
               "description": "The window manager and entry point for the render and update main loop.",
               "creator": {
-                "@r": 8
+                "@r": 9
               },
               "creatorSlot": "WindowManager"
             },
@@ -1314,7 +1384,7 @@
           }
         },
         "Window": {
-          "@r": 9
+          "@r": 10
         },
         "HandlerEditor": {
           "@t": "ProtoObject",
@@ -1323,13 +1393,13 @@
               "name": "HandlerEditor",
               "description": "The default editor for message handlers.",
               "creator": {
-                "@r": 8
+                "@r": 9
               },
               "creatorSlot": "HandlerEditor"
             },
             "slot_values": {
               "parent": {
-                "@r": 9
+                "@r": 10
               },
               "RenderContent": {
                 "@t": "MessageHandler",
@@ -1378,13 +1448,13 @@
               "name": "ObjectEditor",
               "description": "The default editor for objects.",
               "creator": {
-                "@r": 8
+                "@r": 9
               },
               "creatorSlot": "ObjectEditor"
             },
             "slot_values": {
               "parent": {
-                "@r": 9
+                "@r": 10
               },
               "GetTitle": {
                 "@t": "MessageHandler",
@@ -1442,13 +1512,13 @@
               "description": "The Main Menu at the top of the screen.",
               "name": "MainMenu",
               "creator": {
-                "@r": 8
+                "@r": 9
               },
               "creatorSlot": "MainMenu"
             },
             "slot_values": {
               "parent": {
-                "@r": 9
+                "@r": 10
               },
               "left": 0,
               "top": 0,
@@ -1534,7 +1604,7 @@
       "annotations": {
         "name": "Window",
         "creator": {
-          "@r": 8
+          "@r": 9
         },
         "creatorSlot": "Window"
       },
@@ -1674,7 +1744,7 @@
       },
       "slot_values": {
         "parent": {
-          "@r": 11
+          "@r": 12
         }
       },
       "slot_annotations": {},
@@ -1733,7 +1803,7 @@
       "annotations": {},
       "slot_values": {
         "parent": {
-          "@r": 14
+          "@r": 15
         }
       },
       "slot_annotations": {},
