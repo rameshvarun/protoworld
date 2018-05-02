@@ -52,6 +52,7 @@ _SetAnnotation(object, "creatorSlot", `Interface`)
 _SetSlotAnnotation(ref("World"), "Interface", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface"), "parent", ref("World.Core.Namespace"));
+_AddPrototypeSlot(ref("World.Interface"), "parent")
 _SetSlotAnnotation(ref("World.Interface"), "parent", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface"), "WindowManager", (function() {
@@ -85,6 +86,7 @@ _AddSlot(ref("World.Interface.WindowManager"), "RemoveWindow", _MakeMessageHandl
 _SetSlotAnnotation(ref("World.Interface.WindowManager"), "RemoveWindow", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface.WindowManager"), "parent", ref("World.Core.TopObject"));
+_AddPrototypeSlot(ref("World.Interface.WindowManager"), "parent")
 _SetSlotAnnotation(ref("World.Interface.WindowManager"), "parent", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface"), "Window", (function() {
@@ -98,6 +100,7 @@ _SetAnnotation(object, "creatorSlot", `Window`)
 _SetSlotAnnotation(ref("World.Interface"), "Window", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface.Window"), "parent", ref("World.Core.TopObject"));
+_AddPrototypeSlot(ref("World.Interface.Window"), "parent")
 _SetSlotAnnotation(ref("World.Interface.Window"), "parent", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface.Window"), "top", 0);
@@ -255,6 +258,7 @@ _SetAnnotation(object, "creatorSlot", `MainMenu`)
 _SetSlotAnnotation(ref("World.Interface"), "MainMenu", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface.MainMenu"), "parent", ref("World.Interface.Window"));
+_AddPrototypeSlot(ref("World.Interface.MainMenu"), "parent")
 _SetSlotAnnotation(ref("World.Interface.MainMenu"), "parent", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface.MainMenu"), "left", 0);
@@ -363,4 +367,5 @@ _SetAnnotation(object, "creatorSlot", `interface`)
 _SetSlotAnnotation(ref("World.Modules"), "interface", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Modules.interface"), "parent", ref("World.Core.Module"));
+_AddPrototypeSlot(ref("World.Modules.interface"), "parent")
 _SetSlotAnnotation(ref("World.Modules.interface"), "parent", "module", ref("World.Modules.interface"));

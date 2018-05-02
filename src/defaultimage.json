@@ -1149,7 +1149,7 @@
         },
         "GenerateCode": {
           "@t": "MessageHandler",
-          "data": "function() {\n  let slots = this.FindSlots();\n\n  let code = this.prelude;\n  for (let {object, slot} of slots) {\n    let path = this.TracePath(object);\n\n    let value = object[slot];\n    let objpath = path.join('.');\n\n    let valueExpr = null;\n    if(_IsProtoObject(value) && _GetAnnotation(value, 'creator') == object && _GetAnnotation(value, 'creatorSlot') == slot) {\n        let path = this.TracePath(value);\n        \n        let objAnnotations = \"\";\n        for (let annotation of _GetAnnotations(value)) {\n            let annotationVal = _GetAnnotation(value, annotation);\n            objAnnotations += `_SetAnnotation(object, \"${annotation}\", ${this.GenerateValueExpression(annotationVal)})\\n`;\n        }\n        \n        valueExpr = `(function() {\n            let object = ref(\"${path.join('.')}\");\n            ${objAnnotations}\n            return object;\n        })()`;\n    } else {\n        valueExpr = this.GenerateValueExpression(value)\n    }\n    code += `_AddSlot(ref(\"${objpath}\"), \"${slot}\", ${valueExpr});\\n`\n    \n    let annotations = object.GetSlotAnnotations(slot);\n    for (let annotation of annotations) {\n        let value = object.GetSlotAnnotation(slot, annotation);\n        let valueExpr = this.GenerateValueExpression(value);\n        code += `_SetSlotAnnotation(ref(\"${objpath}\"), \"${slot}\", \"${annotation}\", ${valueExpr});\\n`\n    }\n\n    code += '\\n';\n  }\n\n  return code;\n}"
+          "data": "function() {\n  let slots = this.FindSlots();\n\n  let code = this.prelude;\n  for (let {object, slot} of slots) {\n    let path = this.TracePath(object);\n\n    let value = object[slot];\n    let objpath = path.join('.');\n\n    let valueExpr = null;\n    if(_IsProtoObject(value) && _GetAnnotation(value, 'creator') == object && _GetAnnotation(value, 'creatorSlot') == slot) {\n        let path = this.TracePath(value);\n        \n        let objAnnotations = \"\";\n        for (let annotation of _GetAnnotations(value)) {\n            let annotationVal = _GetAnnotation(value, annotation);\n            objAnnotations += `_SetAnnotation(object, \"${annotation}\", ${this.GenerateValueExpression(annotationVal)})\\n`;\n        }\n        \n        valueExpr = `(function() {\n            let object = ref(\"${path.join('.')}\");\n            ${objAnnotations}\n            return object;\n        })()`;\n    } else {\n        valueExpr = this.GenerateValueExpression(value)\n    }\n    code += `_AddSlot(ref(\"${objpath}\"), \"${slot}\", ${valueExpr});\\n`\n    if(_IsPrototypeSlot(object, slot)) {\n        code += `_AddPrototypeSlot(ref(\"${objpath}\"), \"${slot}\")\\n`;\n    }\n    \n    let annotations = object.GetSlotAnnotations(slot);\n    for (let annotation of annotations) {\n        let value = object.GetSlotAnnotation(slot, annotation);\n        let valueExpr = this.GenerateValueExpression(value);\n        code += `_SetSlotAnnotation(ref(\"${objpath}\"), \"${slot}\", \"${annotation}\", ${valueExpr});\\n`\n    }\n\n    code += '\\n';\n  }\n\n  return code;\n}"
         },
         "Export": {
           "@t": "MessageHandler",
@@ -1238,19 +1238,19 @@
               "windows": [],
               "Render": {
                 "@t": "MessageHandler",
-                "data": "function() {\n  return <>\n    {World.Interface.MainMenu.Render()}\n    {this.windows.map(w => w.Render())}</>\n}"
+                "data": "function() {\n  return <>\n    {World.Interface.MainMenu.Render()}\n    {(this.windows || []).map(w => w.Render())}</>\n}"
               },
               "Update": {
                 "@t": "MessageHandler",
-                "data": "function(dt) {\n    World.Interface.MainMenu.Update(dt)\n    this.windows.forEach(w => w.Update(dt));\n}"
+                "data": "function(dt) {\n    World.Interface.MainMenu.Update(dt);\n    (this.windows || []).forEach(w => w.Update(dt));\n}"
               },
               "AddWindow": {
                 "@t": "MessageHandler",
-                "data": "function(window) { this.windows.push(window); }"
+                "data": "function(window) {\n    this.windows = this.windows || [];\n    this.windows.push(window);\n}"
               },
               "RemoveWindow": {
                 "@t": "MessageHandler",
-                "data": "function(window) { this.windows = this.windows.filter(item => item !== window); }"
+                "data": "function(window) {\n    this.windows = this.windows || [];\n    this.windows = this.windows.filter(item => item !== window);\n}"
               },
               "parent": {
                 "@r": 3
@@ -1325,26 +1325,22 @@
             "slot_annotations": {
               "parent": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "RenderContent": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "New": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "GetTitle": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               }
             },
@@ -1388,32 +1384,27 @@
             "slot_annotations": {
               "GetTitle": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "RenderContent": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "New": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "parent": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               },
               "RenderSlot": {
                 "module": {
-                  "@t": "[[undefined]]",
-                  "data": ""
+                  "@r": 4
                 }
               }
             },

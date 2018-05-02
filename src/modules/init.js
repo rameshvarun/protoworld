@@ -1,4 +1,4 @@
-﻿function ref(path) {
+function ref(path) {
     var parts = path.split('.');
 	var current = window;
 	for(let part of parts) {
@@ -8,6 +8,7 @@
 }
 
 _AddSlot(ref("World.Core.Namespace"), "parent", ref("World.Core.TopObject"));
+_AddPrototypeSlot(ref("World.Core.Namespace"), "parent")
 _SetSlotAnnotation(ref("World.Core.Namespace"), "parent", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Core.TopObject"), "AddSlot", _MakeMessageHandler(`function(name, value) {
@@ -180,6 +181,7 @@ _SetAnnotation(object, "creatorSlot", `Core`)
 _SetSlotAnnotation(ref("World"), "Core", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Core"), "parent", ref("World.Core.Namespace"));
+_AddPrototypeSlot(ref("World.Core"), "parent")
 _SetSlotAnnotation(ref("World.Core"), "parent", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Core"), "TopObject", (function() {
@@ -216,6 +218,7 @@ _SetAnnotation(object, "creatorSlot", `Module`)
 _SetSlotAnnotation(ref("World.Core"), "Module", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Core.Module"), "parent", ref("World.Core.TopObject"));
+_AddPrototypeSlot(ref("World.Core.Module"), "parent")
 _SetSlotAnnotation(ref("World.Core.Module"), "parent", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Core.Module"), "FindSlots", _MakeMessageHandler(`function() {
@@ -255,13 +258,13 @@ _AddSlot(ref("World.Core.Module"), "GenerateCode", _MakeMessageHandler(`function
     let valueExpr = null;
     if(_IsProtoObject(value) && _GetAnnotation(value, 'creator') == object && _GetAnnotation(value, 'creatorSlot') == slot) {
         let path = this.TracePath(value);
-        
+
         let objAnnotations = "";
         for (let annotation of _GetAnnotations(value)) {
             let annotationVal = _GetAnnotation(value, annotation);
             objAnnotations += \`_SetAnnotation(object, "\${annotation}", \${this.GenerateValueExpression(annotationVal)})\\n\`;
         }
-        
+
         valueExpr = \`(function() {
             let object = ref("\${path.join('.')}");
             \${objAnnotations}
@@ -271,7 +274,10 @@ _AddSlot(ref("World.Core.Module"), "GenerateCode", _MakeMessageHandler(`function
         valueExpr = this.GenerateValueExpression(value)
     }
     code += \`_AddSlot(ref("\${objpath}"), "\${slot}", \${valueExpr});\\n\`
-    
+    if(_IsPrototypeSlot(object, slot)) {
+        code += \`_AddPrototypeSlot(ref("\${objpath}"), "\${slot}")\\n\`;
+    }
+
     let annotations = object.GetSlotAnnotations(slot);
     for (let annotation of annotations) {
         let value = object.GetSlotAnnotation(slot, annotation);
@@ -295,7 +301,7 @@ _AddSlot(ref("World.Core.Module"), "TracePath", _MakeMessageHandler(`function(ob
             throw new Error(\`\${object.ToString()} missing creator slot.\`);
         if (creator[creatorSlot] != object)
             throw new Error(\`\${object.ToString()}'s creator slot doesn't actually point to it.\`);
-        
+
         var path = this.TracePath(creator);
         path.push(creatorSlot);
         return path;
@@ -354,5 +360,5 @@ _SetAnnotation(object, "creatorSlot", `init`)
 _SetSlotAnnotation(ref("World.Modules"), "init", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Modules.init"), "parent", ref("World.Core.Module"));
+_AddPrototypeSlot(ref("World.Modules.init"), "parent")
 _SetSlotAnnotation(ref("World.Modules.init"), "parent", "module", ref("World.Modules.init"));
-
