@@ -244,6 +244,9 @@ _SetSlotAnnotation(ref("World.Interface.Window"), "width", "module", ref("World.
 _AddSlot(ref("World.Interface.Window"), "height", 400);
 _SetSlotAnnotation(ref("World.Interface.Window"), "height", "module", ref("World.Modules.interface"));
 
+_AddSlot(ref("World.Interface.Window"), "barColor", `#285477`);
+_SetSlotAnnotation(ref("World.Interface.Window"), "barColor", "module", ref("World.Modules.interface"));
+
 _AddSlot(ref("World.Interface"), "HandlerEditor", (function() {
             let object = ref("World.Interface.HandlerEditor");
             _SetAnnotation(object, "name", `HandlerEditor`)
@@ -491,13 +494,6 @@ _AddSlot(ref("World.Interface.MainMenu"), "Render", _MakeMessageHandler(`functio
 
        fileInput.click();
    }}>Load Module</button>
-    <button onClick={() => {
-     World.debug = !World.debug;
-   }}>Toggle Debug</button>
-
-    <button onClick={() => {
-     World.FTS.GameState.New().OpenGameWindow()
-   }}>From the Stars</button>
   </div>;
 }`));
 _SetSlotAnnotation(ref("World.Interface.MainMenu"), "Render", "module", ref("World.Modules.interface"));
