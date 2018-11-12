@@ -1,15 +1,15 @@
 function ref(path) {
     var parts = path.split('.');
-	var current = window;
-	for(let part of parts) {
-	  current = (current[part] = current[part] || _EmptyObject());
+  var current = window;
+  for(let part of parts) {
+    current = (current[part] = current[part] || _EmptyObject());
     }
-	return current;
+  return current;
 }
 
 _AddSlot(ref("World.Core.TopObject"), "CreateEditor", _MakeMessageHandler(`
 function() {
-	return World.Interface.ObjectEditor.New(this);
+  return World.Interface.ObjectEditor.New(this);
 }
 `));
 _SetSlotAnnotation(ref("World.Core.TopObject"), "CreateEditor", "module", ref("World.Modules.interface"));
@@ -17,7 +17,7 @@ _SetSlotAnnotation(ref("World.Core.TopObject"), "CreateEditor", "category", `edi
 
 _AddSlot(ref("World.Core.TopObject"), "OpenEditor", _MakeMessageHandler(`
 function() {
-	return this.CreateEditor().Open();
+  return this.CreateEditor().Open();
 }
 `));
 _SetSlotAnnotation(ref("World.Core.TopObject"), "OpenEditor", "module", ref("World.Modules.interface"));
@@ -39,6 +39,20 @@ _AddSlot(ref("World.Core.Module"), "Export", _MakeMessageHandler(`function() {
   FileSaver.saveAs(blob, "module.js");
 }`));
 _SetSlotAnnotation(ref("World.Core.Module"), "Export", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Modules"), "interface", (function() {
+            let object = ref("World.Modules.interface");
+            _SetAnnotation(object, "name", `InterfaceModule`)
+_SetAnnotation(object, "creator", ref("World.Modules"))
+_SetAnnotation(object, "creatorSlot", `interface`)
+
+            return object;
+        })());
+_SetSlotAnnotation(ref("World.Modules"), "interface", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Modules.interface"), "parent", ref("World.Core.Module"));
+_AddPrototypeSlot(ref("World.Modules.interface"), "parent")
+_SetSlotAnnotation(ref("World.Modules.interface"), "parent", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World"), "Interface", (function() {
             let object = ref("World.Interface");
@@ -172,7 +186,7 @@ _AddSlot(ref("World.Interface.Window"), "Render", _MakeMessageHandler(`function(
     >
       <div
         style={{
-          "backgroundColor": "#285477",
+          "backgroundColor": this.barColor,
           padding: "3px",
           color: "white",
           cursor: "move",
@@ -491,16 +505,3 @@ _SetSlotAnnotation(ref("World.Interface.MainMenu"), "Render", "module", ref("Wor
 _AddSlot(ref("World.Interface.MainMenu"), "windowID", `mainmenu`);
 _SetSlotAnnotation(ref("World.Interface.MainMenu"), "windowID", "module", ref("World.Modules.interface"));
 
-_AddSlot(ref("World.Modules"), "interface", (function() {
-            let object = ref("World.Modules.interface");
-            _SetAnnotation(object, "name", `InterfaceModule`)
-_SetAnnotation(object, "creator", ref("World.Modules"))
-_SetAnnotation(object, "creatorSlot", `interface`)
-
-            return object;
-        })());
-_SetSlotAnnotation(ref("World.Modules"), "interface", "module", ref("World.Modules.interface"));
-
-_AddSlot(ref("World.Modules.interface"), "parent", ref("World.Core.Module"));
-_AddPrototypeSlot(ref("World.Modules.interface"), "parent")
-_SetSlotAnnotation(ref("World.Modules.interface"), "parent", "module", ref("World.Modules.interface"));
