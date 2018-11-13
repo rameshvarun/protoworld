@@ -7,9 +7,27 @@ function ref(path) {
 	return current;
 }
 
-_AddSlot(ref("World"), "parent", ref("World.Core.Namespace"));
-_AddPrototypeSlot(ref("World"), "parent")
-_SetSlotAnnotation(ref("World"), "parent", "module", ref("World.Modules.init"));
+_AddSlot(ref("World"), "Core", (function() {
+            let object = ref("World.Core");
+            _SetAnnotation(object, "name", `Core`)
+_SetAnnotation(object, "description", `A collection of core objects that should exist in every world.`)
+_SetAnnotation(object, "creator", ref("World"))
+_SetAnnotation(object, "creatorSlot", `Core`)
+
+            return object;
+        })());
+_SetSlotAnnotation(ref("World"), "Core", "module", ref("World.Modules.init"));
+
+_AddSlot(ref("World.Core"), "Namespace", (function() {
+            let object = ref("World.Core.Namespace");
+            _SetAnnotation(object, "name", `Namespace`)
+_SetAnnotation(object, "description", `A namespace is a logical grouping of objects. It is a distinct concept from modules.`)
+_SetAnnotation(object, "creator", ref("World.Core"))
+_SetAnnotation(object, "creatorSlot", `Namespace`)
+
+            return object;
+        })());
+_SetSlotAnnotation(ref("World.Core"), "Namespace", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Core.Namespace"), "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Core.Namespace"), "parent")
@@ -173,20 +191,36 @@ _AddSlot(ref("World.Core.TopObject"), "SetModule", _MakeMessageHandler(`function
 }`));
 _SetSlotAnnotation(ref("World.Core.TopObject"), "SetModule", "module", ref("World.Modules.init"));
 
-_AddSlot(ref("World"), "Core", (function() {
-            let object = ref("World.Core");
-            _SetAnnotation(object, "name", `Core`)
-_SetAnnotation(object, "description", `A collection of core objects that should exist in every world.`)
-_SetAnnotation(object, "creator", ref("World"))
-_SetAnnotation(object, "creatorSlot", `Core`)
+_AddSlot(ref("World.Core.TopObject"), "CreateEditor", _MakeMessageHandler(`
+function() {
+  return World.Interface.ObjectEditor.New(this);
+}
+`));
+_SetSlotAnnotation(ref("World.Core.TopObject"), "CreateEditor", "module", ref("World.Modules.init"));
+_SetSlotAnnotation(ref("World.Core.TopObject"), "CreateEditor", "category", `editor`);
 
-            return object;
-        })());
-_SetSlotAnnotation(ref("World"), "Core", "module", ref("World.Modules.init"));
+_AddSlot(ref("World.Core.TopObject"), "OpenEditor", _MakeMessageHandler(`
+function() {
+  return this.CreateEditor().Open();
+}
+`));
+_SetSlotAnnotation(ref("World.Core.TopObject"), "OpenEditor", "module", ref("World.Modules.init"));
+_SetSlotAnnotation(ref("World.Core.TopObject"), "OpenEditor", "category", `editor`);
 
-_AddSlot(ref("World.Core"), "parent", ref("World.Core.Namespace"));
-_AddPrototypeSlot(ref("World.Core"), "parent")
-_SetSlotAnnotation(ref("World.Core"), "parent", "module", ref("World.Modules.init"));
+_AddSlot(ref("World.Core.TopObject"), "RenderWidget", _MakeMessageHandler(`function() {
+    return <button
+              title={this.GetDescription()}
+              onClick={() => this.OpenEditor()}>
+              {this.ToString()}
+            </button>;
+}`));
+_SetSlotAnnotation(ref("World.Core.TopObject"), "RenderWidget", "category", `editor`);
+_SetSlotAnnotation(ref("World.Core.TopObject"), "RenderWidget", "module", ref("World.Modules.init"));
+
+_AddSlot(ref("World.Core.TopObject"), "RemoveSlot", _MakeMessageHandler(`function(name) {
+  _RemoveSlot(this, name);
+}`));
+_SetSlotAnnotation(ref("World.Core.TopObject"), "RemoveSlot", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Core"), "TopObject", (function() {
             let object = ref("World.Core.TopObject");
@@ -199,16 +233,9 @@ _SetAnnotation(object, "creatorSlot", `TopObject`)
         })());
 _SetSlotAnnotation(ref("World.Core"), "TopObject", "module", ref("World.Modules.init"));
 
-_AddSlot(ref("World.Core"), "Namespace", (function() {
-            let object = ref("World.Core.Namespace");
-            _SetAnnotation(object, "name", `Namespace`)
-_SetAnnotation(object, "description", `A namespace is a logical grouping of objects. It is a distinct concept from modules.`)
-_SetAnnotation(object, "creator", ref("World.Core"))
-_SetAnnotation(object, "creatorSlot", `Namespace`)
-
-            return object;
-        })());
-_SetSlotAnnotation(ref("World.Core"), "Namespace", "module", ref("World.Modules.init"));
+_AddSlot(ref("World.Core"), "parent", ref("World.Core.Namespace"));
+_AddPrototypeSlot(ref("World.Core"), "parent")
+_SetSlotAnnotation(ref("World.Core"), "parent", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Core"), "Module", (function() {
             let object = ref("World.Core.Module");
@@ -342,6 +369,10 @@ _AddSlot(ref("World.Core.Module"), "GenerateValueExpression", _MakeMessageHandle
 }`));
 _SetSlotAnnotation(ref("World.Core.Module"), "GenerateValueExpression", "module", ref("World.Modules.init"));
 
+_AddSlot(ref("World"), "parent", ref("World.Core.Namespace"));
+_AddPrototypeSlot(ref("World"), "parent")
+_SetSlotAnnotation(ref("World"), "parent", "module", ref("World.Modules.init"));
+
 _AddSlot(ref("World"), "Modules", (function() {
             let object = ref("World.Modules");
             _SetAnnotation(object, "name", `Modules`)
@@ -352,10 +383,6 @@ _SetAnnotation(object, "creatorSlot", `Modules`)
             return object;
         })());
 _SetSlotAnnotation(ref("World"), "Modules", "module", ref("World.Modules.init"));
-
-_AddSlot(ref("World.Modules"), "parent", ref("World.Core.TopObject"));
-_AddPrototypeSlot(ref("World.Modules"), "parent")
-_SetSlotAnnotation(ref("World.Modules"), "parent", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Modules"), "init", (function() {
             let object = ref("World.Modules.init");
@@ -370,6 +397,10 @@ _SetSlotAnnotation(ref("World.Modules"), "init", "module", ref("World.Modules.in
 _AddSlot(ref("World.Modules.init"), "parent", ref("World.Core.Module"));
 _AddPrototypeSlot(ref("World.Modules.init"), "parent")
 _SetSlotAnnotation(ref("World.Modules.init"), "parent", "module", ref("World.Modules.init"));
+
+_AddSlot(ref("World.Modules"), "parent", ref("World.Core.TopObject"));
+_AddPrototypeSlot(ref("World.Modules"), "parent")
+_SetSlotAnnotation(ref("World.Modules"), "parent", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World"), "World", (function() {
             let object = ref("World");
