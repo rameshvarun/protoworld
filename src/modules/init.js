@@ -191,36 +191,20 @@ _AddSlot(ref("World.Core.TopObject"), "SetModule", _MakeMessageHandler(`function
 }`));
 _SetSlotAnnotation(ref("World.Core.TopObject"), "SetModule", "module", ref("World.Modules.init"));
 
-_AddSlot(ref("World.Core.TopObject"), "CreateEditor", _MakeMessageHandler(`
-function() {
-  return World.Interface.ObjectEditor.New(this);
-}
-`));
-_SetSlotAnnotation(ref("World.Core.TopObject"), "CreateEditor", "module", ref("World.Modules.init"));
-_SetSlotAnnotation(ref("World.Core.TopObject"), "CreateEditor", "category", `editor`);
-
-_AddSlot(ref("World.Core.TopObject"), "OpenEditor", _MakeMessageHandler(`
-function() {
-  return this.CreateEditor().Open();
-}
-`));
-_SetSlotAnnotation(ref("World.Core.TopObject"), "OpenEditor", "module", ref("World.Modules.init"));
-_SetSlotAnnotation(ref("World.Core.TopObject"), "OpenEditor", "category", `editor`);
-
-_AddSlot(ref("World.Core.TopObject"), "RenderWidget", _MakeMessageHandler(`function() {
-    return <button
-              title={this.GetDescription()}
-              onClick={() => this.OpenEditor()}>
-              {this.ToString()}
-            </button>;
-}`));
-_SetSlotAnnotation(ref("World.Core.TopObject"), "RenderWidget", "category", `editor`);
-_SetSlotAnnotation(ref("World.Core.TopObject"), "RenderWidget", "module", ref("World.Modules.init"));
-
 _AddSlot(ref("World.Core.TopObject"), "RemoveSlot", _MakeMessageHandler(`function(name) {
   _RemoveSlot(this, name);
 }`));
 _SetSlotAnnotation(ref("World.Core.TopObject"), "RemoveSlot", "module", ref("World.Modules.init"));
+
+_AddSlot(ref("World.Core.TopObject"), "InstanceOf", _MakeMessageHandler(`function(other) {
+    let current = this;
+    do {
+        if (current == other) return true;
+        current = current.parent;
+    } while (current)
+    return false;
+}`));
+_SetSlotAnnotation(ref("World.Core.TopObject"), "InstanceOf", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World.Core"), "TopObject", (function() {
             let object = ref("World.Core.TopObject");
@@ -369,10 +353,6 @@ _AddSlot(ref("World.Core.Module"), "GenerateValueExpression", _MakeMessageHandle
 }`));
 _SetSlotAnnotation(ref("World.Core.Module"), "GenerateValueExpression", "module", ref("World.Modules.init"));
 
-_AddSlot(ref("World"), "parent", ref("World.Core.Namespace"));
-_AddPrototypeSlot(ref("World"), "parent")
-_SetSlotAnnotation(ref("World"), "parent", "module", ref("World.Modules.init"));
-
 _AddSlot(ref("World"), "Modules", (function() {
             let object = ref("World.Modules");
             _SetAnnotation(object, "name", `Modules`)
@@ -401,6 +381,10 @@ _SetSlotAnnotation(ref("World.Modules.init"), "parent", "module", ref("World.Mod
 _AddSlot(ref("World.Modules"), "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Modules"), "parent")
 _SetSlotAnnotation(ref("World.Modules"), "parent", "module", ref("World.Modules.init"));
+
+_AddSlot(ref("World"), "parent", ref("World.Core.Namespace"));
+_AddPrototypeSlot(ref("World"), "parent")
+_SetSlotAnnotation(ref("World"), "parent", "module", ref("World.Modules.init"));
 
 _AddSlot(ref("World"), "World", (function() {
             let object = ref("World");
