@@ -11,6 +11,9 @@ import 'brace/theme/monokai';
 import AceEditor from 'react-ace';
 window.AceEditor = AceEditor;
 
+window.Prettier = require("prettier/standalone");
+window.PrettierBabylon = require("prettier/parser-babylon");
+
 window._SaveImage = function() {
   return serialize(World);
 }
