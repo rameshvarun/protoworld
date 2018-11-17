@@ -662,7 +662,7 @@ _AddSlot(
     code += '\\n';
   }
 
-  code = Prettier.format(code, {plugins: PrettierBabylon});
+  code = Prettier.format(code, {plugins: [PrettierBabylon]});
   return code;
 }`)
 );
