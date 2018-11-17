@@ -483,7 +483,7 @@ _AddSlot(
           />
         </span>
       </div>
-      <div style={{ padding: "5px", flexGrow: 1, overflow: 'auto', marginBottom: '10px' }}>{this.RenderContent()}</div>
+      <div style={{ padding: this.padding, flexGrow: 1, overflow: 'auto', marginBottom: '10px' }}>{this.RenderContent()}</div>
     </div>
   );
 }`)
@@ -543,6 +543,14 @@ _AddSlot(
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
   "MoveToFront",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(ref("World.Interface.Window"), "padding", `5px`);
+_SetSlotAnnotation(
+  ref("World.Interface.Window"),
+  "padding",
   "module",
   ref("World.Modules.interface")
 );
@@ -630,6 +638,14 @@ _AddSlot(
 _SetSlotAnnotation(
   ref("World.Interface.HandlerEditor"),
   "GetTitle",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(ref("World.Interface.HandlerEditor"), "padding", `0px`);
+_SetSlotAnnotation(
+  ref("World.Interface.HandlerEditor"),
+  "padding",
   "module",
   ref("World.Modules.interface")
 );
