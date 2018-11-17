@@ -175,7 +175,8 @@ _AddSlot(ref("World.Interface.Window"), "Render", _MakeMessageHandler(`function(
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        isolation: 'isolate',
       };
 
   return (
@@ -500,4 +501,3 @@ _SetSlotAnnotation(ref("World.Interface.MainMenu"), "Render", "module", ref("Wor
 
 _AddSlot(ref("World.Interface.MainMenu"), "windowID", `mainmenu`);
 _SetSlotAnnotation(ref("World.Interface.MainMenu"), "windowID", "module", ref("World.Modules.interface"));
-
