@@ -114,6 +114,15 @@ _AddSlot(ref("World.Interface.WindowManager"), "IsOpen", _MakeMessageHandler(`fu
 }`));
 _SetSlotAnnotation(ref("World.Interface.WindowManager"), "IsOpen", "module", ref("World.Modules.interface"));
 
+_AddSlot(ref("World.Interface.WindowManager"), "MoveToFront", _MakeMessageHandler(`function(window) {
+    if (!this.IsOpen(window))
+        throw new Error('Tried to move a non-open window to the front.');
+
+    this.RemoveWindow(window);
+    this.AddWindow(window);
+}`));
+_SetSlotAnnotation(ref("World.Interface.WindowManager"), "MoveToFront", "module", ref("World.Modules.interface"));
+
 _AddSlot(ref("World.Interface"), "Window", (function() {
             let object = ref("World.Interface.Window");
             _SetAnnotation(object, "name", `Window`)
@@ -257,6 +266,11 @@ _AddSlot(ref("World.Interface.Window"), "IsOpen", _MakeMessageHandler(`function(
     return World.Interface.WindowManager.IsOpen(this);
 }`));
 _SetSlotAnnotation(ref("World.Interface.Window"), "IsOpen", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.Window"), "MoveToFront", _MakeMessageHandler(`function() {
+    World.Interface.WindowManager.MoveToFront(this);
+}`));
+_SetSlotAnnotation(ref("World.Interface.Window"), "MoveToFront", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface"), "HandlerEditor", (function() {
             let object = ref("World.Interface.HandlerEditor");
