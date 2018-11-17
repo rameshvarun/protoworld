@@ -1,10 +1,10 @@
 function ref(path) {
     var parts = path.split('.');
-  var current = window;
-  for(let part of parts) {
-    current = (current[part] = current[part] || _EmptyObject());
+	var current = window;
+	for(let part of parts) {
+	  current = (current[part] = current[part] || _EmptyObject());
     }
-  return current;
+	return current;
 }
 
 _AddSlot(ref("World.Core.TopObject"), "CreateEditor", _MakeMessageHandler(`
@@ -108,6 +108,11 @@ _SetSlotAnnotation(ref("World.Interface.WindowManager"), "RemoveWindow", "module
 _AddSlot(ref("World.Interface.WindowManager"), "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Interface.WindowManager"), "parent")
 _SetSlotAnnotation(ref("World.Interface.WindowManager"), "parent", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.WindowManager"), "IsOpen", _MakeMessageHandler(`function(window) {
+    return this.windows.includes(window);
+}`));
+_SetSlotAnnotation(ref("World.Interface.WindowManager"), "IsOpen", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface"), "Window", (function() {
             let object = ref("World.Interface.Window");
@@ -247,6 +252,11 @@ _SetSlotAnnotation(ref("World.Interface.Window"), "height", "module", ref("World
 
 _AddSlot(ref("World.Interface.Window"), "barColor", `#285477`);
 _SetSlotAnnotation(ref("World.Interface.Window"), "barColor", "module", ref("World.Modules.interface"));
+
+_AddSlot(ref("World.Interface.Window"), "IsOpen", _MakeMessageHandler(`function() {
+    return World.Interface.WindowManager.IsOpen(this);
+}`));
+_SetSlotAnnotation(ref("World.Interface.Window"), "IsOpen", "module", ref("World.Modules.interface"));
 
 _AddSlot(ref("World.Interface"), "HandlerEditor", (function() {
             let object = ref("World.Interface.HandlerEditor");
