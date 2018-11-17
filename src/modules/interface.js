@@ -408,7 +408,7 @@ _AddSlot(
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: "#f1f1f1",
-        marginTop: '10px',
+        marginTop: '15px',
         marginBottom: '10px',
       } : {
         resize: "both",
@@ -428,16 +428,22 @@ _AddSlot(
         isolation: 'isolate',
       };
 
+  let contentStyle = isMobile ? {
+      padding: this.padding, flexGrow: 1, overflow: 'auto', height: '500px'}
+    : { padding: this.padding, flexGrow: 1, overflow: 'auto', height: '0px' };
+
   return (
     <div
       key={this.windowID}
       style={windowStyle}
       ref={(div) => this.windowDiv = div}
       onMouseDown={() => {
+        if (!isMobile)
             this.MoveToFront();
       }}
     >
       <div
+        key="topbar"
         style={{
           "backgroundColor": this.barColor,
           padding: "3px",
@@ -485,7 +491,8 @@ _AddSlot(
           />
         </span>
       </div>
-      <div style={{ padding: this.padding, flexGrow: 1, overflow: 'auto', marginBottom: '10px', height: '0px' }}>{this.RenderContent()}</div>
+      <div key="content" style={contentStyle}>{this.RenderContent()}</div>
+      <div key="bottombar" style={{backgroundColor: this.barColor, height: '10px'}}></div>
     </div>
   );
 }`)
@@ -505,7 +512,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.Window"), "height", 400);
+_AddSlot(ref("World.Interface.Window"), "height", 600);
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
   "height",
