@@ -198,6 +198,7 @@ _AddSlot(ref("World.Interface.Window"), "Render", _MakeMessageHandler(`function(
       key={this.windowID}
       style={windowStyle}
       ref={(div) => this.windowDiv = div}
+      onMouseDown={() => this.MoveToFront()}
     >
       <div
         style={{
