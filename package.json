@@ -26,7 +26,7 @@
     "mainloop.js": "^1.0.4",
     "mobile-detect": "^1.4.1",
     "prettier": "^1.15.2",
-    "react-ace": "^6.1.0",
+    "react-ace": "^6.2.0",
     "replicator": "^1.0.2",
     "uuid": "^3.2.1",
     "virtual-dom": "^2.1.1"
