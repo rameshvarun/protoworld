@@ -437,10 +437,6 @@ _AddSlot(
       key={this.windowID}
       style={windowStyle}
       ref={(div) => this.windowDiv = div}
-      onMouseDown={() => {
-        if (!isMobile)
-            this.MoveToFront();
-      }}
     >
       <div
         key="topbar"

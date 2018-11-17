@@ -22,10 +22,11 @@ window._LoadImage = function(json) {
   window.World = deserialize(json);
 }
 
-// window.World = deserialize(require('./defaultimage.json'));
 require('./modules/init.js')
 require('./modules/interface.js')
 require('./modules/random.js')
+require('./modules/manual.js')
+
 
 window.FileSaver = require('file-saver');
 window.React = require('react');
@@ -60,3 +61,8 @@ MainLoop.setUpdate(function(dt) {
   var tree = World.Interface.WindowManager.Render();
   ReactDOM.render(tree, document.getElementById('root'));
 }).start();
+
+let manualViewer = World.Manual.ManualViewer.New();
+manualViewer.left = 60;
+manualViewer.top = 60;
+manualViewer.Open();
