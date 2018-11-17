@@ -433,8 +433,7 @@ _AddSlot(
       key={this.windowID}
       style={windowStyle}
       ref={(div) => this.windowDiv = div}
-      onClick={() => {
-          if (this.IsOpen())
+      onMouseDown={() => {
             this.MoveToFront();
       }}
     >
