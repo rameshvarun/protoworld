@@ -433,7 +433,10 @@ _AddSlot(
       key={this.windowID}
       style={windowStyle}
       ref={(div) => this.windowDiv = div}
-      onMouseDown={() => this.MoveToFront()}
+      onClick={() => {
+          if (this.IsOpen())
+            this.MoveToFront();
+      }}
     >
       <div
         style={{
@@ -483,7 +486,7 @@ _AddSlot(
           />
         </span>
       </div>
-      <div style={{ padding: this.padding, flexGrow: 1, overflow: 'auto', marginBottom: '10px' }}>{this.RenderContent()}</div>
+      <div style={{ padding: this.padding, flexGrow: 1, overflow: 'auto', marginBottom: '10px', height: '0px' }}>{this.RenderContent()}</div>
     </div>
   );
 }`)
@@ -596,10 +599,12 @@ _AddSlot(
   ref("World.Interface.HandlerEditor"),
   "RenderContent",
   _MakeMessageHandler(`function() {
-  return [
-    <AceEditor style={{width: '100%'}} mode="jsx" theme="monokai" value={this.code} onChange={(value) => this.code = value}/>,
-    <button onClick={() => this.target[this.slot] = _MakeMessageHandler(this.code)}>Save</button>
-  ];
+  return <div style={{ height: '100%', display: 'flex', flexDirection: 'column'}}>
+    <div style={{display: 'flex'}}>
+        <button onClick={() => this.target[this.slot] = _MakeMessageHandler(this.code)}>Save</button>
+    </div>
+    <AceEditor style={{width: '100%', flexGrow: 1}} mode="jsx" theme="monokai" value={this.code} onChange={(value) => this.code = value}/>
+  </div>;
 }`)
 );
 _SetSlotAnnotation(
