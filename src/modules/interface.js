@@ -213,6 +213,7 @@ _AddSlot(
   _MakeMessageHandler(`function(window) {
     this.windows = this.windows || [];
     this.windows.push(window);
+    window.zIndex = this.GetMaxZ() + 1;
 }`)
 );
 _SetSlotAnnotation(
@@ -270,14 +271,26 @@ _AddSlot(
   _MakeMessageHandler(`function(window) {
     if (!this.IsOpen(window))
         throw new Error('Tried to move a non-open window to the front.');
-
-    this.RemoveWindow(window);
-    this.AddWindow(window);
+    window.zIndex = this.GetMaxZ() + 1;
 }`)
 );
 _SetSlotAnnotation(
   ref("World.Interface.WindowManager"),
   "MoveToFront",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(
+  ref("World.Interface.WindowManager"),
+  "GetMaxZ",
+  _MakeMessageHandler(`function() {
+    return Math.max(0, ...this.windows.map(window => window.zIndex));
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Interface.WindowManager"),
+  "GetMaxZ",
   "module",
   ref("World.Modules.interface")
 );
@@ -426,6 +439,7 @@ _AddSlot(
         flexDirection: 'column',
         boxSizing: 'border-box',
         isolation: 'isolate',
+        zIndex: this.zIndex,
       };
 
   let contentStyle = isMobile ? {
@@ -437,6 +451,7 @@ _AddSlot(
       key={this.windowID}
       style={windowStyle}
       ref={(div) => this.windowDiv = div}
+      onMouseDown={() => this.MoveToFront()}
     >
       <div
         key="topbar"
@@ -556,6 +571,14 @@ _AddSlot(ref("World.Interface.Window"), "padding", `5px`);
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
   "padding",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(ref("World.Interface.Window"), "zIndex", 0);
+_SetSlotAnnotation(
+  ref("World.Interface.Window"),
+  "zIndex",
   "module",
   ref("World.Modules.interface")
 );
