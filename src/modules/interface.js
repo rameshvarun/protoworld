@@ -995,3 +995,122 @@ _SetSlotAnnotation(
   "module",
   ref("World.Modules.interface")
 );
+
+_AddSlot(
+  ref("World.Interface"),
+  "CanvasWindow",
+  (function() {
+    let object = ref("World.Interface.CanvasWindow");
+    _SetAnnotation(object, "name", `CanvasWindow`);
+    _SetAnnotation(object, "creator", ref("World.Interface"));
+    _SetAnnotation(object, "creatorSlot", `CanvasWindow`);
+
+    return object;
+  })()
+);
+_SetSlotAnnotation(
+  ref("World.Interface"),
+  "CanvasWindow",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(
+  ref("World.Interface.CanvasWindow"),
+  "parent",
+  ref("World.Interface.Window")
+);
+_AddPrototypeSlot(ref("World.Interface.CanvasWindow"), "parent");
+_SetSlotAnnotation(
+  ref("World.Interface.CanvasWindow"),
+  "parent",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(
+  ref("World.Interface.CanvasWindow"),
+  "RenderContent",
+  _MakeMessageHandler(`function() {
+    if (this.canvas) {
+        // Handle resizing.
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+
+        if (this.canvas.width !== width || this.canvas.height !== height) {
+            this.canvas.width = width;
+            this.canvas.height = height;
+        }
+
+        this.RenderCanvas(this.canvas);
+    }
+
+    return <div style={{width: "100%", height: "100%", overflow: 'hidden'}}>
+        <canvas ref={(canvas) => this.canvas = canvas} style={{width: "100%", height: "100%"}}>
+        </canvas>
+    </div>;
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Interface.CanvasWindow"),
+  "RenderContent",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(
+  ref("World.Interface.CanvasWindow"),
+  "New",
+  _MakeMessageHandler(`function(target) {
+    let inst = this.Extend();
+    inst.AddSlot('windowID', uuid.v1());
+    return inst;
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Interface.CanvasWindow"),
+  "New",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(
+  ref("World.Interface.CanvasWindow"),
+  "GetTitle",
+  _MakeMessageHandler(`function() {
+    return "CanvasWindow"
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Interface.CanvasWindow"),
+  "GetTitle",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(ref("World.Interface.CanvasWindow"), "padding", `0px`);
+_SetSlotAnnotation(
+  ref("World.Interface.CanvasWindow"),
+  "padding",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(
+  ref("World.Interface.CanvasWindow"),
+  "RenderCanvas",
+  _MakeMessageHandler(`function(canvas) {
+    let ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.stroke();
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Interface.CanvasWindow"),
+  "RenderCanvas",
+  "module",
+  ref("World.Modules.interface")
+);
