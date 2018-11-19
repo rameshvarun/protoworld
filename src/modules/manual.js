@@ -102,6 +102,7 @@ _AddSlot(
     let object = ref("World.Manual.ManualPage");
     _SetAnnotation(object, "creator", ref("World.Manual"));
     _SetAnnotation(object, "creatorSlot", `ManualPage`);
+    _SetAnnotation(object, "name", `ManualPage`);
 
     return object;
   })()
@@ -118,6 +119,28 @@ _AddPrototypeSlot(ref("World.Manual.ManualPage"), "parent");
 _SetSlotAnnotation(
   ref("World.Manual.ManualPage"),
   "parent",
+  "module",
+  ref("World.Modules.manual")
+);
+
+_AddSlot(ref("World.Manual.ManualPage"), "title", `Untitled Manual Page`);
+_SetSlotAnnotation(
+  ref("World.Manual.ManualPage"),
+  "title",
+  "module",
+  ref("World.Modules.manual")
+);
+
+_AddSlot(
+  ref("World.Manual.ManualPage"),
+  "RenderPage",
+  _MakeMessageHandler(`function() {
+    return <h1>Empty Manual Page</h1>;
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Manual.ManualPage"),
+  "RenderPage",
   "module",
   ref("World.Modules.manual")
 );
@@ -160,6 +183,7 @@ _AddSlot(
   _MakeMessageHandler(`function(target) {
     let inst = this.Extend();
     inst.AddSlot('windowID', uuid.v1());
+    inst.path = "introduction";
     return inst;
 }`)
 );
@@ -175,10 +199,11 @@ _AddSlot(
   "RenderContent",
   _MakeMessageHandler(`function() {
     return <div style={{display: 'flex', height: '100%'}}>
-        <div style={{minWidth: '150px', borderRight: '1px solid black'}}>
+        <div style={{minWidth: '150px', borderRight: '1px solid black', padding: '5px'}}>
+            {this.RenderNavigation(this.path)}
         </div>
         <div style={{padding: '10px'}}>
-            {World.Manual.root.introduction.RenderPage()}
+            {World.Manual.root[this.path].RenderPage()}
         </div>
     </div>;
 }`)
@@ -224,6 +249,25 @@ _AddSlot(ref("World.Manual.ManualViewer"), "height", 600);
 _SetSlotAnnotation(
   ref("World.Manual.ManualViewer"),
   "height",
+  "module",
+  ref("World.Modules.manual")
+);
+
+_AddSlot(
+  ref("World.Manual.ManualViewer"),
+  "RenderNavigation",
+  _MakeMessageHandler(`function(current) {
+    let root = World.Manual.root;
+    return root.GetSlotNames().map(slot => {
+        if (slot == "parent") return;
+        let style = slot == current ? {fontWeight: 'bold'} : {};
+        return <div style={style} onClick={() => this.path = slot}>{root[slot].title}</div>
+    });
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Manual.ManualViewer"),
+  "RenderNavigation",
   "module",
   ref("World.Modules.manual")
 );
@@ -318,6 +362,101 @@ _AddSlot(
 );
 _SetSlotAnnotation(
   ref("World.Manual.root.introduction"),
+  "RenderPage",
+  "module",
+  ref("World.Modules.manual")
+);
+
+_AddSlot(ref("World.Manual.root.introduction"), "title", `Introduction`);
+_SetSlotAnnotation(
+  ref("World.Manual.root.introduction"),
+  "title",
+  "module",
+  ref("World.Modules.manual")
+);
+
+_AddSlot(
+  ref("World.Manual.root"),
+  "modules",
+  (function() {
+    let object = ref("World.Manual.root.modules");
+    _SetAnnotation(object, "creator", ref("World.Manual.root"));
+    _SetAnnotation(object, "creatorSlot", `modules`);
+
+    return object;
+  })()
+);
+_SetSlotAnnotation(
+  ref("World.Manual.root"),
+  "modules",
+  "module",
+  ref("World.Modules.manual")
+);
+
+_AddSlot(
+  ref("World.Manual.root.modules"),
+  "parent",
+  ref("World.Manual.ManualPage")
+);
+_AddPrototypeSlot(ref("World.Manual.root.modules"), "parent");
+_SetSlotAnnotation(
+  ref("World.Manual.root.modules"),
+  "parent",
+  "module",
+  ref("World.Modules.manual")
+);
+
+_AddSlot(ref("World.Manual.root.modules"), "title", `Modules`);
+_SetSlotAnnotation(
+  ref("World.Manual.root.modules"),
+  "title",
+  "module",
+  ref("World.Modules.manual")
+);
+
+_AddSlot(
+  ref("World.Manual.root.modules"),
+  "RenderPage",
+  _MakeMessageHandler(`function() {
+    return <>
+        <h1>Understanding Modules</h1>
+        <p>You've been building a live environment.
+            You want to commit the code that you've written to Git so that you can
+            diff and merge with other developers. This is where modules come in.
+            Modules enable you to serialize part of an object graph into regular
+            JS code that can be loaded into another instance of ProtoWorld. ProtoWorld
+            modules are heavily based off of the <a target="_blank" href="http://handbook.selflanguage.org/2017.1/howtoprg.html#the-transporter">Transporter from Self</a>.
+        </p>
+
+        <p>
+        A module is a collection of slots that have been annotated with a specific tag.
+        When you export the module, all of those slots are written out to a JS file.
+        </p>
+        <p>
+        Note that slots are the units of code packaging, not modules.
+        This allows a module to patch in new slots onto an existing object.
+        For example, the interface module patches in slots such as "OpenEditor"
+        onto TopObject.
+        </p>
+        <p>
+        Modules also require that exported objects have a unique path, from the root
+        that identifies the object. This is done by giving every object a creator
+        annotation consisting of the object/slot that "creates" it. Tracing creator annotaions
+        back to root gives us the path of the object.
+        </p>
+
+        <p>
+        Once exported, modules are idempotent and can be loaded back in any order. They can even be edited manually.
+        </p>
+
+        <p>
+        Modules are how ProtoWorld itself is versioned.
+        </p>
+    </>;
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Manual.root.modules"),
   "RenderPage",
   "module",
   ref("World.Modules.manual")
