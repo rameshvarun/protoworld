@@ -175,6 +175,8 @@ _AddSlot(
   "RenderContent",
   _MakeMessageHandler(`function() {
     return <div style={{display: 'flex', height: '100%'}}>
+        <div style={{minWidth: '150px', borderRight: '1px solid black'}}>
+        </div>
         <div style={{padding: '10px'}}>
             {World.Manual.root.introduction.RenderPage()}
         </div>
