@@ -27,6 +27,7 @@ require('./modules/interface.js')
 require('./modules/random.js')
 require('./modules/manual.js')
 require('./modules/tools.js')
+require('./modules/math.js')
 
 
 window.FileSaver = require('file-saver');
