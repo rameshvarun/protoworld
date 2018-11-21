@@ -1032,7 +1032,7 @@ _AddSlot(
   ref("World.Interface.CanvasWindow"),
   "RenderContent",
   _MakeMessageHandler(`function() {
-    if (this.canvas) {
+    if (this.canvas && this.canvas instanceof HTMLElement) {
         // Handle resizing.
         const width = this.canvas.clientWidth;
         const height = this.canvas.clientHeight;
