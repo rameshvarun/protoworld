@@ -37,10 +37,10 @@ slot(
   "World.Core.Asset",
   "CreateEditor",
   msg(`function() {
-    if (this === World.Core.Asset) {
-        return World.Core.TopObject.CreateEditor.call(this);
+    if (this.data) {
+       return World.Interface.AssetViewer.New(this);
     } else {
-        return World.Interface.AssetViewer.New(this);
+       return World.Core.TopObject.CreateEditor.call(this);
     }
 }`)
 );
@@ -668,7 +668,66 @@ slot(
   })()
 );
 
+slot(
+  "World.Interface.Image",
+  "CreateEditor",
+  msg(`function() {
+    if (this.data) {
+       return World.Interface.ImageViewer.New(this);
+    } else {
+       return World.Core.TopObject.CreateEditor.call(this);
+    }
+}`)
+);
+
 prototype_slot("World.Interface.Image", "parent", ref("World.Core.Asset"));
+
+slot(
+  "World.Interface",
+  "ImageViewer",
+  (function() {
+    let object = ref("World.Interface.ImageViewer");
+    _SetAnnotation(object, "name", `ImageViewer`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World.Interface"));
+    _SetAnnotation(object, "creatorSlot", `ImageViewer`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Interface.ImageViewer",
+  "GetTitle",
+  msg(`function() {
+    return \`\${(this.target.GetAnnotation('name') || "Unnamed Object")} (Image Viewer)\`;
+}`)
+);
+
+slot(
+  "World.Interface.ImageViewer",
+  "RenderContent",
+  msg(`function() {
+  return (
+    <div>
+      {this.RenderDescriptionWidget()}
+      <hr />
+
+      <img style={{width: '100%'}} src={this.target.GetObjectURL()}></img>
+
+      <div>Asset Size: {this.target.data.byteLength} bytes.</div>
+      <div>Content Type: {this.target.contentType}</div>
+      <button onClick={() => this.target.Download()}>Download</button>
+    </div>
+  );
+}`)
+);
+
+prototype_slot(
+  "World.Interface.ImageViewer",
+  "parent",
+  ref("World.Interface.AssetViewer")
+);
 
 slot(
   "World.Interface",
