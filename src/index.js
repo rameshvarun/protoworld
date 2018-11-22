@@ -11,6 +11,9 @@ import 'brace/theme/monokai';
 import AceEditor from 'react-ace';
 window.AceEditor = AceEditor;
 
+import ErrorBoundary from 'react-error-boundary';
+window.ErrorBoundary = ErrorBoundary;
+
 window.PIXI = require('pixi.js');
 
 window.Prettier = require("prettier/standalone");

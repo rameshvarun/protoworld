@@ -323,7 +323,9 @@ slot(
   } catch(e) {
       content = <div>
         An error occurred while rendering window content.
-        <pre>{e.stack || e.toString()}</pre>
+        <pre style={{
+                    whiteSpace: 'pre-wrap'
+                }}>{e.stack || e.toString()}</pre>
       </div>;
   }
 
@@ -383,7 +385,15 @@ slot(
           />
         </span>
       </div>
-      <div key="content" style={contentStyle}>{content}</div>
+      <div key="content" style={contentStyle}>
+        <ErrorBoundary FallbackComponent={({ componentStack, error }) => {
+            return <div>A React error occurred while rendering this window.
+                <pre style={{
+                    whiteSpace: 'pre-wrap'
+                }}>{error.toString()}</pre>
+            </div>;
+        }}>{content}</ErrorBoundary>
+      </div>
       <div key="bottombar" style={{backgroundColor: this.barColor, height: '10px'}}></div>
     </div>
   );
