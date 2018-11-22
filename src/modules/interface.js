@@ -768,23 +768,22 @@ slot(
   return <div
     style={barStyle}>
    <button onClick={() => {
-     var blob = new Blob([_SaveImage(World)], {type: "text/plain;charset=utf-8"});
-     FileSaver.saveAs(blob, "image.json");
+     var blob = new Blob([_SaveImage(World)], {type: "application/x-protoworld"});
+     FileSaver.saveAs(blob, "image.prw");
    }}>Save Image</button>
    <button onClick={() => {
         var fileInput = document.getElementById('file-input');
         var changeHandler = function() {
           var file = fileInput.files[0];
 
-          if (file.name.match(/\\.(txt|json)\$/)) {
+          if (file.name.match(/\\.prw\$/)) {
             var reader = new FileReader();
 
             reader.onload = function() {
-              // console.log(JSON.parse(reader.result));
-              _LoadImage(JSON.parse(reader.result));
+              _LoadImage(reader.result);
             };
 
-            reader.readAsText(file);
+            reader.readAsArrayBuffer(file);
           } else {
            alert("File not supported, .txt or .json files only");
           }

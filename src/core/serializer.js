@@ -1,9 +1,9 @@
 const Replicator = require('replicator');
+const pako = require('pako');
+
 const replicator = new Replicator({
-    serialize (val) {
-        return JSON.stringify(val, undefined, 2);
-    },
-    deserialize: x => x
+    serialize: x => pako.deflate(JSON.stringify(x)),
+    deserialize: x => JSON.parse(pako.inflate(x, {to: 'string'})),
 });
 
 import {getHandlerCode, isMessageHandler, makeMessageHandler} from './MessageHandler';
