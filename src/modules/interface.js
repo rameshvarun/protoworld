@@ -34,6 +34,26 @@ let msg = function(code) {
 let mod = ref("World.Modules.interface");
 
 slot(
+  "World.Core.Asset",
+  "CreateEditor",
+  msg(`function() {
+    if (this === World.Core.Asset) {
+        return World.Core.TopObject.CreateEditor.call(this);
+    } else {
+        return World.Interface.AssetViewer.New(this);
+    }
+}`)
+);
+
+slot(
+  "World.Core.Asset",
+  "Download",
+  msg(`function() {
+    FileSaver.saveAs(this.GetBlob());
+}`)
+);
+
+slot(
   "World.Core.TopObject",
   "CreateEditor",
   msg(`
@@ -98,92 +118,191 @@ slot(
 
 slot(
   "World.Interface",
-  "CanvasWindow",
+  "AssetViewer",
   (function() {
-    let object = ref("World.Interface.CanvasWindow");
-    _SetAnnotation(object, "name", `CanvasWindow`);
+    let object = ref("World.Interface.AssetViewer");
+    _SetAnnotation(object, "name", `AssetViewer`);
     _SetAnnotation(object, "creator", ref("World.Interface"));
-    _SetAnnotation(object, "creatorSlot", `CanvasWindow`);
-    _SetAnnotation(
-      object,
-      "description",
-      `A base class for Windows that create and draw to an HTML5 canvas.`
-    );
+    _SetAnnotation(object, "creatorSlot", `AssetViewer`);
 
     return object;
   })()
 );
 
 slot(
-  "World.Interface.CanvasWindow",
+  "World.Interface.AssetViewer",
   "GetTitle",
   msg(`function() {
-    return "CanvasWindow"
+    return \`\${(this.target.GetAnnotation('name') || "Unnamed Object")} (Asset Viewer)\`;
 }`)
 );
 
 slot(
-  "World.Interface.CanvasWindow",
+  "World.Interface.AssetViewer",
+  "RenderContent",
+  msg(`function() {
+  let description = this.target.GetAnnotation("description");
+  let modules = Array.from(this.target.ListModules());
+  let categories = Array.from(this.target.ListCategories());
+
+  return (
+    <div>
+      {this.RenderDescriptionWidget()}
+      <hr />
+
+      <div>Asset Size: {this.target.data.byteLength} bytes.</div>
+      <div>Content Type: {this.target.contentType}</div>
+      <button onClick={() => this.target.Download()}>Download</button>
+    </div>
+  );
+}`)
+);
+
+prototype_slot(
+  "World.Interface.AssetViewer",
+  "parent",
+  ref("World.Interface.ObjectEditor")
+);
+
+slot(
+  "World.Interface.ObjectEditor",
+  "GetTitle",
+  msg(`function() {
+    return \`\${(this.target.GetAnnotation('name') || "Unnamed Object")} (Object Editor)\`;
+}`)
+);
+
+slot(
+  "World.Interface.ObjectEditor",
   "New",
   msg(`function(target) {
     let inst = World.Interface.Window.New.call(this);
-    inst.SetSlotAnnotation('canvas', 'transient', true);
+    inst.AddSlot('target', target);
+    inst.SetSlotAnnotation('evaluator', 'transient', true);
     return inst;
 }`)
 );
 
 slot(
-  "World.Interface.CanvasWindow",
-  "RenderCanvas",
-  msg(`function(canvas) {
-    let ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  "World.Interface.ObjectEditor",
+  "RenderContent",
+  msg(`function() {
+  let description = this.target.GetAnnotation("description");
+  let modules = Array.from(this.target.ListModules());
+  let categories = Array.from(this.target.ListCategories());
 
-    ctx.fillStyle = 'blue';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.stroke();
+  return (
+    <div>
+      {this.RenderDescriptionWidget()}
+      <hr />
+
+        {modules.length > 0 && (
+          <>
+          <b>Modules: {modules.map(m => m.RenderWidget())}</b>
+          <hr />
+          </>
+        )}
+
+
+      <div><b>Slots</b></div>
+      <div style={{ paddingTop: '5px'}}>
+        <div ><em>uncategorized</em></div>
+        <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(null).map(slot => this.RenderSlot(slot))}</div>
+      </div>
+      {categories.map(cat => <div style={{ paddingTop: '5px'}}>
+          <div ><em>{cat}</em></div>
+          <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(cat).map(slot => this.RenderSlot(slot))}</div>
+      </div>)}
+      <hr />
+      <ReactConsole
+        welcomeMessage={\`Evaluator for \${this.target.ToString()}.\`}
+        ref={e => (this.evaluator = e)}
+        handler={code => {
+          function evalInContext() {
+            return eval(code);
+          }
+
+          try {
+             let result = evalInContext.call(this.target);
+             this.evaluator.log(new String(result));
+          } catch (e) {
+            this.evaluator.log(new String(e));
+          }
+          this.evaluator.return();
+        }}
+      />
+    </div>
+  );
 }`)
 );
 
 slot(
-  "World.Interface.CanvasWindow",
-  "RenderContent",
+  "World.Interface.ObjectEditor",
+  "RenderDescriptionWidget",
   msg(`function() {
-    if (this.canvas && this.canvas instanceof HTMLElement) {
-        // Handle resizing.
-        const width = this.canvas.clientWidth;
-        const height = this.canvas.clientHeight;
+    let description = this.target.GetAnnotation("description");
 
-        if (this.canvas.width !== width || this.canvas.height !== height) {
-            this.canvas.width = width;
-            this.canvas.height = height;
-        }
+    if (this.editingDescription) {
+        return <div>
+            <div><input ref={input => this.nameInput = input} defaultValue={this.target.GetName()}/></div>
+            <div><textarea ref={input => this.descriptionInput = input} style={{width: '100%'}}
+                defaultValue={this.target.GetDescription()}></textarea></div>
 
-        this.RenderCanvas(this.canvas);
+            <button onClick={() => {
+                if (this.nameInput.value != this.target.GetName())
+                  this.target.SetName(this.nameInput.value);
+
+                if (this.descriptionInput.value != this.target.GetDescription())
+                  this.target.SetDescription(this.descriptionInput.value);
+
+                this.editingDescription = false;
+            }}>Save</button>
+            <button onClick={() => this.editingDescription = false}>Cancel</button>
+        </div>;
+    } else {
+        return <div onClick={() => {
+            this.editingDescription = true;
+        }}>{description ? description : "(No Description)"}</div>
+    }
+}`)
+);
+
+slot(
+  "World.Interface.ObjectEditor",
+  "RenderSlot",
+  msg(`function(slot) {
+    let value = this.target[slot];
+    let description = this.target.GetSlotDescription(slot);
+
+    let namespan = _IsPrototypeSlot(this.target, slot) ? <b>{slot}*</b> : slot;
+
+    let slotspan = null;
+    if (_IsMessageHandler(value)) {
+      slotspan = <button onClick= {() =>
+              World.Interface.HandlerEditor.New(this.target, slot).Open()}>Edit Code</button>;
+    } else if (_IsProtoObject(value)) {
+      slotspan = value.RenderWidget();
+    } else if (typeof value == "number") {
+        slotspan = value;
+    } else {
+        slotspan = new String(value);
     }
 
-    return <div style={{width: "100%", height: "100%", overflow: 'hidden'}}>
-        <canvas ref={(canvas) => {
-            if (canvas && canvas != this.canvas)
-                this.SetCanvas(canvas);
-        }} style={{width: "100%", height: "100%"}}>
-        </canvas>
+    return <div key={slot} style={{
+            paddingBottom: '5px',
+            display: 'flex',
+            'justifyContent': 'space-between',
+            'alignItems': 'flex-end',
+            'flexWrap': 'wrap'
+    }}>
+        <span title={description}>{namespan}</span>
+        <span>{slotspan}</span>
     </div>;
 }`)
 );
 
-slot(
-  "World.Interface.CanvasWindow",
-  "SetCanvas",
-  msg(`function(canvas) {
-    this.canvas = canvas;
-}`)
-);
-
-slot("World.Interface.CanvasWindow", "padding", `0px`);
-
 prototype_slot(
-  "World.Interface.CanvasWindow",
+  "World.Interface.ObjectEditor",
   "parent",
   ref("World.Interface.Window")
 );
@@ -386,6 +505,98 @@ slot("World.Interface.Window", "zIndex", 0);
 
 slot(
   "World.Interface",
+  "CanvasWindow",
+  (function() {
+    let object = ref("World.Interface.CanvasWindow");
+    _SetAnnotation(object, "name", `CanvasWindow`);
+    _SetAnnotation(object, "creator", ref("World.Interface"));
+    _SetAnnotation(object, "creatorSlot", `CanvasWindow`);
+    _SetAnnotation(
+      object,
+      "description",
+      `A base class for Windows that create and draw to an HTML5 canvas.`
+    );
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "GetTitle",
+  msg(`function() {
+    return "CanvasWindow"
+}`)
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "New",
+  msg(`function(target) {
+    let inst = World.Interface.Window.New.call(this);
+    inst.SetSlotAnnotation('canvas', 'transient', true);
+    return inst;
+}`)
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "RenderCanvas",
+  msg(`function(canvas) {
+    let ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.stroke();
+}`)
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "RenderContent",
+  msg(`function() {
+    if (this.canvas && this.canvas instanceof HTMLElement) {
+        // Handle resizing.
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+
+        if (this.canvas.width !== width || this.canvas.height !== height) {
+            this.canvas.width = width;
+            this.canvas.height = height;
+        }
+
+        this.RenderCanvas(this.canvas);
+    }
+
+    return <div style={{width: "100%", height: "100%", overflow: 'hidden'}}>
+        <canvas ref={(canvas) => {
+            if (canvas && canvas != this.canvas)
+                this.SetCanvas(canvas);
+        }} style={{width: "100%", height: "100%"}}>
+        </canvas>
+    </div>;
+}`)
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "SetCanvas",
+  msg(`function(canvas) {
+    this.canvas = canvas;
+}`)
+);
+
+slot("World.Interface.CanvasWindow", "padding", `0px`);
+
+prototype_slot(
+  "World.Interface.CanvasWindow",
+  "parent",
+  ref("World.Interface.Window")
+);
+
+slot(
+  "World.Interface",
   "HandlerEditor",
   (function() {
     let object = ref("World.Interface.HandlerEditor");
@@ -442,6 +653,22 @@ prototype_slot(
   "parent",
   ref("World.Interface.Window")
 );
+
+slot(
+  "World.Interface",
+  "Image",
+  (function() {
+    let object = ref("World.Interface.Image");
+    _SetAnnotation(object, "name", `Image`);
+    _SetAnnotation(object, "description", `Represents an image asset.`);
+    _SetAnnotation(object, "creator", ref("World.Interface"));
+    _SetAnnotation(object, "creatorSlot", `Image`);
+
+    return object;
+  })()
+);
+
+prototype_slot("World.Interface.Image", "parent", ref("World.Core.Asset"));
 
 slot(
   "World.Interface",
@@ -539,6 +766,26 @@ slot(
 
        fileInput.click();
    }}>Load Module</button>
+   <button onClick={() => {
+        var fileInput = document.getElementById('file-input');
+        var changeHandler = function() {
+          var file = fileInput.files[0];
+          var reader = new FileReader();
+
+          reader.onload = function() {
+              let asset = World.Core.Asset.New(reader.result, file.type);
+              asset.OpenEditor();
+          };
+
+          reader.readAsArrayBuffer(file);
+
+          fileInput.removeEventListener('change', changeHandler);
+          this.value = null;
+        }
+
+       fileInput.addEventListener('change', changeHandler);
+       fileInput.click();
+   }}>Upload Asset</button>
   </div>;
 }`)
 );
@@ -567,149 +814,6 @@ slot(
 
     return object;
   })()
-);
-
-slot(
-  "World.Interface.ObjectEditor",
-  "GetTitle",
-  msg(`function() {
-    return \`\${(this.target.GetAnnotation('name') || "Unnamed Object")} (Object Editor)\`;
-}`)
-);
-
-slot(
-  "World.Interface.ObjectEditor",
-  "New",
-  msg(`function(target) {
-    let inst = World.Interface.Window.New.call(this);
-    inst.AddSlot('target', target);
-    inst.SetSlotAnnotation('evaluator', 'transient', true);
-    return inst;
-}`)
-);
-
-slot(
-  "World.Interface.ObjectEditor",
-  "RenderContent",
-  msg(`function() {
-  let description = this.target.GetAnnotation("description");
-  let modules = Array.from(this.target.ListModules());
-  let categories = Array.from(this.target.ListCategories());
-
-  return (
-    <div>
-      {this.RenderDescriptionWidget()}
-      <hr />
-
-        {modules.length > 0 && (
-          <>
-          <b>Modules: {modules.map(m => m.RenderWidget())}</b>
-          <hr />
-          </>
-        )}
-
-
-      <div><b>Slots</b></div>
-      <div style={{ paddingTop: '5px'}}>
-        <div ><em>uncategorized</em></div>
-        <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(null).map(slot => this.RenderSlot(slot))}</div>
-      </div>
-      {categories.map(cat => <div style={{ paddingTop: '5px'}}>
-          <div ><em>{cat}</em></div>
-          <div style={{ paddingLeft: '5px'}}>{this.target.GetSlotsByCategory(cat).map(slot => this.RenderSlot(slot))}</div>
-      </div>)}
-      <hr />
-      <ReactConsole
-        welcomeMessage={\`Evaluator for \${this.target.ToString()}.\`}
-        ref={e => (this.evaluator = e)}
-        handler={code => {
-          function evalInContext() {
-            return eval(code);
-          }
-
-          try {
-             let result = evalInContext.call(this.target);
-             this.evaluator.log(new String(result));
-          } catch (e) {
-            this.evaluator.log(new String(e));
-          }
-          this.evaluator.return();
-        }}
-      />
-    </div>
-  );
-}`)
-);
-
-slot(
-  "World.Interface.ObjectEditor",
-  "RenderDescriptionWidget",
-  msg(`function() {
-    let description = this.target.GetAnnotation("description");
-
-    if (this.editingDescription) {
-        return <div>
-            <div><input ref={input => this.nameInput = input} defaultValue={this.target.GetName()}/></div>
-            <div><textarea ref={input => this.descriptionInput = input} style={{width: '100%'}}
-                defaultValue={this.target.GetDescription()}></textarea></div>
-
-            <button onClick={() => {
-                if (this.nameInput.value != this.target.GetName())
-                  this.target.SetName(this.nameInput.value);
-
-                if (this.descriptionInput.value != this.target.GetDescription())
-                  this.target.SetDescription(this.descriptionInput.value);
-
-                this.editingDescription = false;
-            }}>Save</button>
-            <button onClick={() => this.editingDescription = false}>Cancel</button>
-        </div>;
-    } else {
-        return <div onClick={() => {
-            this.editingDescription = true;
-        }}>{description ? description : "(No Description)"}</div>
-    }
-}`)
-);
-
-slot(
-  "World.Interface.ObjectEditor",
-  "RenderSlot",
-  msg(`function(slot) {
-    let value = this.target[slot];
-    let description = this.target.GetSlotDescription(slot);
-
-    let namespan = _IsPrototypeSlot(this.target, slot) ? <b>{slot}*</b> : slot;
-
-    let slotspan = null;
-    if (_IsMessageHandler(value)) {
-      slotspan = <button onClick= {() =>
-              World.Interface.HandlerEditor.New(this.target, slot).Open()}>Edit Code</button>;
-    } else if (_IsProtoObject(value)) {
-      slotspan = value.RenderWidget();
-    } else if (typeof value == "number") {
-        slotspan = value;
-    } else {
-        slotspan = new String(value);
-    }
-
-    return <div key={slot} style={{
-            paddingBottom: '5px',
-            display: 'flex',
-            'justifyContent': 'space-between',
-            'alignItems': 'flex-end',
-            'flexWrap': 'wrap'
-    }}>
-        <span title={description}>{namespan}</span>
-        <span>{slotspan}</span>
-    </div>;
-}`)
-);
-
-prototype_slot(
-  "World.Interface.ObjectEditor",
-  "parent",
-  ref("World.Interface.Window")
 );
 
 slot(
