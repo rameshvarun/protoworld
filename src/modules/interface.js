@@ -1,3 +1,9 @@
+/*
+InterfaceModule - ProtoWorld Module
+This module contains objects relating to ProtoWorld's interface, including the windowing system as well as the default ObjectEditor.
+*/
+
+/* BEGIN MODULE PRELUDE */
 let ref = function(path) {
   var parts = path.split(".");
   var current = window;
@@ -7,92 +13,62 @@ let ref = function(path) {
   return current;
 };
 
-let slot = function(path, name, value) {
+let slot = function(path, name, value, annotations) {
   _AddSlot(ref(path), name, value);
+  for (let annotation in annotations) {
+    _SetSlotAnnotation(ref(path), name, annotation, annotations[annotation]);
+  }
 };
+
+let msg = function(code) {
+  return _MakeMessageHandler(code);
+};
+/* END MODULE PRELUDE */
 
 slot(
   "World.Core.TopObject",
   "CreateEditor",
-  _MakeMessageHandler(`
+  msg(`
 function() {
   return World.Interface.ObjectEditor.New(this);
 }
-`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "CreateEditor",
-  "module",
-  ref("World.Modules.interface")
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "CreateEditor",
-  "category",
-  `editor`
+`),
+  { module: ref("World.Modules.interface"), category: `editor` }
 );
 
 slot(
   "World.Core.TopObject",
   "OpenEditor",
-  _MakeMessageHandler(`
+  msg(`
 function() {
   return this.CreateEditor().Open();
 }
-`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "OpenEditor",
-  "module",
-  ref("World.Modules.interface")
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "OpenEditor",
-  "category",
-  `editor`
+`),
+  { module: ref("World.Modules.interface"), category: `editor` }
 );
 
 slot(
   "World.Core.TopObject",
   "RenderWidget",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return <button
               title={this.GetDescription()}
               onClick={() => this.OpenEditor()}>
               {this.ToString()}
             </button>;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "RenderWidget",
-  "category",
-  `editor`
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "RenderWidget",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { category: `editor`, module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Core.Module",
   "Export",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
   let code = this.GenerateCode();
   var blob = new Blob([code], {type: "text/plain;charset=utf-8"});
   FileSaver.saveAs(blob, "module.js");
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.Module"),
-  "Export",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
@@ -103,25 +79,21 @@ slot(
     _SetAnnotation(object, "name", `InterfaceModule`);
     _SetAnnotation(object, "creator", ref("World.Modules"));
     _SetAnnotation(object, "creatorSlot", `interface`);
+    _SetAnnotation(
+      object,
+      "description",
+      `This module contains objects relating to ProtoWorld's interface, including the windowing system as well as the default ObjectEditor.`
+    );
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Modules"),
-  "interface",
-  "module",
-  ref("World.Modules.interface")
+  })(),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Modules.interface", "parent", ref("World.Core.Module"));
+slot("World.Modules.interface", "parent", ref("World.Core.Module"), {
+  module: ref("World.Modules.interface")
+});
 _AddPrototypeSlot(ref("World.Modules.interface"), "parent");
-_SetSlotAnnotation(
-  ref("World.Modules.interface"),
-  "parent",
-  "module",
-  ref("World.Modules.interface")
-);
 
 slot(
   "World",
@@ -138,23 +110,14 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Interface`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World"),
-  "Interface",
-  "module",
-  ref("World.Modules.interface")
+  })(),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface", "parent", ref("World.Core.Namespace"));
+slot("World.Interface", "parent", ref("World.Core.Namespace"), {
+  module: ref("World.Modules.interface")
+});
 _AddPrototypeSlot(ref("World.Interface"), "parent");
-_SetSlotAnnotation(
-  ref("World.Interface"),
-  "parent",
-  "module",
-  ref("World.Modules.interface")
-);
 
 slot(
   "World.Interface",
@@ -171,128 +134,84 @@ slot(
     _SetAnnotation(object, "creatorSlot", `WindowManager`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Interface"),
-  "WindowManager",
-  "module",
-  ref("World.Modules.interface")
+  })(),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.WindowManager",
   "Render",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
   return <>
     {World.Interface.MainMenu.Render()}
     {(this.windows || []).map(w => w.Render())}</>
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.WindowManager"),
-  "Render",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.WindowManager",
   "Update",
-  _MakeMessageHandler(`function(dt) {
+  msg(`function(dt) {
     World.Interface.MainMenu.Update(dt);
     (this.windows || []).forEach(w => w.Update(dt));
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.WindowManager"),
-  "Update",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.WindowManager",
   "AddWindow",
-  _MakeMessageHandler(`function(window) {
+  msg(`function(window) {
     this.windows = this.windows || [];
     this.windows.push(window);
     window.zIndex = this.GetMaxZ() + 1;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.WindowManager"),
-  "AddWindow",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.WindowManager",
   "RemoveWindow",
-  _MakeMessageHandler(`function(window) {
+  msg(`function(window) {
     this.windows = this.windows || [];
     this.windows = this.windows.filter(item => item !== window);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.WindowManager"),
-  "RemoveWindow",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.WindowManager", "parent", ref("World.Core.TopObject"));
+slot("World.Interface.WindowManager", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.interface")
+});
 _AddPrototypeSlot(ref("World.Interface.WindowManager"), "parent");
-_SetSlotAnnotation(
-  ref("World.Interface.WindowManager"),
-  "parent",
-  "module",
-  ref("World.Modules.interface")
-);
 
 slot(
   "World.Interface.WindowManager",
   "IsOpen",
-  _MakeMessageHandler(`function(window) {
+  msg(`function(window) {
     return this.windows.includes(window);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.WindowManager"),
-  "IsOpen",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.WindowManager",
   "MoveToFront",
-  _MakeMessageHandler(`function(window) {
+  msg(`function(window) {
     if (!this.IsOpen(window))
         throw new Error('Tried to move a non-open window to the front.');
     window.zIndex = this.GetMaxZ() + 1;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.WindowManager"),
-  "MoveToFront",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.WindowManager",
   "GetMaxZ",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return Math.max(0, ...this.windows.map(window => window.zIndex));
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.WindowManager"),
-  "GetMaxZ",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
@@ -305,113 +224,64 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Window`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Interface"),
-  "Window",
-  "module",
-  ref("World.Modules.interface")
+  })(),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.Window", "parent", ref("World.Core.TopObject"));
+slot("World.Interface.Window", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.interface")
+});
 _AddPrototypeSlot(ref("World.Interface.Window"), "parent");
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "parent",
-  "module",
-  ref("World.Modules.interface")
-);
 
-slot("World.Interface.Window", "top", 0);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "top",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.Window", "top", 0, {
+  module: ref("World.Modules.interface")
+});
 
-slot("World.Interface.Window", "left", 0);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "left",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.Window", "left", 0, {
+  module: ref("World.Modules.interface")
+});
 
 slot(
   "World.Interface.Window",
   "Open",
-  _MakeMessageHandler(
-    `function() { World.Interface.WindowManager.AddWindow(this) }`
-  )
-);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "Open",
-  "module",
-  ref("World.Modules.interface")
+  msg(`function() { World.Interface.WindowManager.AddWindow(this) }`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.Window",
   "Close",
-  _MakeMessageHandler(
-    `function() { World.Interface.WindowManager.RemoveWindow(this) }`
-  )
-);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "Close",
-  "module",
-  ref("World.Modules.interface")
+  msg(`function() { World.Interface.WindowManager.RemoveWindow(this) }`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.Window",
   "Update",
-  _MakeMessageHandler(`function(dt) {
+  msg(`function(dt) {
     if (this.windowDiv && this.windowDiv instanceof HTMLElement) {
         this.width = this.windowDiv.offsetWidth;
         this.height = this.windowDiv.offsetHeight;
     }
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "Update",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
-slot(
-  "World.Interface.Window",
-  "RenderContent",
-  _MakeMessageHandler(`function() { }`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "RenderContent",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.Window", "RenderContent", msg(`function() { }`), {
+  module: ref("World.Modules.interface")
+});
 
 slot(
   "World.Interface.Window",
   "GetTitle",
-  _MakeMessageHandler(`function() { return 'Untitled Window'; }`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "GetTitle",
-  "module",
-  ref("World.Modules.interface")
+  msg(`function() { return 'Untitled Window'; }`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.Window",
   "Render",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
   let isMobile = MobileDetect.mobile() !== null;
 
   let windowStyle = isMobile ? {
@@ -506,98 +376,58 @@ slot(
       <div key="bottombar" style={{backgroundColor: this.barColor, height: '10px'}}></div>
     </div>
   );
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "Render",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.Window", "width", 400);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "width",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.Window", "width", 400, {
+  module: ref("World.Modules.interface")
+});
 
-slot("World.Interface.Window", "height", 600);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "height",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.Window", "height", 600, {
+  module: ref("World.Modules.interface")
+});
 
-slot("World.Interface.Window", "barColor", `#285477`);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "barColor",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.Window", "barColor", `#285477`, {
+  module: ref("World.Modules.interface")
+});
 
 slot(
   "World.Interface.Window",
   "IsOpen",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return World.Interface.WindowManager.IsOpen(this);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "IsOpen",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.Window",
   "MoveToFront",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     World.Interface.WindowManager.MoveToFront(this);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "MoveToFront",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.Window", "padding", `5px`);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "padding",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.Window", "padding", `5px`, {
+  module: ref("World.Modules.interface")
+});
 
-slot("World.Interface.Window", "zIndex", 0);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "zIndex",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.Window", "zIndex", 0, {
+  module: ref("World.Modules.interface")
+});
 
 slot(
   "World.Interface.Window",
   "New",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     let inst = this.Extend();
     inst.windowID = uuid.v1();
     inst.SetSlotAnnotation('windowDiv', 'transient', true);
     return inst;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.Window"),
-  "New",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
@@ -615,82 +445,54 @@ slot(
     _SetAnnotation(object, "creatorSlot", `HandlerEditor`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Interface"),
-  "HandlerEditor",
-  "module",
-  ref("World.Modules.interface")
+  })(),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.HandlerEditor", "parent", ref("World.Interface.Window"));
+slot("World.Interface.HandlerEditor", "parent", ref("World.Interface.Window"), {
+  module: ref("World.Modules.interface")
+});
 _AddPrototypeSlot(ref("World.Interface.HandlerEditor"), "parent");
-_SetSlotAnnotation(
-  ref("World.Interface.HandlerEditor"),
-  "parent",
-  "module",
-  ref("World.Modules.interface")
-);
 
 slot(
   "World.Interface.HandlerEditor",
   "RenderContent",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
   return <div style={{ height: '100%', display: 'flex', flexDirection: 'column'}}>
     <div style={{display: 'flex'}}>
         <button onClick={() => this.target[this.slot] = _MakeMessageHandler(this.code)}>Save</button>
     </div>
     <AceEditor style={{width: '100%', flexGrow: 1}} mode="jsx" theme="monokai" value={this.code} onChange={(value) => this.code = value}/>
   </div>;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.HandlerEditor"),
-  "RenderContent",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.HandlerEditor",
   "New",
-  _MakeMessageHandler(`function(target, slot) {
+  msg(`function(target, slot) {
   let inst = World.Interface.Window.New.call(this);
   inst.AddSlot('target', target);
   inst.AddSlot('slot', slot);
   inst.AddSlot('code', _GetMessageHandlerCode(target[slot]));
   return inst;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.HandlerEditor"),
-  "New",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.HandlerEditor",
   "GetTitle",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
  return "HandlerEditor: " + this.target.toString() + "->" + this.slot;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.HandlerEditor"),
-  "GetTitle",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.HandlerEditor", "padding", `0px`);
-_SetSlotAnnotation(
-  ref("World.Interface.HandlerEditor"),
-  "padding",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.HandlerEditor", "padding", `0px`, {
+  module: ref("World.Modules.interface")
+});
 
 slot(
   "World.Interface",
@@ -703,54 +505,36 @@ slot(
     _SetAnnotation(object, "creatorSlot", `ObjectEditor`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Interface"),
-  "ObjectEditor",
-  "module",
-  ref("World.Modules.interface")
+  })(),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.ObjectEditor", "parent", ref("World.Interface.Window"));
+slot("World.Interface.ObjectEditor", "parent", ref("World.Interface.Window"), {
+  module: ref("World.Modules.interface")
+});
 _AddPrototypeSlot(ref("World.Interface.ObjectEditor"), "parent");
-_SetSlotAnnotation(
-  ref("World.Interface.ObjectEditor"),
-  "parent",
-  "module",
-  ref("World.Modules.interface")
-);
 
 slot(
   "World.Interface.ObjectEditor",
   "GetTitle",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return \`\${(this.target.GetAnnotation('name') || "Unnamed Object")} (Object Editor)\`;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.ObjectEditor"),
-  "GetTitle",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.ObjectEditor",
   "RenderContent",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
   let description = this.target.GetAnnotation("description");
   let modules = Array.from(this.target.ListModules());
   let categories = Array.from(this.target.ListCategories());
 
   return (
     <div>
-      {description ? (
-        <>
-          <div>{description}</div>
-          <hr />
-        </>
-      ) : null}
+      {this.RenderDescriptionWidget()}
+      <hr />
       <div>
         <b>Modules:</b>
         {modules.length > 0 ? (
@@ -789,36 +573,26 @@ slot(
       />
     </div>
   );
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.ObjectEditor"),
-  "RenderContent",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.ObjectEditor",
   "New",
-  _MakeMessageHandler(`function(target) {
+  msg(`function(target) {
     let inst = World.Interface.Window.New.call(this);
     inst.AddSlot('target', target);
     inst.SetSlotAnnotation('evaluator', 'transient', true);
     return inst;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.ObjectEditor"),
-  "New",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.ObjectEditor",
   "RenderSlot",
-  _MakeMessageHandler(`function(slot) {
+  msg(`function(slot) {
     let value = this.target[slot];
     let description = this.target.GetSlotDescription(slot);
 
@@ -846,13 +620,36 @@ slot(
         <span title={description}>{namespan}</span>
         <span>{slotspan}</span>
     </div>;
-}`)
+}`),
+  { module: ref("World.Modules.interface") }
 );
-_SetSlotAnnotation(
-  ref("World.Interface.ObjectEditor"),
-  "RenderSlot",
-  "module",
-  ref("World.Modules.interface")
+
+slot(
+  "World.Interface.ObjectEditor",
+  "RenderDescriptionWidget",
+  msg(`function() {
+    let description = this.target.GetAnnotation("description");
+
+    if (this.editingDescription) {
+        return <div>
+            <div><input ref={input => this.nameInput = input} defaultValue={this.target.GetName()}/></div>
+            <div><textarea ref={input => this.descriptionInput = input} style={{width: '100%'}}
+                defaultValue={this.target.GetDescription()}></textarea></div>
+
+            <button onClick={() => {
+                this.target.SetName(this.nameInput.value);
+                this.target.SetDescription(this.descriptionInput.value);
+                this.editingDescription = false;
+            }}>Save</button>
+            <button onClick={() => this.editingDescription = false}>Cancel</button>
+        </div>;
+    } else {
+        return <div onClick={() => {
+            this.editingDescription = true;
+        }}>{description ? description : "(No Description)"}</div>
+    }
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
@@ -870,44 +667,27 @@ slot(
     _SetAnnotation(object, "creatorSlot", `MainMenu`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Interface"),
-  "MainMenu",
-  "module",
-  ref("World.Modules.interface")
+  })(),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.MainMenu", "parent", ref("World.Interface.Window"));
+slot("World.Interface.MainMenu", "parent", ref("World.Interface.Window"), {
+  module: ref("World.Modules.interface")
+});
 _AddPrototypeSlot(ref("World.Interface.MainMenu"), "parent");
-_SetSlotAnnotation(
-  ref("World.Interface.MainMenu"),
-  "parent",
-  "module",
-  ref("World.Modules.interface")
-);
 
-slot("World.Interface.MainMenu", "left", 0);
-_SetSlotAnnotation(
-  ref("World.Interface.MainMenu"),
-  "left",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.MainMenu", "left", 0, {
+  module: ref("World.Modules.interface")
+});
 
-slot("World.Interface.MainMenu", "top", 0);
-_SetSlotAnnotation(
-  ref("World.Interface.MainMenu"),
-  "top",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.MainMenu", "top", 0, {
+  module: ref("World.Modules.interface")
+});
 
 slot(
   "World.Interface.MainMenu",
   "Render",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
   let isMobile = MobileDetect.mobile() !== null;
   let barStyle = isMobile ? {
      'backgroundColor': '#285477',
@@ -983,22 +763,13 @@ slot(
        fileInput.click();
    }}>Load Module</button>
   </div>;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.MainMenu"),
-  "Render",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.MainMenu", "windowID", `mainmenu`);
-_SetSlotAnnotation(
-  ref("World.Interface.MainMenu"),
-  "windowID",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.MainMenu", "windowID", `mainmenu`, {
+  module: ref("World.Modules.interface")
+});
 
 slot(
   "World.Interface",
@@ -1010,28 +781,19 @@ slot(
     _SetAnnotation(object, "creatorSlot", `CanvasWindow`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Interface"),
-  "CanvasWindow",
-  "module",
-  ref("World.Modules.interface")
+  })(),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.CanvasWindow", "parent", ref("World.Interface.Window"));
+slot("World.Interface.CanvasWindow", "parent", ref("World.Interface.Window"), {
+  module: ref("World.Modules.interface")
+});
 _AddPrototypeSlot(ref("World.Interface.CanvasWindow"), "parent");
-_SetSlotAnnotation(
-  ref("World.Interface.CanvasWindow"),
-  "parent",
-  "module",
-  ref("World.Modules.interface")
-);
 
 slot(
   "World.Interface.CanvasWindow",
   "RenderContent",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     if (this.canvas && this.canvas instanceof HTMLElement) {
         // Handle resizing.
         const width = this.canvas.clientWidth;
@@ -1052,82 +814,53 @@ slot(
         }} style={{width: "100%", height: "100%"}}>
         </canvas>
     </div>;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.CanvasWindow"),
-  "RenderContent",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.CanvasWindow",
   "New",
-  _MakeMessageHandler(`function(target) {
+  msg(`function(target) {
     let inst = World.Interface.Window.New.call(this);
     inst.SetSlotAnnotation('canvas', 'transient', true);
     return inst;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.CanvasWindow"),
-  "New",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.CanvasWindow",
   "GetTitle",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return "CanvasWindow"
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.CanvasWindow"),
-  "GetTitle",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
-slot("World.Interface.CanvasWindow", "padding", `0px`);
-_SetSlotAnnotation(
-  ref("World.Interface.CanvasWindow"),
-  "padding",
-  "module",
-  ref("World.Modules.interface")
-);
+slot("World.Interface.CanvasWindow", "padding", `0px`, {
+  module: ref("World.Modules.interface")
+});
 
 slot(
   "World.Interface.CanvasWindow",
   "RenderCanvas",
-  _MakeMessageHandler(`function(canvas) {
+  msg(`function(canvas) {
     let ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = 'blue';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.stroke();
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.CanvasWindow"),
-  "RenderCanvas",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
 
 slot(
   "World.Interface.CanvasWindow",
   "SetCanvas",
-  _MakeMessageHandler(`function(canvas) {
+  msg(`function(canvas) {
     this.canvas = canvas;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Interface.CanvasWindow"),
-  "SetCanvas",
-  "module",
-  ref("World.Modules.interface")
+}`),
+  { module: ref("World.Modules.interface") }
 );
