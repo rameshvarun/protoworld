@@ -1,3 +1,8 @@
+/*
+InitModule - ProtoWorld Module
+This module contains the core ProtoWorld objects.
+*/
+
 /* BEGIN MODULE PRELUDE */
 let ref = function(path) {
   var parts = path.split(".");
@@ -439,7 +444,13 @@ slot(
   msg(`function() {
   let slots = this.FindSlots();
 
-  let code = this.prelude;
+  let info = \`/*
+\${this.GetName()} - ProtoWorld Module
+\${this.GetDescription()}
+*/
+\`;
+
+  let code = info + this.prelude;
   for (let {object, slot} of slots) {
     let path = this.TracePath(object);
 
@@ -585,6 +596,11 @@ slot(
     _SetAnnotation(object, "name", `InitModule`);
     _SetAnnotation(object, "creator", ref("World.Modules"));
     _SetAnnotation(object, "creatorSlot", `init`);
+    _SetAnnotation(
+      object,
+      "description",
+      `This module contains the core ProtoWorld objects.`
+    );
 
     return object;
   })(),
