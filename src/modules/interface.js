@@ -589,6 +589,7 @@ slot(
   _MakeMessageHandler(`function() {
     let inst = this.Extend();
     inst.windowID = uuid.v1();
+    inst.SetSlotAnnotation('windowDiv', 'transient', true);
     return inst;
 }`)
 );
