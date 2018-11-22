@@ -53,152 +53,56 @@ slot(
 
 slot(
   "World.Core",
-  "Module",
+  "Asset",
   (function() {
-    let object = ref("World.Core.Module");
-    _SetAnnotation(object, "name", `Module`);
-    _SetAnnotation(object, "description", `The traits object for modules.`);
+    let object = ref("World.Core.Asset");
+    _SetAnnotation(object, "name", `Asset`);
+    _SetAnnotation(
+      object,
+      "description",
+      `An object representing an asset, such as images or meshes.`
+    );
     _SetAnnotation(object, "creator", ref("World.Core"));
-    _SetAnnotation(object, "creatorSlot", `Module`);
+    _SetAnnotation(object, "creatorSlot", `Asset`);
 
     return object;
   })()
 );
 
 slot(
-  "World.Core.Module",
-  "FindSlots",
+  "World.Core.Asset",
+  "GetBlob",
   msg(`function() {
-  // Get all slots in objects tagged with the module.
-  let visited = new Set();
-  let slots = [];
-
-  var findSlots = (object) => {
-    if(!_IsProtoObject(object)) return;
-    if(visited.has(object)) return;
-
-    visited.add(object);
-
-    let objectSlots = object.GetSlotNames();
-    objectSlots.sort();
-
-    for(let slot of objectSlots) {
-      if (_GetSlotAnnotation(object, slot, 'module') == this) {
-        slots.push({object, slot});
-      }
-      findSlots(object[slot]);
+    if (!(this.blob instanceof Blob)) {
+        this.blob = new Blob([this.data]);
     }
-  }
-
-  findSlots(World);
-  return slots;
-}`),
-  { description: `Find all slots that have been annotated with this module.` }
+    return this.blob;
+}`)
 );
 
 slot(
-  "World.Core.Module",
-  "GenerateCode",
+  "World.Core.Asset",
+  "GetObjectURL",
   msg(`function() {
-  let slots = this.FindSlots();
-
-  let info = \`/*
-\${this.GetName()} - ProtoWorld Module
-\${this.GetDescription()}
-*/
-\`;
-
-  let code = info + this.prelude;
-  code += \`let mod = ref("\${this.TracePath(this).join('.')}");\\n\\n\`;
-  for (let {object, slot} of slots) {
-    let path = this.TracePath(object);
-
-    let value = object[slot];
-    let objpath = path.join('.');
-
-    let valueExpr = null;
-    if(_IsProtoObject(value) && _GetAnnotation(value, 'creator') == object && _GetAnnotation(value, 'creatorSlot') == slot) {
-        let path = this.TracePath(value);
-
-        let objAnnotations = "";
-        for (let annotation of _GetAnnotations(value)) {
-            let annotationVal = _GetAnnotation(value, annotation);
-            objAnnotations += \`_SetAnnotation(object, "\${annotation}", \${this.GenerateValueExpression(annotationVal)})\\n\`;
-        }
-
-        valueExpr = \`(function() {
-            let object = ref("\${path.join('.')}");
-            \${objAnnotations}
-            return object;
-        })()\`;
-    } else {
-        valueExpr = this.GenerateValueExpression(value)
+    if (!this.objectURL) {
+        this.objectURL = URL.createObjectURL(this.GetBlob());
     }
-
-    let annotations = object.GetSlotAnnotations(slot).filter(name =>
-      name !== "module");
-    let annotationObj = '{' + annotations.map(annotation => {
-      let value = object.GetSlotAnnotation(slot, annotation);
-      let valueExpr = this.GenerateValueExpression(value);
-      return \`"\${annotation}": \${valueExpr}\`;
-    }).join(',') + '}';
-
-    let annotationArg = "";
-    if (annotations.length > 0) {
-      annotationArg = \`, \${annotationObj}\`;
-    }
-
-    let func = _IsPrototypeSlot(object, slot) ? 'prototype_slot' : 'slot';
-    code += \`\${func}("\${objpath}", "\${slot}", \${valueExpr} \${annotationArg});\\n\`
-    code += '\\n';
-  }
-
-  code = Prettier.format(code, {plugins: [PrettierBabylon]});
-  return code;
+    return this.objectURL;
 }`)
 );
 
 slot(
-  "World.Core.Module",
-  "GenerateValueExpression",
-  msg(`function(value) {
-    if (_IsMessageHandler(value)) {
-      let handlerCode = _GetMessageHandlerCode(value);
-      let escapedCode = escapeTemplateString(handlerCode);
-      return \`msg(\${escapedCode})\`
-    } else if (_IsProtoObject(value)) {
-      return \`ref("\${this.TracePath(value).join('.')}")\`;
-    } else if (typeof value == "string") {
-        return escapeTemplateString(value);
-    } else if (typeof value == "number") {
-        return JSON.stringify(value);
-    } else {
-      throw new Error(\`Encountered an object of Unknown type.\`);
-    }
+  "World.Core.Asset",
+  "New",
+  msg(`function(data, contentType) {
+    let inst = this.Extend();
+    inst.data = data;
+    inst.contentType = contentType;
+    return inst;
 }`)
 );
 
-slot(
-  "World.Core.Module",
-  "TracePath",
-  msg(`function(object) {
-    if (object == World) return ['World'];
-    else {
-        let creator = _GetAnnotation(object, 'creator');
-        let creatorSlot = _GetAnnotation(object, 'creatorSlot');
-        if (!creator || !creatorSlot)
-            throw new Error(\`\${object.ToString()} missing creator slot.\`);
-        if (creator[creatorSlot] != object)
-            throw new Error(\`\${object.ToString()}'s creator slot doesn't actually point to it.\`);
-
-        var path = this.TracePath(creator);
-        path.push(creatorSlot);
-        return path;
-    }
-}`)
-);
-
-prototype_slot("World.Core.Module", "parent", ref("World.Core.TopObject"));
+prototype_slot("World.Core.Asset", "parent", ref("World.Core.TopObject"));
 
 slot(
   "World.Core.TopObject",
@@ -468,6 +372,155 @@ function() {
 }
 `)
 );
+
+slot(
+  "World.Core",
+  "Module",
+  (function() {
+    let object = ref("World.Core.Module");
+    _SetAnnotation(object, "name", `Module`);
+    _SetAnnotation(object, "description", `The traits object for modules.`);
+    _SetAnnotation(object, "creator", ref("World.Core"));
+    _SetAnnotation(object, "creatorSlot", `Module`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Core.Module",
+  "FindSlots",
+  msg(`function() {
+  // Get all slots in objects tagged with the module.
+  let visited = new Set();
+  let slots = [];
+
+  var findSlots = (object) => {
+    if(!_IsProtoObject(object)) return;
+    if(visited.has(object)) return;
+
+    visited.add(object);
+
+    let objectSlots = object.GetSlotNames();
+    objectSlots.sort();
+
+    for(let slot of objectSlots) {
+      if (_GetSlotAnnotation(object, slot, 'module') == this) {
+        slots.push({object, slot});
+      }
+      findSlots(object[slot]);
+    }
+  }
+
+  findSlots(World);
+  return slots;
+}`),
+  { description: `Find all slots that have been annotated with this module.` }
+);
+
+slot(
+  "World.Core.Module",
+  "GenerateCode",
+  msg(`function() {
+  let slots = this.FindSlots();
+
+  let info = \`/*
+\${this.GetName()} - ProtoWorld Module
+\${this.GetDescription()}
+*/
+\`;
+
+  let code = info + this.prelude;
+  code += \`let mod = ref("\${this.TracePath(this).join('.')}");\\n\\n\`;
+  for (let {object, slot} of slots) {
+    let path = this.TracePath(object);
+
+    let value = object[slot];
+    let objpath = path.join('.');
+
+    let valueExpr = null;
+    if(_IsProtoObject(value) && _GetAnnotation(value, 'creator') == object && _GetAnnotation(value, 'creatorSlot') == slot) {
+        let path = this.TracePath(value);
+
+        let objAnnotations = "";
+        for (let annotation of _GetAnnotations(value)) {
+            let annotationVal = _GetAnnotation(value, annotation);
+            objAnnotations += \`_SetAnnotation(object, "\${annotation}", \${this.GenerateValueExpression(annotationVal)})\\n\`;
+        }
+
+        valueExpr = \`(function() {
+            let object = ref("\${path.join('.')}");
+            \${objAnnotations}
+            return object;
+        })()\`;
+    } else {
+        valueExpr = this.GenerateValueExpression(value)
+    }
+
+    let annotations = object.GetSlotAnnotations(slot).filter(name =>
+      name !== "module");
+    let annotationObj = '{' + annotations.map(annotation => {
+      let value = object.GetSlotAnnotation(slot, annotation);
+      let valueExpr = this.GenerateValueExpression(value);
+      return \`"\${annotation}": \${valueExpr}\`;
+    }).join(',') + '}';
+
+    let annotationArg = "";
+    if (annotations.length > 0) {
+      annotationArg = \`, \${annotationObj}\`;
+    }
+
+    let func = _IsPrototypeSlot(object, slot) ? 'prototype_slot' : 'slot';
+    code += \`\${func}("\${objpath}", "\${slot}", \${valueExpr} \${annotationArg});\\n\`
+    code += '\\n';
+  }
+
+  code = Prettier.format(code, {plugins: [PrettierBabylon]});
+  return code;
+}`)
+);
+
+slot(
+  "World.Core.Module",
+  "GenerateValueExpression",
+  msg(`function(value) {
+    if (_IsMessageHandler(value)) {
+      let handlerCode = _GetMessageHandlerCode(value);
+      let escapedCode = escapeTemplateString(handlerCode);
+      return \`msg(\${escapedCode})\`
+    } else if (_IsProtoObject(value)) {
+      return \`ref("\${this.TracePath(value).join('.')}")\`;
+    } else if (typeof value == "string") {
+        return escapeTemplateString(value);
+    } else if (typeof value == "number") {
+        return JSON.stringify(value);
+    } else {
+      throw new Error(\`Encountered an object of Unknown type.\`);
+    }
+}`)
+);
+
+slot(
+  "World.Core.Module",
+  "TracePath",
+  msg(`function(object) {
+    if (object == World) return ['World'];
+    else {
+        let creator = _GetAnnotation(object, 'creator');
+        let creatorSlot = _GetAnnotation(object, 'creatorSlot');
+        if (!creator || !creatorSlot)
+            throw new Error(\`\${object.ToString()} missing creator slot.\`);
+        if (creator[creatorSlot] != object)
+            throw new Error(\`\${object.ToString()}'s creator slot doesn't actually point to it.\`);
+
+        var path = this.TracePath(creator);
+        path.push(creatorSlot);
+        return path;
+    }
+}`)
+);
+
+prototype_slot("World.Core.Module", "parent", ref("World.Core.TopObject"));
 
 slot(
   "World.Core.Module",
