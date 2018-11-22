@@ -43,8 +43,7 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Core`);
 
     return object;
-  })(),
-  {}
+  })()
 );
 
 slot(
@@ -58,8 +57,7 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Module`);
 
     return object;
-  })(),
-  {}
+  })()
 );
 
 slot(
@@ -140,7 +138,12 @@ slot(
       return \`"\${annotation}": \${valueExpr}\`;
     }).join(',') + '}';
 
-    code += \`slot("\${objpath}", "\${slot}", \${valueExpr}, \${annotationObj});\\n\`
+    let annotationArg = "";
+    if (annotations.length > 0) {
+      annotationArg = \`, \${annotationObj}\`;
+    }
+
+    code += \`slot("\${objpath}", "\${slot}", \${valueExpr} \${annotationArg});\\n\`
     if(_IsPrototypeSlot(object, slot)) {
         code += \`_AddPrototypeSlot(ref("\${objpath}"), "\${slot}")\\n\`;
     }
@@ -150,8 +153,7 @@ slot(
 
   code = Prettier.format(code, {plugins: [PrettierBabylon]});
   return code;
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -171,8 +173,7 @@ slot(
     } else {
       throw new Error(\`Encountered an object of Unknown type.\`);
     }
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -192,11 +193,10 @@ slot(
         path.push(creatorSlot);
         return path;
     }
-}`),
-  {}
+}`)
 );
 
-slot("World.Core.Module", "parent", ref("World.Core.TopObject"), {});
+slot("World.Core.Module", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Core.Module"), "parent");
 
 slot(
@@ -204,8 +204,7 @@ slot(
   "AddMessageHandler",
   msg(`function(slot) {
     this.AddSlot(slot, _MakeMessageHandler('function() {\\n}'))
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -238,8 +237,7 @@ slot(
 function(name) {
 	return _GetAnnotation(this, name);
 }
-`),
-  {}
+`)
 );
 
 slot(
@@ -247,8 +245,7 @@ slot(
   "GetCreator",
   msg(`function() {
     return this.GetAnnotation('creator');
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -256,8 +253,7 @@ slot(
   "GetDescription",
   msg(`function() {
     return this.GetAnnotation('description');
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -265,8 +261,7 @@ slot(
   "GetName",
   msg(`function() {
     return this.GetAnnotation('name');
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -274,8 +269,7 @@ slot(
   "GetSlotAnnotation",
   msg(`function(slot, name) {
     return _GetSlotAnnotation(this, slot, name);
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -283,8 +277,7 @@ slot(
   "GetSlotAnnotations",
   msg(`function(slot) {
     return _GetSlotAnnotations(this, slot)
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -301,8 +294,7 @@ slot(
   "GetSlotDescription",
   msg(`function(slot) {
     return this.GetSlotAnnotation(slot, 'description')
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -310,8 +302,7 @@ slot(
   "GetSlotModule",
   msg(`function(slot) {
     return this.GetSlotAnnotation(slot, "module");
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -321,8 +312,7 @@ slot(
 function() {
 	return _GetSlotNames(this);
 }
-`),
-  {}
+`)
 );
 
 slot(
@@ -344,8 +334,7 @@ slot(
         current = current.parent;
     } while (current)
     return false;
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -372,8 +361,7 @@ slot(
         if (module) modules.add(module);
     }
     return modules;
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -381,8 +369,7 @@ slot(
   "RemoveSlot",
   msg(`function(name) {
   _RemoveSlot(this, name);
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -392,8 +379,7 @@ slot(
 function(name, value) {
 	_SetAnnotation(this, name, value);
 }
-`),
-  {}
+`)
 );
 
 slot(
@@ -401,8 +387,7 @@ slot(
   "SetAsCreator",
   msg(`function(slot) {
     this[slot].SetCreator(this, slot);
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -411,8 +396,7 @@ slot(
   msg(`function(object, slot) {
   this.SetAnnotation('creator', object);
   this.SetAnnotation('creatorSlot', slot);
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -420,8 +404,7 @@ slot(
   "SetDescription",
   msg(`function(desc) {
   this.SetAnnotation('description', desc);
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -431,8 +414,7 @@ slot(
     for (let slot of this.GetSlotNames()) {
         this.SetSlotModule(slot, module);
     }
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -440,8 +422,7 @@ slot(
   "SetName",
   msg(`function(name) {
   this.SetAnnotation('name', name);
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -449,8 +430,7 @@ slot(
   "SetSlotAnnotation",
   msg(
     `function(slot, name, value) { _SetSlotAnnotation(this, slot, name, value); }`
-  ),
-  {}
+  )
 );
 
 slot(
@@ -467,8 +447,7 @@ slot(
   "SetSlotDescription",
   msg(`function(slot, desc) {
     this.SetSlotAnnotation(slot, "description", desc);
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -476,8 +455,7 @@ slot(
   "SetSlotModule",
   msg(`function(slot, module) {
     this.SetSlotAnnotation(slot, 'module', module);
-}`),
-  {}
+}`)
 );
 
 slot(
@@ -487,8 +465,7 @@ slot(
 function() {
 	return this.GetAnnotation('name') || 'Unnamed Object';
 }
-`),
-  {}
+`)
 );
 
 slot(
@@ -518,8 +495,7 @@ let msg = function(code) {
 }
 /* END MODULE PRELUDE */
 
-`,
-  {}
+`
 );
 
 slot(
@@ -537,11 +513,10 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Namespace`);
 
     return object;
-  })(),
-  {}
+  })()
 );
 
-slot("World.Core.Namespace", "parent", ref("World.Core.TopObject"), {});
+slot("World.Core.Namespace", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Core.Namespace"), "parent");
 
 slot(
@@ -559,11 +534,10 @@ slot(
     _SetAnnotation(object, "creatorSlot", `TopObject`);
 
     return object;
-  })(),
-  {}
+  })()
 );
 
-slot("World.Core", "parent", ref("World.Core.Namespace"), {});
+slot("World.Core", "parent", ref("World.Core.Namespace"));
 _AddPrototypeSlot(ref("World.Core"), "parent");
 
 slot(
@@ -581,8 +555,7 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Modules`);
 
     return object;
-  })(),
-  {}
+  })()
 );
 
 slot(
@@ -600,14 +573,13 @@ slot(
     );
 
     return object;
-  })(),
-  {}
+  })()
 );
 
-slot("World.Modules.init", "parent", ref("World.Core.Module"), {});
+slot("World.Modules.init", "parent", ref("World.Core.Module"));
 _AddPrototypeSlot(ref("World.Modules.init"), "parent");
 
-slot("World.Modules", "parent", ref("World.Core.TopObject"), {});
+slot("World.Modules", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Modules"), "parent");
 
 slot(
@@ -625,9 +597,8 @@ slot(
     _SetAnnotation(object, "creatorSlot", `World`);
 
     return object;
-  })(),
-  {}
+  })()
 );
 
-slot("World", "parent", ref("World.Core.Namespace"), {});
+slot("World", "parent", ref("World.Core.Namespace"));
 _AddPrototypeSlot(ref("World"), "parent");
