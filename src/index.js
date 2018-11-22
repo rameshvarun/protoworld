@@ -11,6 +11,8 @@ import 'brace/theme/monokai';
 import AceEditor from 'react-ace';
 window.AceEditor = AceEditor;
 
+window.PIXI = require('pixi.js');
+
 window.Prettier = require("prettier/standalone");
 window.PrettierBabylon = require("prettier/parser-babylon");
 
@@ -28,6 +30,7 @@ require('./modules/random.js')
 require('./modules/manual.js')
 require('./modules/tools.js')
 require('./modules/math.js')
+require('./modules/protopixi.js')
 
 
 window.FileSaver = require('file-saver');

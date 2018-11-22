@@ -1046,7 +1046,10 @@ _AddSlot(
     }
 
     return <div style={{width: "100%", height: "100%", overflow: 'hidden'}}>
-        <canvas ref={(canvas) => this.canvas = canvas} style={{width: "100%", height: "100%"}}>
+        <canvas ref={(canvas) => {
+            if (canvas && canvas != this.canvas)
+                this.SetCanvas(canvas);
+        }} style={{width: "100%", height: "100%"}}>
         </canvas>
     </div>;
 }`)
@@ -1111,6 +1114,20 @@ _AddSlot(
 _SetSlotAnnotation(
   ref("World.Interface.CanvasWindow"),
   "RenderCanvas",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(
+  ref("World.Interface.CanvasWindow"),
+  "SetCanvas",
+  _MakeMessageHandler(`function(canvas) {
+    this.canvas = canvas;
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Interface.CanvasWindow"),
+  "SetCanvas",
   "module",
   ref("World.Modules.interface")
 );
