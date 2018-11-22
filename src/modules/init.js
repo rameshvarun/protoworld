@@ -1,14 +1,18 @@
-function ref(path) {
+let ref = function(path) {
   var parts = path.split(".");
   var current = window;
   for (let part of parts) {
     current = current[part] = current[part] || _EmptyObject();
   }
   return current;
-}
+};
 
-_AddSlot(
-  ref("World"),
+let slot = function(path, name, value) {
+  _AddSlot(ref(path), name, value);
+};
+
+slot(
+  "World",
   "Core",
   (function() {
     let object = ref("World.Core");
@@ -26,8 +30,8 @@ _AddSlot(
 );
 _SetSlotAnnotation(ref("World"), "Core", "module", ref("World.Modules.init"));
 
-_AddSlot(
-  ref("World.Core"),
+slot(
+  "World.Core",
   "Namespace",
   (function() {
     let object = ref("World.Core.Namespace");
@@ -50,7 +54,7 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(ref("World.Core.Namespace"), "parent", ref("World.Core.TopObject"));
+slot("World.Core.Namespace", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Core.Namespace"), "parent");
 _SetSlotAnnotation(
   ref("World.Core.Namespace"),
@@ -59,8 +63,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "AddSlot",
   _MakeMessageHandler(`function(name, value) {
   _AddSlot(this, name, value);
@@ -79,8 +83,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "Extend",
   _MakeMessageHandler(`function(name, value) {
   let child = _EmptyObject();
@@ -102,8 +106,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "SetAnnotation",
   _MakeMessageHandler(`
 function(name, value) {
@@ -118,8 +122,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetAnnotation",
   _MakeMessageHandler(`
 function(name) {
@@ -134,8 +138,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetSlotNames",
   _MakeMessageHandler(`
 function() {
@@ -150,8 +154,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "ToString",
   _MakeMessageHandler(`
 function() {
@@ -166,8 +170,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "SetName",
   _MakeMessageHandler(`function(name) {
   this.SetAnnotation('name', name);
@@ -180,8 +184,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "SetDescription",
   _MakeMessageHandler(`function(desc) {
   this.SetAnnotation('description', desc);
@@ -194,8 +198,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "SetSlotAnnotation",
   _MakeMessageHandler(
     `function(slot, name, value) { _SetSlotAnnotation(this, slot, name, value); }`
@@ -208,8 +212,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "SetSlotModule",
   _MakeMessageHandler(`function(slot, module) {
     this.SetSlotAnnotation(slot, 'module', module);
@@ -222,8 +226,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "SetCreator",
   _MakeMessageHandler(`function(object, slot) {
   this.SetAnnotation('creator', object);
@@ -237,8 +241,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetCreator",
   _MakeMessageHandler(`function() {
     return this.GetAnnotation('creator');
@@ -251,8 +255,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetName",
   _MakeMessageHandler(`function() {
     return this.GetAnnotation('name');
@@ -265,8 +269,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetDescription",
   _MakeMessageHandler(`function() {
     return this.GetAnnotation('description');
@@ -279,8 +283,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetSlotAnnotation",
   _MakeMessageHandler(`function(slot, name) {
     return _GetSlotAnnotation(this, slot, name);
@@ -293,8 +297,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetSlotModule",
   _MakeMessageHandler(`function(slot) {
     return this.GetSlotAnnotation(slot, "module");
@@ -307,8 +311,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "ListModules",
   _MakeMessageHandler(`function() {
     let modules = new Set();
@@ -326,8 +330,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "SetSlotDescription",
   _MakeMessageHandler(`function(slot, desc) {
     this.SetSlotAnnotation(slot, "description", desc);
@@ -340,8 +344,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetSlotDescription",
   _MakeMessageHandler(`function(slot) {
     return this.GetSlotAnnotation(slot, 'description')
@@ -354,8 +358,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "AddMessageHandler",
   _MakeMessageHandler(`function(slot) {
     this.AddSlot(slot, _MakeMessageHandler('function() {\\n}'))
@@ -368,8 +372,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "SetSlotCategory",
   _MakeMessageHandler(`function(slot, category) {
     this.SetSlotAnnotation(slot, "category", category);
@@ -388,8 +392,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetSlotCategory",
   _MakeMessageHandler(`function(slot) {
     return this.GetSlotAnnotation(slot, "category");
@@ -408,8 +412,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "ListCategories",
   _MakeMessageHandler(`function() {
     let categories = new Set();
@@ -433,8 +437,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetSlotsByCategory",
   _MakeMessageHandler(`function(cat) {
     return this.GetSlotNames().filter(slot => this.GetSlotCategory(slot) == cat)
@@ -453,8 +457,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "GetSlotAnnotations",
   _MakeMessageHandler(`function(slot) {
     return _GetSlotAnnotations(this, slot)
@@ -467,8 +471,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "SetModule",
   _MakeMessageHandler(`function(module) {
     for (let slot of this.GetSlotNames()) {
@@ -483,8 +487,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "RemoveSlot",
   _MakeMessageHandler(`function(name) {
   _RemoveSlot(this, name);
@@ -497,8 +501,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "InstanceOf",
   _MakeMessageHandler(`function(other) {
     let current = this;
@@ -516,8 +520,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "SetAsCreator",
   _MakeMessageHandler(`function(slot) {
     this[slot].SetCreator(this, slot);
@@ -530,8 +534,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core"),
+slot(
+  "World.Core",
   "TopObject",
   (function() {
     let object = ref("World.Core.TopObject");
@@ -554,7 +558,7 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(ref("World.Core"), "parent", ref("World.Core.Namespace"));
+slot("World.Core", "parent", ref("World.Core.Namespace"));
 _AddPrototypeSlot(ref("World.Core"), "parent");
 _SetSlotAnnotation(
   ref("World.Core"),
@@ -563,8 +567,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core"),
+slot(
+  "World.Core",
   "Module",
   (function() {
     let object = ref("World.Core.Module");
@@ -583,7 +587,7 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(ref("World.Core.Module"), "parent", ref("World.Core.TopObject"));
+slot("World.Core.Module", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Core.Module"), "parent");
 _SetSlotAnnotation(
   ref("World.Core.Module"),
@@ -592,8 +596,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.Module"),
+slot(
+  "World.Core.Module",
   "FindSlots",
   _MakeMessageHandler(`function() {
   // Get all slots in objects tagged with the module.
@@ -630,8 +634,8 @@ _SetSlotAnnotation(
   `Find all slots that have been annotated with this module.`
 );
 
-_AddSlot(
-  ref("World.Core.Module"),
+slot(
+  "World.Core.Module",
   "GenerateCode",
   _MakeMessageHandler(`function() {
   let slots = this.FindSlots();
@@ -661,7 +665,7 @@ _AddSlot(
     } else {
         valueExpr = this.GenerateValueExpression(value)
     }
-    code += \`_AddSlot(ref("\${objpath}"), "\${slot}", \${valueExpr});\\n\`
+    code += \`slot("\${objpath}", "\${slot}", \${valueExpr});\\n\`
     if(_IsPrototypeSlot(object, slot)) {
         code += \`_AddPrototypeSlot(ref("\${objpath}"), "\${slot}")\\n\`;
     }
@@ -687,8 +691,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.Module"),
+slot(
+  "World.Core.Module",
   "TracePath",
   _MakeMessageHandler(`function(object) {
     if (object == World) return ['World'];
@@ -713,16 +717,20 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.Module"),
+slot(
+  "World.Core.Module",
   "prelude",
-  `function ref(path) {
-    var parts = path.split('.');
-	var current = window;
-	for(let part of parts) {
-	  current = (current[part] = current[part] || _EmptyObject());
-    }
-	return current;
+  `let ref = function(path) {
+  var parts = path.split('.');
+  var current = window;
+  for(let part of parts) {
+    current = (current[part] = current[part] || _EmptyObject());
+  }
+  return current;
+}
+
+let slot = function(path, name, value) {
+  _AddSlot(ref(path), name, value);
 }
 
 `
@@ -734,8 +742,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Core.Module"),
+slot(
+  "World.Core.Module",
   "GenerateValueExpression",
   _MakeMessageHandler(`function(value) {
     if (_IsMessageHandler(value)) {
@@ -760,8 +768,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World"),
+slot(
+  "World",
   "Modules",
   (function() {
     let object = ref("World.Modules");
@@ -784,8 +792,8 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(
-  ref("World.Modules"),
+slot(
+  "World.Modules",
   "init",
   (function() {
     let object = ref("World.Modules.init");
@@ -803,7 +811,7 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(ref("World.Modules.init"), "parent", ref("World.Core.Module"));
+slot("World.Modules.init", "parent", ref("World.Core.Module"));
 _AddPrototypeSlot(ref("World.Modules.init"), "parent");
 _SetSlotAnnotation(
   ref("World.Modules.init"),
@@ -812,7 +820,7 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(ref("World.Modules"), "parent", ref("World.Core.TopObject"));
+slot("World.Modules", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Modules"), "parent");
 _SetSlotAnnotation(
   ref("World.Modules"),
@@ -821,12 +829,12 @@ _SetSlotAnnotation(
   ref("World.Modules.init")
 );
 
-_AddSlot(ref("World"), "parent", ref("World.Core.Namespace"));
+slot("World", "parent", ref("World.Core.Namespace"));
 _AddPrototypeSlot(ref("World"), "parent");
 _SetSlotAnnotation(ref("World"), "parent", "module", ref("World.Modules.init"));
 
-_AddSlot(
-  ref("World"),
+slot(
+  "World",
   "World",
   (function() {
     let object = ref("World");

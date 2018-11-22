@@ -1,14 +1,18 @@
-function ref(path) {
+let ref = function(path) {
   var parts = path.split(".");
   var current = window;
   for (let part of parts) {
     current = current[part] = current[part] || _EmptyObject();
   }
   return current;
-}
+};
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+let slot = function(path, name, value) {
+  _AddSlot(ref(path), name, value);
+};
+
+slot(
+  "World.Core.TopObject",
   "CreateEditor",
   _MakeMessageHandler(`
 function() {
@@ -29,8 +33,8 @@ _SetSlotAnnotation(
   `editor`
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "OpenEditor",
   _MakeMessageHandler(`
 function() {
@@ -51,8 +55,8 @@ _SetSlotAnnotation(
   `editor`
 );
 
-_AddSlot(
-  ref("World.Core.TopObject"),
+slot(
+  "World.Core.TopObject",
   "RenderWidget",
   _MakeMessageHandler(`function() {
     return <button
@@ -75,8 +79,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Core.Module"),
+slot(
+  "World.Core.Module",
   "Export",
   _MakeMessageHandler(`function() {
   let code = this.GenerateCode();
@@ -91,8 +95,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Modules"),
+slot(
+  "World.Modules",
   "interface",
   (function() {
     let object = ref("World.Modules.interface");
@@ -110,7 +114,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Modules.interface"), "parent", ref("World.Core.Module"));
+slot("World.Modules.interface", "parent", ref("World.Core.Module"));
 _AddPrototypeSlot(ref("World.Modules.interface"), "parent");
 _SetSlotAnnotation(
   ref("World.Modules.interface"),
@@ -119,8 +123,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World"),
+slot(
+  "World",
   "Interface",
   (function() {
     let object = ref("World.Interface");
@@ -143,7 +147,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface"), "parent", ref("World.Core.Namespace"));
+slot("World.Interface", "parent", ref("World.Core.Namespace"));
 _AddPrototypeSlot(ref("World.Interface"), "parent");
 _SetSlotAnnotation(
   ref("World.Interface"),
@@ -152,8 +156,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface"),
+slot(
+  "World.Interface",
   "WindowManager",
   (function() {
     let object = ref("World.Interface.WindowManager");
@@ -176,8 +180,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.WindowManager"),
+slot(
+  "World.Interface.WindowManager",
   "Render",
   _MakeMessageHandler(`function() {
   return <>
@@ -192,8 +196,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.WindowManager"),
+slot(
+  "World.Interface.WindowManager",
   "Update",
   _MakeMessageHandler(`function(dt) {
     World.Interface.MainMenu.Update(dt);
@@ -207,8 +211,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.WindowManager"),
+slot(
+  "World.Interface.WindowManager",
   "AddWindow",
   _MakeMessageHandler(`function(window) {
     this.windows = this.windows || [];
@@ -223,8 +227,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.WindowManager"),
+slot(
+  "World.Interface.WindowManager",
   "RemoveWindow",
   _MakeMessageHandler(`function(window) {
     this.windows = this.windows || [];
@@ -238,11 +242,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.WindowManager"),
-  "parent",
-  ref("World.Core.TopObject")
-);
+slot("World.Interface.WindowManager", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Interface.WindowManager"), "parent");
 _SetSlotAnnotation(
   ref("World.Interface.WindowManager"),
@@ -251,8 +251,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.WindowManager"),
+slot(
+  "World.Interface.WindowManager",
   "IsOpen",
   _MakeMessageHandler(`function(window) {
     return this.windows.includes(window);
@@ -265,8 +265,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.WindowManager"),
+slot(
+  "World.Interface.WindowManager",
   "MoveToFront",
   _MakeMessageHandler(`function(window) {
     if (!this.IsOpen(window))
@@ -281,8 +281,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.WindowManager"),
+slot(
+  "World.Interface.WindowManager",
   "GetMaxZ",
   _MakeMessageHandler(`function() {
     return Math.max(0, ...this.windows.map(window => window.zIndex));
@@ -295,8 +295,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface"),
+slot(
+  "World.Interface",
   "Window",
   (function() {
     let object = ref("World.Interface.Window");
@@ -314,7 +314,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.Window"), "parent", ref("World.Core.TopObject"));
+slot("World.Interface.Window", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Interface.Window"), "parent");
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
@@ -323,7 +323,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.Window"), "top", 0);
+slot("World.Interface.Window", "top", 0);
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
   "top",
@@ -331,7 +331,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.Window"), "left", 0);
+slot("World.Interface.Window", "left", 0);
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
   "left",
@@ -339,8 +339,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.Window"),
+slot(
+  "World.Interface.Window",
   "Open",
   _MakeMessageHandler(
     `function() { World.Interface.WindowManager.AddWindow(this) }`
@@ -353,8 +353,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.Window"),
+slot(
+  "World.Interface.Window",
   "Close",
   _MakeMessageHandler(
     `function() { World.Interface.WindowManager.RemoveWindow(this) }`
@@ -367,8 +367,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.Window"),
+slot(
+  "World.Interface.Window",
   "Update",
   _MakeMessageHandler(`function(dt) {
     if (this.windowDiv && this.windowDiv instanceof HTMLElement) {
@@ -384,8 +384,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.Window"),
+slot(
+  "World.Interface.Window",
   "RenderContent",
   _MakeMessageHandler(`function() { }`)
 );
@@ -396,8 +396,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.Window"),
+slot(
+  "World.Interface.Window",
   "GetTitle",
   _MakeMessageHandler(`function() { return 'Untitled Window'; }`)
 );
@@ -408,8 +408,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.Window"),
+slot(
+  "World.Interface.Window",
   "Render",
   _MakeMessageHandler(`function() {
   let isMobile = MobileDetect.mobile() !== null;
@@ -515,7 +515,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.Window"), "width", 400);
+slot("World.Interface.Window", "width", 400);
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
   "width",
@@ -523,7 +523,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.Window"), "height", 600);
+slot("World.Interface.Window", "height", 600);
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
   "height",
@@ -531,7 +531,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.Window"), "barColor", `#285477`);
+slot("World.Interface.Window", "barColor", `#285477`);
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
   "barColor",
@@ -539,8 +539,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.Window"),
+slot(
+  "World.Interface.Window",
   "IsOpen",
   _MakeMessageHandler(`function() {
     return World.Interface.WindowManager.IsOpen(this);
@@ -553,8 +553,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.Window"),
+slot(
+  "World.Interface.Window",
   "MoveToFront",
   _MakeMessageHandler(`function() {
     World.Interface.WindowManager.MoveToFront(this);
@@ -567,7 +567,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.Window"), "padding", `5px`);
+slot("World.Interface.Window", "padding", `5px`);
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
   "padding",
@@ -575,7 +575,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.Window"), "zIndex", 0);
+slot("World.Interface.Window", "zIndex", 0);
 _SetSlotAnnotation(
   ref("World.Interface.Window"),
   "zIndex",
@@ -583,8 +583,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.Window"),
+slot(
+  "World.Interface.Window",
   "New",
   _MakeMessageHandler(`function() {
     let inst = this.Extend();
@@ -599,8 +599,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface"),
+slot(
+  "World.Interface",
   "HandlerEditor",
   (function() {
     let object = ref("World.Interface.HandlerEditor");
@@ -623,11 +623,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.HandlerEditor"),
-  "parent",
-  ref("World.Interface.Window")
-);
+slot("World.Interface.HandlerEditor", "parent", ref("World.Interface.Window"));
 _AddPrototypeSlot(ref("World.Interface.HandlerEditor"), "parent");
 _SetSlotAnnotation(
   ref("World.Interface.HandlerEditor"),
@@ -636,8 +632,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.HandlerEditor"),
+slot(
+  "World.Interface.HandlerEditor",
   "RenderContent",
   _MakeMessageHandler(`function() {
   return <div style={{ height: '100%', display: 'flex', flexDirection: 'column'}}>
@@ -655,8 +651,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.HandlerEditor"),
+slot(
+  "World.Interface.HandlerEditor",
   "New",
   _MakeMessageHandler(`function(target, slot) {
   let inst = World.Interface.Window.New.call(this);
@@ -673,8 +669,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.HandlerEditor"),
+slot(
+  "World.Interface.HandlerEditor",
   "GetTitle",
   _MakeMessageHandler(`function() {
  return "HandlerEditor: " + this.target.toString() + "->" + this.slot;
@@ -687,7 +683,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.HandlerEditor"), "padding", `0px`);
+slot("World.Interface.HandlerEditor", "padding", `0px`);
 _SetSlotAnnotation(
   ref("World.Interface.HandlerEditor"),
   "padding",
@@ -695,8 +691,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface"),
+slot(
+  "World.Interface",
   "ObjectEditor",
   (function() {
     let object = ref("World.Interface.ObjectEditor");
@@ -715,11 +711,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.ObjectEditor"),
-  "parent",
-  ref("World.Interface.Window")
-);
+slot("World.Interface.ObjectEditor", "parent", ref("World.Interface.Window"));
 _AddPrototypeSlot(ref("World.Interface.ObjectEditor"), "parent");
 _SetSlotAnnotation(
   ref("World.Interface.ObjectEditor"),
@@ -728,8 +720,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.ObjectEditor"),
+slot(
+  "World.Interface.ObjectEditor",
   "GetTitle",
   _MakeMessageHandler(`function() {
     return \`\${(this.target.GetAnnotation('name') || "Unnamed Object")} (Object Editor)\`;
@@ -742,8 +734,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.ObjectEditor"),
+slot(
+  "World.Interface.ObjectEditor",
   "RenderContent",
   _MakeMessageHandler(`function() {
   let description = this.target.GetAnnotation("description");
@@ -805,8 +797,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.ObjectEditor"),
+slot(
+  "World.Interface.ObjectEditor",
   "New",
   _MakeMessageHandler(`function(target) {
     let inst = World.Interface.Window.New.call(this);
@@ -821,8 +813,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.ObjectEditor"),
+slot(
+  "World.Interface.ObjectEditor",
   "RenderSlot",
   _MakeMessageHandler(`function(slot) {
     let value = this.target[slot];
@@ -861,8 +853,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface"),
+slot(
+  "World.Interface",
   "MainMenu",
   (function() {
     let object = ref("World.Interface.MainMenu");
@@ -885,11 +877,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.MainMenu"),
-  "parent",
-  ref("World.Interface.Window")
-);
+slot("World.Interface.MainMenu", "parent", ref("World.Interface.Window"));
 _AddPrototypeSlot(ref("World.Interface.MainMenu"), "parent");
 _SetSlotAnnotation(
   ref("World.Interface.MainMenu"),
@@ -898,7 +886,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.MainMenu"), "left", 0);
+slot("World.Interface.MainMenu", "left", 0);
 _SetSlotAnnotation(
   ref("World.Interface.MainMenu"),
   "left",
@@ -906,7 +894,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.MainMenu"), "top", 0);
+slot("World.Interface.MainMenu", "top", 0);
 _SetSlotAnnotation(
   ref("World.Interface.MainMenu"),
   "top",
@@ -914,8 +902,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.MainMenu"),
+slot(
+  "World.Interface.MainMenu",
   "Render",
   _MakeMessageHandler(`function() {
   let isMobile = MobileDetect.mobile() !== null;
@@ -1002,7 +990,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.MainMenu"), "windowID", `mainmenu`);
+slot("World.Interface.MainMenu", "windowID", `mainmenu`);
 _SetSlotAnnotation(
   ref("World.Interface.MainMenu"),
   "windowID",
@@ -1010,8 +998,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface"),
+slot(
+  "World.Interface",
   "CanvasWindow",
   (function() {
     let object = ref("World.Interface.CanvasWindow");
@@ -1029,11 +1017,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.CanvasWindow"),
-  "parent",
-  ref("World.Interface.Window")
-);
+slot("World.Interface.CanvasWindow", "parent", ref("World.Interface.Window"));
 _AddPrototypeSlot(ref("World.Interface.CanvasWindow"), "parent");
 _SetSlotAnnotation(
   ref("World.Interface.CanvasWindow"),
@@ -1042,8 +1026,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.CanvasWindow"),
+slot(
+  "World.Interface.CanvasWindow",
   "RenderContent",
   _MakeMessageHandler(`function() {
     if (this.canvas && this.canvas instanceof HTMLElement) {
@@ -1075,8 +1059,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.CanvasWindow"),
+slot(
+  "World.Interface.CanvasWindow",
   "New",
   _MakeMessageHandler(`function(target) {
     let inst = World.Interface.Window.New.call(this);
@@ -1090,8 +1074,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.CanvasWindow"),
+slot(
+  "World.Interface.CanvasWindow",
   "GetTitle",
   _MakeMessageHandler(`function() {
     return "CanvasWindow"
@@ -1104,7 +1088,7 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(ref("World.Interface.CanvasWindow"), "padding", `0px`);
+slot("World.Interface.CanvasWindow", "padding", `0px`);
 _SetSlotAnnotation(
   ref("World.Interface.CanvasWindow"),
   "padding",
@@ -1112,8 +1096,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.CanvasWindow"),
+slot(
+  "World.Interface.CanvasWindow",
   "RenderCanvas",
   _MakeMessageHandler(`function(canvas) {
     let ctx = canvas.getContext('2d');
@@ -1131,8 +1115,8 @@ _SetSlotAnnotation(
   ref("World.Modules.interface")
 );
 
-_AddSlot(
-  ref("World.Interface.CanvasWindow"),
+slot(
+  "World.Interface.CanvasWindow",
   "SetCanvas",
   _MakeMessageHandler(`function(canvas) {
     this.canvas = canvas;

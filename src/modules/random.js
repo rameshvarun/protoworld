@@ -1,14 +1,18 @@
-function ref(path) {
+let ref = function(path) {
   var parts = path.split(".");
   var current = window;
   for (let part of parts) {
     current = current[part] = current[part] || _EmptyObject();
   }
   return current;
-}
+};
 
-_AddSlot(
-  ref("World.Modules"),
+let slot = function(path, name, value) {
+  _AddSlot(ref(path), name, value);
+};
+
+slot(
+  "World.Modules",
   "random",
   (function() {
     let object = ref("World.Modules.random");
@@ -26,7 +30,7 @@ _SetSlotAnnotation(
   ref("World.Modules.random")
 );
 
-_AddSlot(ref("World.Modules.random"), "parent", ref("World.Core.Module"));
+slot("World.Modules.random", "parent", ref("World.Core.Module"));
 _AddPrototypeSlot(ref("World.Modules.random"), "parent");
 _SetSlotAnnotation(
   ref("World.Modules.random"),
@@ -35,8 +39,8 @@ _SetSlotAnnotation(
   ref("World.Modules.random")
 );
 
-_AddSlot(
-  ref("World"),
+slot(
+  "World",
   "Random",
   (function() {
     let object = ref("World.Random");
@@ -59,7 +63,7 @@ _SetSlotAnnotation(
   ref("World.Modules.random")
 );
 
-_AddSlot(ref("World.Random"), "parent", ref("World.Core.TopObject"));
+slot("World.Random", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Random"), "parent");
 _SetSlotAnnotation(
   ref("World.Random"),
@@ -68,8 +72,8 @@ _SetSlotAnnotation(
   ref("World.Modules.random")
 );
 
-_AddSlot(
-  ref("World.Random"),
+slot(
+  "World.Random",
   "Chance",
   _MakeMessageHandler(`function(prob = 0.5) {
     return Math.random() < prob;
@@ -88,8 +92,8 @@ _SetSlotAnnotation(
   ref("World.Modules.random")
 );
 
-_AddSlot(
-  ref("World.Random"),
+slot(
+  "World.Random",
   "Choice",
   _MakeMessageHandler(`function(choices) {
     return choices[Math.floor(Math.random() * choices.length)];
@@ -108,8 +112,8 @@ _SetSlotAnnotation(
   ref("World.Modules.random")
 );
 
-_AddSlot(
-  ref("World.Random"),
+slot(
+  "World.Random",
   "Uniform",
   _MakeMessageHandler(`function(min = 0.0, max = 1.0) {
     return Math.random() * (max - min) + min;
@@ -122,8 +126,8 @@ _SetSlotAnnotation(
   ref("World.Modules.random")
 );
 
-_AddSlot(
-  ref("World.Random"),
+slot(
+  "World.Random",
   "Integer",
   _MakeMessageHandler(`function(min, max) {
     return Math.floor(this.Uniform(min, max));
@@ -136,8 +140,8 @@ _SetSlotAnnotation(
   ref("World.Modules.random")
 );
 
-_AddSlot(
-  ref("World.Random"),
+slot(
+  "World.Random",
   "CharacterFromString",
   _MakeMessageHandler(`function(chars) {
     return chars[Math.floor(Math.random() * chars.length)];

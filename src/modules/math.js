@@ -1,14 +1,18 @@
-function ref(path) {
+let ref = function(path) {
   var parts = path.split(".");
   var current = window;
   for (let part of parts) {
     current = current[part] = current[part] || _EmptyObject();
   }
   return current;
-}
+};
 
-_AddSlot(
-  ref("World.Modules"),
+let slot = function(path, name, value) {
+  _AddSlot(ref(path), name, value);
+};
+
+slot(
+  "World.Modules",
   "math",
   (function() {
     let object = ref("World.Modules.math");
@@ -26,7 +30,7 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(ref("World.Modules.math"), "parent", ref("World.Core.Module"));
+slot("World.Modules.math", "parent", ref("World.Core.Module"));
 _AddPrototypeSlot(ref("World.Modules.math"), "parent");
 _SetSlotAnnotation(
   ref("World.Modules.math"),
@@ -35,8 +39,8 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(
-  ref("World"),
+slot(
+  "World",
   "Math",
   (function() {
     let object = ref("World.Math");
@@ -50,7 +54,7 @@ _AddSlot(
 );
 _SetSlotAnnotation(ref("World"), "Math", "module", ref("World.Modules.math"));
 
-_AddSlot(ref("World.Math"), "parent", ref("World.Core.Namespace"));
+slot("World.Math", "parent", ref("World.Core.Namespace"));
 _AddPrototypeSlot(ref("World.Math"), "parent");
 _SetSlotAnnotation(
   ref("World.Math"),
@@ -59,8 +63,8 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(
-  ref("World.Math"),
+slot(
+  "World.Math",
   "Vec2",
   (function() {
     let object = ref("World.Math.Vec2");
@@ -77,7 +81,7 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(ref("World.Math.Vec2"), "parent", ref("World.Core.TopObject"));
+slot("World.Math.Vec2", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Math.Vec2"), "parent");
 _SetSlotAnnotation(
   ref("World.Math.Vec2"),
@@ -86,7 +90,7 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(ref("World.Math.Vec2"), "x", 0);
+slot("World.Math.Vec2", "x", 0);
 _SetSlotAnnotation(
   ref("World.Math.Vec2"),
   "x",
@@ -94,7 +98,7 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(ref("World.Math.Vec2"), "y", 0);
+slot("World.Math.Vec2", "y", 0);
 _SetSlotAnnotation(
   ref("World.Math.Vec2"),
   "y",
@@ -102,8 +106,8 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(
-  ref("World.Math.Vec2"),
+slot(
+  "World.Math.Vec2",
   "Length",
   _MakeMessageHandler(`function() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
@@ -116,8 +120,8 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(
-  ref("World.Math.Vec2"),
+slot(
+  "World.Math.Vec2",
   "FromXY",
   _MakeMessageHandler(`function(x, y) {
     let inst = this.Extend();
@@ -133,8 +137,8 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(
-  ref("World.Math.Vec2"),
+slot(
+  "World.Math.Vec2",
   "Add",
   _MakeMessageHandler(`function(other) {
     return World.Math.Vec2.FromXY(this.x + other.x, this.y + other.y);
@@ -147,8 +151,8 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(
-  ref("World.Math.Vec2"),
+slot(
+  "World.Math.Vec2",
   "ToString",
   _MakeMessageHandler(`function() {
     if (this === World.Math.Vec2)
@@ -164,8 +168,8 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(
-  ref("World.Math"),
+slot(
+  "World.Math",
   "Vec3",
   (function() {
     let object = ref("World.Math.Vec3");
@@ -183,7 +187,7 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(ref("World.Math.Vec3"), "parent", ref("World.Core.TopObject"));
+slot("World.Math.Vec3", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Math.Vec3"), "parent");
 _SetSlotAnnotation(
   ref("World.Math.Vec3"),
@@ -192,7 +196,7 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(ref("World.Math.Vec3"), "x", 0);
+slot("World.Math.Vec3", "x", 0);
 _SetSlotAnnotation(
   ref("World.Math.Vec3"),
   "x",
@@ -200,7 +204,7 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(ref("World.Math.Vec3"), "y", 0);
+slot("World.Math.Vec3", "y", 0);
 _SetSlotAnnotation(
   ref("World.Math.Vec3"),
   "y",
@@ -208,7 +212,7 @@ _SetSlotAnnotation(
   ref("World.Modules.math")
 );
 
-_AddSlot(ref("World.Math.Vec3"), "z", 0);
+slot("World.Math.Vec3", "z", 0);
 _SetSlotAnnotation(
   ref("World.Math.Vec3"),
   "z",

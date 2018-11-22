@@ -1,14 +1,18 @@
-function ref(path) {
+let ref = function(path) {
   var parts = path.split(".");
   var current = window;
   for (let part of parts) {
     current = current[part] = current[part] || _EmptyObject();
   }
   return current;
-}
+};
 
-_AddSlot(
-  ref("World.Modules"),
+let slot = function(path, name, value) {
+  _AddSlot(ref(path), name, value);
+};
+
+slot(
+  "World.Modules",
   "tools",
   (function() {
     let object = ref("World.Modules.tools");
@@ -26,7 +30,7 @@ _SetSlotAnnotation(
   ref("World.Modules.tools")
 );
 
-_AddSlot(ref("World.Modules.tools"), "parent", ref("World.Core.Module"));
+slot("World.Modules.tools", "parent", ref("World.Core.Module"));
 _AddPrototypeSlot(ref("World.Modules.tools"), "parent");
 _SetSlotAnnotation(
   ref("World.Modules.tools"),
@@ -35,8 +39,8 @@ _SetSlotAnnotation(
   ref("World.Modules.tools")
 );
 
-_AddSlot(
-  ref("World"),
+slot(
+  "World",
   "Tools",
   (function() {
     let object = ref("World.Tools");
@@ -49,7 +53,7 @@ _AddSlot(
 );
 _SetSlotAnnotation(ref("World"), "Tools", "module", ref("World.Modules.tools"));
 
-_AddSlot(ref("World.Tools"), "parent", ref("World.Core.Namespace"));
+slot("World.Tools", "parent", ref("World.Core.Namespace"));
 _AddPrototypeSlot(ref("World.Tools"), "parent");
 _SetSlotAnnotation(
   ref("World.Tools"),
@@ -58,8 +62,8 @@ _SetSlotAnnotation(
   ref("World.Modules.tools")
 );
 
-_AddSlot(
-  ref("World.Tools"),
+slot(
+  "World.Tools",
   "ModuleScanner",
   (function() {
     let object = ref("World.Tools.ModuleScanner");
@@ -82,11 +86,7 @@ _SetSlotAnnotation(
   ref("World.Modules.tools")
 );
 
-_AddSlot(
-  ref("World.Tools.ModuleScanner"),
-  "parent",
-  ref("World.Interface.Window")
-);
+slot("World.Tools.ModuleScanner", "parent", ref("World.Interface.Window"));
 _AddPrototypeSlot(ref("World.Tools.ModuleScanner"), "parent");
 _SetSlotAnnotation(
   ref("World.Tools.ModuleScanner"),
@@ -95,8 +95,8 @@ _SetSlotAnnotation(
   ref("World.Modules.tools")
 );
 
-_AddSlot(
-  ref("World.Tools.ModuleScanner"),
+slot(
+  "World.Tools.ModuleScanner",
   "New",
   _MakeMessageHandler(`function() {
     let inst = this.Extend();
@@ -112,8 +112,8 @@ _SetSlotAnnotation(
   ref("World.Modules.tools")
 );
 
-_AddSlot(
-  ref("World.Tools.ModuleScanner"),
+slot(
+  "World.Tools.ModuleScanner",
   "FindSlots",
   _MakeMessageHandler(`function() {
   let visited = new Set();
@@ -144,8 +144,8 @@ _SetSlotAnnotation(
   ref("World.Modules.tools")
 );
 
-_AddSlot(
-  ref("World.Tools.ModuleScanner"),
+slot(
+  "World.Tools.ModuleScanner",
   "GetTitle",
   _MakeMessageHandler(`function() {
     return "Module Scanner";
@@ -158,8 +158,8 @@ _SetSlotAnnotation(
   ref("World.Modules.tools")
 );
 
-_AddSlot(
-  ref("World.Tools.ModuleScanner"),
+slot(
+  "World.Tools.ModuleScanner",
   "RenderContent",
   _MakeMessageHandler(`function() {
     return <div>

@@ -1,14 +1,18 @@
-function ref(path) {
+let ref = function(path) {
   var parts = path.split(".");
   var current = window;
   for (let part of parts) {
     current = current[part] = current[part] || _EmptyObject();
   }
   return current;
-}
+};
 
-_AddSlot(
-  ref("World.Modules"),
+let slot = function(path, name, value) {
+  _AddSlot(ref(path), name, value);
+};
+
+slot(
+  "World.Modules",
   "pixi",
   (function() {
     let object = ref("World.Modules.pixi");
@@ -26,7 +30,7 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(ref("World.Modules.pixi"), "parent", ref("World.Core.Module"));
+slot("World.Modules.pixi", "parent", ref("World.Core.Module"));
 _AddPrototypeSlot(ref("World.Modules.pixi"), "parent");
 _SetSlotAnnotation(
   ref("World.Modules.pixi"),
@@ -35,8 +39,8 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(
-  ref("World"),
+slot(
+  "World",
   "PIXI",
   (function() {
     let object = ref("World.PIXI");
@@ -48,7 +52,7 @@ _AddSlot(
 );
 _SetSlotAnnotation(ref("World"), "PIXI", "module", ref("World.Modules.pixi"));
 
-_AddSlot(ref("World.PIXI"), "parent", ref("World.Core.Namespace"));
+slot("World.PIXI", "parent", ref("World.Core.Namespace"));
 _AddPrototypeSlot(ref("World.PIXI"), "parent");
 _SetSlotAnnotation(
   ref("World.PIXI"),
@@ -57,8 +61,8 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(
-  ref("World.PIXI"),
+slot(
+  "World.PIXI",
   "GameObject",
   (function() {
     let object = ref("World.PIXI.GameObject");
@@ -75,7 +79,7 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(ref("World.PIXI.GameObject"), "parent", ref("World.Core.TopObject"));
+slot("World.PIXI.GameObject", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.PIXI.GameObject"), "parent");
 _SetSlotAnnotation(
   ref("World.PIXI.GameObject"),
@@ -84,8 +88,8 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(
-  ref("World.PIXI"),
+slot(
+  "World.PIXI",
   "GameComponent",
   (function() {
     let object = ref("World.PIXI.GameComponent");
@@ -102,11 +106,7 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(
-  ref("World.PIXI.GameComponent"),
-  "parent",
-  ref("World.Core.TopObject")
-);
+slot("World.PIXI.GameComponent", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.PIXI.GameComponent"), "parent");
 _SetSlotAnnotation(
   ref("World.PIXI.GameComponent"),
@@ -115,8 +115,8 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(
-  ref("World.PIXI"),
+slot(
+  "World.PIXI",
   "Scene",
   (function() {
     let object = ref("World.PIXI.Scene");
@@ -133,7 +133,7 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(ref("World.PIXI.Scene"), "parent", ref("World.Core.TopObject"));
+slot("World.PIXI.Scene", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.PIXI.Scene"), "parent");
 _SetSlotAnnotation(
   ref("World.PIXI.Scene"),
@@ -142,8 +142,8 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(
-  ref("World.PIXI"),
+slot(
+  "World.PIXI",
   "PIXIWindow",
   (function() {
     let object = ref("World.PIXI.PIXIWindow");
@@ -160,11 +160,7 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(
-  ref("World.PIXI.PIXIWindow"),
-  "parent",
-  ref("World.Interface.CanvasWindow")
-);
+slot("World.PIXI.PIXIWindow", "parent", ref("World.Interface.CanvasWindow"));
 _AddPrototypeSlot(ref("World.PIXI.PIXIWindow"), "parent");
 _SetSlotAnnotation(
   ref("World.PIXI.PIXIWindow"),
@@ -173,8 +169,8 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(
-  ref("World.PIXI.PIXIWindow"),
+slot(
+  "World.PIXI.PIXIWindow",
   "SetCanvas",
   _MakeMessageHandler(`function(canvas) {
     World.Interface.CanvasWindow.SetCanvas.call(this, canvas)
@@ -191,8 +187,8 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(
-  ref("World.PIXI.PIXIWindow"),
+slot(
+  "World.PIXI.PIXIWindow",
   "GetTitle",
   _MakeMessageHandler(`function() {
     return "PIXI Window"
@@ -205,8 +201,8 @@ _SetSlotAnnotation(
   ref("World.Modules.pixi")
 );
 
-_AddSlot(
-  ref("World.PIXI.PIXIWindow"),
+slot(
+  "World.PIXI.PIXIWindow",
   "RenderCanvas",
   _MakeMessageHandler(`function() {
 }`)

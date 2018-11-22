@@ -1,14 +1,18 @@
-function ref(path) {
+let ref = function(path) {
   var parts = path.split(".");
   var current = window;
   for (let part of parts) {
     current = current[part] = current[part] || _EmptyObject();
   }
   return current;
-}
+};
 
-_AddSlot(
-  ref("World.Modules"),
+let slot = function(path, name, value) {
+  _AddSlot(ref(path), name, value);
+};
+
+slot(
+  "World.Modules",
   "manual",
   (function() {
     let object = ref("World.Modules.manual");
@@ -26,7 +30,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(ref("World.Modules.manual"), "parent", ref("World.Core.Module"));
+slot("World.Modules.manual", "parent", ref("World.Core.Module"));
 _AddPrototypeSlot(ref("World.Modules.manual"), "parent");
 _SetSlotAnnotation(
   ref("World.Modules.manual"),
@@ -35,8 +39,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World"),
+slot(
+  "World",
   "Manual",
   (function() {
     let object = ref("World.Manual");
@@ -54,7 +58,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(ref("World.Manual"), "parent", ref("World.Core.Namespace"));
+slot("World.Manual", "parent", ref("World.Core.Namespace"));
 _AddPrototypeSlot(ref("World.Manual"), "parent");
 _SetSlotAnnotation(
   ref("World.Manual"),
@@ -63,8 +67,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual"),
+slot(
+  "World.Manual",
   "ManualCategory",
   (function() {
     let object = ref("World.Manual.ManualCategory");
@@ -82,11 +86,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.ManualCategory"),
-  "parent",
-  ref("World.Core.TopObject")
-);
+slot("World.Manual.ManualCategory", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Manual.ManualCategory"), "parent");
 _SetSlotAnnotation(
   ref("World.Manual.ManualCategory"),
@@ -95,8 +95,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual"),
+slot(
+  "World.Manual",
   "ManualPage",
   (function() {
     let object = ref("World.Manual.ManualPage");
@@ -114,7 +114,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(ref("World.Manual.ManualPage"), "parent", ref("World.Core.TopObject"));
+slot("World.Manual.ManualPage", "parent", ref("World.Core.TopObject"));
 _AddPrototypeSlot(ref("World.Manual.ManualPage"), "parent");
 _SetSlotAnnotation(
   ref("World.Manual.ManualPage"),
@@ -123,7 +123,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(ref("World.Manual.ManualPage"), "title", `Untitled Manual Page`);
+slot("World.Manual.ManualPage", "title", `Untitled Manual Page`);
 _SetSlotAnnotation(
   ref("World.Manual.ManualPage"),
   "title",
@@ -131,8 +131,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.ManualPage"),
+slot(
+  "World.Manual.ManualPage",
   "RenderPage",
   _MakeMessageHandler(`function() {
     return <h1>Empty Manual Page</h1>;
@@ -145,8 +145,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual"),
+slot(
+  "World.Manual",
   "ManualViewer",
   (function() {
     let object = ref("World.Manual.ManualViewer");
@@ -164,11 +164,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.ManualViewer"),
-  "parent",
-  ref("World.Interface.Window")
-);
+slot("World.Manual.ManualViewer", "parent", ref("World.Interface.Window"));
 _AddPrototypeSlot(ref("World.Manual.ManualViewer"), "parent");
 _SetSlotAnnotation(
   ref("World.Manual.ManualViewer"),
@@ -177,8 +173,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.ManualViewer"),
+slot(
+  "World.Manual.ManualViewer",
   "New",
   _MakeMessageHandler(`function(target) {
     let inst = World.Interface.Window.New.call(this);
@@ -193,8 +189,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.ManualViewer"),
+slot(
+  "World.Manual.ManualViewer",
   "RenderContent",
   _MakeMessageHandler(`function() {
     return <div style={{display: 'flex', height: '100%'}}>
@@ -214,7 +210,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(ref("World.Manual.ManualViewer"), "padding", `0px`);
+slot("World.Manual.ManualViewer", "padding", `0px`);
 _SetSlotAnnotation(
   ref("World.Manual.ManualViewer"),
   "padding",
@@ -222,8 +218,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.ManualViewer"),
+slot(
+  "World.Manual.ManualViewer",
   "GetTitle",
   _MakeMessageHandler(`function() {
     return "Manual Viewer";
@@ -236,7 +232,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(ref("World.Manual.ManualViewer"), "width", 800);
+slot("World.Manual.ManualViewer", "width", 800);
 _SetSlotAnnotation(
   ref("World.Manual.ManualViewer"),
   "width",
@@ -244,7 +240,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(ref("World.Manual.ManualViewer"), "height", 600);
+slot("World.Manual.ManualViewer", "height", 600);
 _SetSlotAnnotation(
   ref("World.Manual.ManualViewer"),
   "height",
@@ -252,8 +248,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.ManualViewer"),
+slot(
+  "World.Manual.ManualViewer",
   "RenderNavigation",
   _MakeMessageHandler(`function(current) {
     let root = World.Manual.root;
@@ -271,8 +267,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual"),
+slot(
+  "World.Manual",
   "root",
   (function() {
     let object = ref("World.Manual.root");
@@ -289,11 +285,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.root"),
-  "parent",
-  ref("World.Manual.ManualCategory")
-);
+slot("World.Manual.root", "parent", ref("World.Manual.ManualCategory"));
 _AddPrototypeSlot(ref("World.Manual.root"), "parent");
 _SetSlotAnnotation(
   ref("World.Manual.root"),
@@ -302,8 +294,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.root"),
+slot(
+  "World.Manual.root",
   "introduction",
   (function() {
     let object = ref("World.Manual.root.introduction");
@@ -320,8 +312,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.root.introduction"),
+slot(
+  "World.Manual.root.introduction",
   "parent",
   ref("World.Manual.ManualPage")
 );
@@ -333,8 +325,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.root.introduction"),
+slot(
+  "World.Manual.root.introduction",
   "RenderPage",
   _MakeMessageHandler(`function() {
     return <>
@@ -366,7 +358,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(ref("World.Manual.root.introduction"), "title", `Introduction`);
+slot("World.Manual.root.introduction", "title", `Introduction`);
 _SetSlotAnnotation(
   ref("World.Manual.root.introduction"),
   "title",
@@ -374,8 +366,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.root"),
+slot(
+  "World.Manual.root",
   "modules",
   (function() {
     let object = ref("World.Manual.root.modules");
@@ -392,11 +384,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.root.modules"),
-  "parent",
-  ref("World.Manual.ManualPage")
-);
+slot("World.Manual.root.modules", "parent", ref("World.Manual.ManualPage"));
 _AddPrototypeSlot(ref("World.Manual.root.modules"), "parent");
 _SetSlotAnnotation(
   ref("World.Manual.root.modules"),
@@ -405,7 +393,7 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(ref("World.Manual.root.modules"), "title", `Modules`);
+slot("World.Manual.root.modules", "title", `Modules`);
 _SetSlotAnnotation(
   ref("World.Manual.root.modules"),
   "title",
@@ -413,8 +401,8 @@ _SetSlotAnnotation(
   ref("World.Modules.manual")
 );
 
-_AddSlot(
-  ref("World.Manual.root.modules"),
+slot(
+  "World.Manual.root.modules",
   "RenderPage",
   _MakeMessageHandler(`function() {
     return <>
