@@ -1,3 +1,4 @@
+/* BEGIN MODULE PRELUDE */
 let ref = function(path) {
   var parts = path.split(".");
   var current = window;
@@ -17,6 +18,7 @@ let slot = function(path, name, value, annotations) {
 let msg = function(code) {
   return _MakeMessageHandler(code);
 };
+/* END MODULE PRELUDE */
 
 slot(
   "World",
@@ -508,7 +510,9 @@ slot(
 slot(
   "World.Core.Module",
   "prelude",
-  `let ref = function(path) {
+  `
+/* BEGIN MODULE PRELUDE */
+let ref = function(path) {
   var parts = path.split('.');
   var current = window;
   for(let part of parts) {
@@ -527,6 +531,7 @@ let slot = function(path, name, value, annotations) {
 let msg = function(code) {
   return _MakeMessageHandler(code);
 }
+/* END MODULE PRELUDE */
 
 `,
   { module: ref("World.Modules.init") }
