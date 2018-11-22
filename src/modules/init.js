@@ -11,6 +11,10 @@ let slot = function(path, name, value) {
   _AddSlot(ref(path), name, value);
 };
 
+let msg = function(code) {
+  return _MakeMessageHandler(code);
+};
+
 slot(
   "World",
   "Core",
@@ -66,7 +70,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "AddSlot",
-  _MakeMessageHandler(`function(name, value) {
+  msg(`function(name, value) {
   _AddSlot(this, name, value);
 }`)
 );
@@ -86,7 +90,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "Extend",
-  _MakeMessageHandler(`function(name, value) {
+  msg(`function(name, value) {
   let child = _EmptyObject();
   _AddSlot(child, 'parent', this)
   _AddPrototypeSlot(child, 'parent')
@@ -109,7 +113,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "SetAnnotation",
-  _MakeMessageHandler(`
+  msg(`
 function(name, value) {
 	_SetAnnotation(this, name, value);
 }
@@ -125,7 +129,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetAnnotation",
-  _MakeMessageHandler(`
+  msg(`
 function(name) {
 	return _GetAnnotation(this, name);
 }
@@ -141,7 +145,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetSlotNames",
-  _MakeMessageHandler(`
+  msg(`
 function() {
 	return _GetSlotNames(this);
 }
@@ -157,7 +161,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "ToString",
-  _MakeMessageHandler(`
+  msg(`
 function() {
 	return this.GetAnnotation('name') || 'Unnamed Object';
 }
@@ -173,7 +177,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "SetName",
-  _MakeMessageHandler(`function(name) {
+  msg(`function(name) {
   this.SetAnnotation('name', name);
 }`)
 );
@@ -187,7 +191,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "SetDescription",
-  _MakeMessageHandler(`function(desc) {
+  msg(`function(desc) {
   this.SetAnnotation('description', desc);
 }`)
 );
@@ -201,7 +205,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "SetSlotAnnotation",
-  _MakeMessageHandler(
+  msg(
     `function(slot, name, value) { _SetSlotAnnotation(this, slot, name, value); }`
   )
 );
@@ -215,7 +219,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "SetSlotModule",
-  _MakeMessageHandler(`function(slot, module) {
+  msg(`function(slot, module) {
     this.SetSlotAnnotation(slot, 'module', module);
 }`)
 );
@@ -229,7 +233,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "SetCreator",
-  _MakeMessageHandler(`function(object, slot) {
+  msg(`function(object, slot) {
   this.SetAnnotation('creator', object);
   this.SetAnnotation('creatorSlot', slot);
 }`)
@@ -244,7 +248,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetCreator",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return this.GetAnnotation('creator');
 }`)
 );
@@ -258,7 +262,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetName",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return this.GetAnnotation('name');
 }`)
 );
@@ -272,7 +276,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetDescription",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return this.GetAnnotation('description');
 }`)
 );
@@ -286,7 +290,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetSlotAnnotation",
-  _MakeMessageHandler(`function(slot, name) {
+  msg(`function(slot, name) {
     return _GetSlotAnnotation(this, slot, name);
 }`)
 );
@@ -300,7 +304,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetSlotModule",
-  _MakeMessageHandler(`function(slot) {
+  msg(`function(slot) {
     return this.GetSlotAnnotation(slot, "module");
 }`)
 );
@@ -314,7 +318,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "ListModules",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     let modules = new Set();
     for (let slot of this.GetSlotNames()) {
         let module = this.GetSlotModule(slot);
@@ -333,7 +337,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "SetSlotDescription",
-  _MakeMessageHandler(`function(slot, desc) {
+  msg(`function(slot, desc) {
     this.SetSlotAnnotation(slot, "description", desc);
 }`)
 );
@@ -347,7 +351,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetSlotDescription",
-  _MakeMessageHandler(`function(slot) {
+  msg(`function(slot) {
     return this.GetSlotAnnotation(slot, 'description')
 }`)
 );
@@ -361,7 +365,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "AddMessageHandler",
-  _MakeMessageHandler(`function(slot) {
+  msg(`function(slot) {
     this.AddSlot(slot, _MakeMessageHandler('function() {\\n}'))
 }`)
 );
@@ -375,7 +379,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "SetSlotCategory",
-  _MakeMessageHandler(`function(slot, category) {
+  msg(`function(slot, category) {
     this.SetSlotAnnotation(slot, "category", category);
 }`)
 );
@@ -395,7 +399,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetSlotCategory",
-  _MakeMessageHandler(`function(slot) {
+  msg(`function(slot) {
     return this.GetSlotAnnotation(slot, "category");
 }`)
 );
@@ -415,7 +419,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "ListCategories",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     let categories = new Set();
     for (let slot of this.GetSlotNames()) {
         let cat = this.GetSlotCategory(slot);
@@ -440,7 +444,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetSlotsByCategory",
-  _MakeMessageHandler(`function(cat) {
+  msg(`function(cat) {
     return this.GetSlotNames().filter(slot => this.GetSlotCategory(slot) == cat)
 }`)
 );
@@ -460,7 +464,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "GetSlotAnnotations",
-  _MakeMessageHandler(`function(slot) {
+  msg(`function(slot) {
     return _GetSlotAnnotations(this, slot)
 }`)
 );
@@ -474,7 +478,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "SetModule",
-  _MakeMessageHandler(`function(module) {
+  msg(`function(module) {
     for (let slot of this.GetSlotNames()) {
         this.SetSlotModule(slot, module);
     }
@@ -490,7 +494,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "RemoveSlot",
-  _MakeMessageHandler(`function(name) {
+  msg(`function(name) {
   _RemoveSlot(this, name);
 }`)
 );
@@ -504,7 +508,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "InstanceOf",
-  _MakeMessageHandler(`function(other) {
+  msg(`function(other) {
     let current = this;
     do {
         if (current == other) return true;
@@ -523,7 +527,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.TopObject",
   "SetAsCreator",
-  _MakeMessageHandler(`function(slot) {
+  msg(`function(slot) {
     this[slot].SetCreator(this, slot);
 }`)
 );
@@ -599,7 +603,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.Module",
   "FindSlots",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
   // Get all slots in objects tagged with the module.
   let visited = new Set();
   let slots = [];
@@ -637,7 +641,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.Module",
   "GenerateCode",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
   let slots = this.FindSlots();
 
   let code = this.prelude;
@@ -694,7 +698,7 @@ _SetSlotAnnotation(
 slot(
   "World.Core.Module",
   "TracePath",
-  _MakeMessageHandler(`function(object) {
+  msg(`function(object) {
     if (object == World) return ['World'];
     else {
         let creator = _GetAnnotation(object, 'creator');
@@ -733,6 +737,10 @@ let slot = function(path, name, value) {
   _AddSlot(ref(path), name, value);
 }
 
+let msg = function(code) {
+  return _MakeMessageHandler(code);
+}
+
 `
 );
 _SetSlotAnnotation(
@@ -745,11 +753,11 @@ _SetSlotAnnotation(
 slot(
   "World.Core.Module",
   "GenerateValueExpression",
-  _MakeMessageHandler(`function(value) {
+  msg(`function(value) {
     if (_IsMessageHandler(value)) {
       let handlerCode = _GetMessageHandlerCode(value);
       let escapedCode = escapeTemplateString(handlerCode);
-      return \`_MakeMessageHandler(\${escapedCode})\`
+      return \`msg(\${escapedCode})\`
     } else if (_IsProtoObject(value)) {
       return \`ref("\${this.TracePath(value).join('.')}")\`;
     } else if (typeof value == "string") {
