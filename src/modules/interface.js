@@ -34,16 +34,6 @@ let msg = function(code) {
 let mod = ref("World.Modules.interface");
 
 slot(
-  "World.Core.Module",
-  "Export",
-  msg(`function() {
-  let code = this.GenerateCode();
-  var blob = new Blob([code], {type: "text/plain;charset=utf-8"});
-  FileSaver.saveAs(blob, "module.js");
-}`)
-);
-
-slot(
   "World.Core.TopObject",
   "CreateEditor",
   msg(`
@@ -76,6 +66,16 @@ slot(
             </button>;
 }`),
   { category: `editor` }
+);
+
+slot(
+  "World.Core.Module",
+  "Export",
+  msg(`function() {
+  let code = this.GenerateCode();
+  var blob = new Blob([code], {type: "text/plain;charset=utf-8"});
+  FileSaver.saveAs(blob, "module.js");
+}`)
 );
 
 slot(
@@ -600,15 +600,15 @@ slot(
     <div>
       {this.RenderDescriptionWidget()}
       <hr />
-      <div>
-        <b>Modules:</b>
-        {modules.length > 0 ? (
-          modules.map(m => m.RenderWidget())
-        ) : (
-          <span> none</span>
+
+        {modules.length > 0 && (
+          <>
+          <b>Modules: {modules.map(m => m.RenderWidget())}</b>
+          <hr />
+          </>
         )}
-      </div>
-      <hr />
+
+
       <div><b>Slots</b></div>
       <div style={{ paddingTop: '5px'}}>
         <div ><em>uncategorized</em></div>
