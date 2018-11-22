@@ -316,6 +316,17 @@ slot(
       padding: this.padding, flexGrow: 1, overflow: 'auto', height: '500px'}
     : { padding: this.padding, flexGrow: 1, overflow: 'auto', height: '0px' };
 
+  let content = null;
+
+  try {
+      content = this.RenderContent();
+  } catch(e) {
+      content = <div>
+        An error occurred while rendering window content.
+        <pre>{e.stack || e.toString()}</pre>
+      </div>;
+  }
+
   return (
     <div
       key={this.windowID}
@@ -372,7 +383,7 @@ slot(
           />
         </span>
       </div>
-      <div key="content" style={contentStyle}>{this.RenderContent()}</div>
+      <div key="content" style={contentStyle}>{content}</div>
       <div key="bottombar" style={{backgroundColor: this.barColor, height: '10px'}}></div>
     </div>
   );
@@ -637,8 +648,12 @@ slot(
                 defaultValue={this.target.GetDescription()}></textarea></div>
 
             <button onClick={() => {
-                this.target.SetName(this.nameInput.value);
-                this.target.SetDescription(this.descriptionInput.value);
+                if (this.nameInput.value != this.target.GetName())
+                  this.target.SetName(this.nameInput.value);
+
+                if (this.descriptionInput.value != this.target.GetDescription())
+                  this.target.SetDescription(this.descriptionInput.value);
+
                 this.editingDescription = false;
             }}>Save</button>
             <button onClick={() => this.editingDescription = false}>Cancel</button>
