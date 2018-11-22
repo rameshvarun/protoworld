@@ -105,6 +105,12 @@ slot(
     let object = ref("World.PIXI.Scene");
     _SetAnnotation(object, "creator", ref("World.PIXI"));
     _SetAnnotation(object, "creatorSlot", `Scene`);
+    _SetAnnotation(object, "name", `Scene`);
+    _SetAnnotation(
+      object,
+      "description",
+      `A Scene represents a world of game objects.`
+    );
 
     return object;
   })(),
@@ -140,8 +146,12 @@ slot(
   "SetCanvas",
   msg(`function(canvas) {
     World.Interface.CanvasWindow.SetCanvas.call(this, canvas)
+    console.log("Recreating renderer and stage...")
     this.renderer = new PIXI.WebGLRenderer({
-        view: canvas
+        view: canvas,
+        width: 800,
+        height: 600,
+        backgroundColor: '0x1099bb'
     });
     this.stage = new PIXI.Container();
 }`),
