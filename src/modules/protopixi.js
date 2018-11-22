@@ -123,6 +123,7 @@ slot(
     let object = ref("World.PIXI.PIXIWindow");
     _SetAnnotation(object, "creator", ref("World.PIXI"));
     _SetAnnotation(object, "creatorSlot", `PIXIWindow`);
+    _SetAnnotation(object, "name", `PIXIWindow`);
 
     return object;
   })(),
@@ -140,7 +141,7 @@ slot(
   msg(`function(canvas) {
     World.Interface.CanvasWindow.SetCanvas.call(this, canvas)
     this.renderer = new PIXI.WebGLRenderer({
-        height: 30, width: 30, view: canvas
+        view: canvas
     });
     this.stage = new PIXI.Container();
 }`),
@@ -160,6 +161,7 @@ slot(
   "World.PIXI.PIXIWindow",
   "RenderCanvas",
   msg(`function() {
+    this.renderer.render(this.stage);
 }`),
   { module: ref("World.Modules.pixi") }
 );
