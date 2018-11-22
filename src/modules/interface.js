@@ -804,6 +804,7 @@ slot(
   _MakeMessageHandler(`function(target) {
     let inst = World.Interface.Window.New.call(this);
     inst.AddSlot('target', target);
+    inst.SetSlotAnnotation('evaluator', 'transient', true);
     return inst;
 }`)
 );
@@ -1065,6 +1066,7 @@ slot(
   "New",
   _MakeMessageHandler(`function(target) {
     let inst = World.Interface.Window.New.call(this);
+    inst.SetSlotAnnotation('canvas', 'transient', true);
     return inst;
 }`)
 );
