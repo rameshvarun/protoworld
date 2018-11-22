@@ -46,350 +46,6 @@ slot(
 
 slot(
   "World.Core",
-  "Namespace",
-  (function() {
-    let object = ref("World.Core.Namespace");
-    _SetAnnotation(object, "name", `Namespace`);
-    _SetAnnotation(
-      object,
-      "description",
-      `A namespace is a logical grouping of objects. It is a distinct concept from modules.`
-    );
-    _SetAnnotation(object, "creator", ref("World.Core"));
-    _SetAnnotation(object, "creatorSlot", `Namespace`);
-
-    return object;
-  })(),
-  { module: ref("World.Modules.init") }
-);
-
-slot("World.Core.Namespace", "parent", ref("World.Core.TopObject"), {
-  module: ref("World.Modules.init")
-});
-_AddPrototypeSlot(ref("World.Core.Namespace"), "parent");
-
-slot(
-  "World.Core.TopObject",
-  "AddSlot",
-  msg(`function(name, value) {
-  _AddSlot(this, name, value);
-}`),
-  {
-    description: `Takes in a slot name and value, and creates a slot on this object.`,
-    module: ref("World.Modules.init")
-  }
-);
-
-slot(
-  "World.Core.TopObject",
-  "Extend",
-  msg(`function(name, value) {
-  let child = _EmptyObject();
-  _AddSlot(child, 'parent', this)
-  _AddPrototypeSlot(child, 'parent')
-  return child;
-}`),
-  {
-    description: `Creates a new object with this object as a parent.`,
-    module: ref("World.Modules.init")
-  }
-);
-
-slot(
-  "World.Core.TopObject",
-  "SetAnnotation",
-  msg(`
-function(name, value) {
-	_SetAnnotation(this, name, value);
-}
-`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetAnnotation",
-  msg(`
-function(name) {
-	return _GetAnnotation(this, name);
-}
-`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetSlotNames",
-  msg(`
-function() {
-	return _GetSlotNames(this);
-}
-`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "ToString",
-  msg(`
-function() {
-	return this.GetAnnotation('name') || 'Unnamed Object';
-}
-`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "SetName",
-  msg(`function(name) {
-  this.SetAnnotation('name', name);
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "SetDescription",
-  msg(`function(desc) {
-  this.SetAnnotation('description', desc);
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "SetSlotAnnotation",
-  msg(
-    `function(slot, name, value) { _SetSlotAnnotation(this, slot, name, value); }`
-  ),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "SetSlotModule",
-  msg(`function(slot, module) {
-    this.SetSlotAnnotation(slot, 'module', module);
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "SetCreator",
-  msg(`function(object, slot) {
-  this.SetAnnotation('creator', object);
-  this.SetAnnotation('creatorSlot', slot);
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetCreator",
-  msg(`function() {
-    return this.GetAnnotation('creator');
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetName",
-  msg(`function() {
-    return this.GetAnnotation('name');
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetDescription",
-  msg(`function() {
-    return this.GetAnnotation('description');
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetSlotAnnotation",
-  msg(`function(slot, name) {
-    return _GetSlotAnnotation(this, slot, name);
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetSlotModule",
-  msg(`function(slot) {
-    return this.GetSlotAnnotation(slot, "module");
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "ListModules",
-  msg(`function() {
-    let modules = new Set();
-    for (let slot of this.GetSlotNames()) {
-        let module = this.GetSlotModule(slot);
-        if (module) modules.add(module);
-    }
-    return modules;
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "SetSlotDescription",
-  msg(`function(slot, desc) {
-    this.SetSlotAnnotation(slot, "description", desc);
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetSlotDescription",
-  msg(`function(slot) {
-    return this.GetSlotAnnotation(slot, 'description')
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "AddMessageHandler",
-  msg(`function(slot) {
-    this.AddSlot(slot, _MakeMessageHandler('function() {\\n}'))
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "SetSlotCategory",
-  msg(`function(slot, category) {
-    this.SetSlotAnnotation(slot, "category", category);
-}`),
-  { category: `categories`, module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetSlotCategory",
-  msg(`function(slot) {
-    return this.GetSlotAnnotation(slot, "category");
-}`),
-  { category: `categories`, module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "ListCategories",
-  msg(`function() {
-    let categories = new Set();
-    for (let slot of this.GetSlotNames()) {
-        let cat = this.GetSlotCategory(slot);
-        if (cat) categories.add(cat);
-    }
-    return categories;
-}`),
-  { category: `categories`, module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetSlotsByCategory",
-  msg(`function(cat) {
-    return this.GetSlotNames().filter(slot => this.GetSlotCategory(slot) == cat)
-}`),
-  { category: `categories`, module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "GetSlotAnnotations",
-  msg(`function(slot) {
-    return _GetSlotAnnotations(this, slot)
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "SetModule",
-  msg(`function(module) {
-    for (let slot of this.GetSlotNames()) {
-        this.SetSlotModule(slot, module);
-    }
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "RemoveSlot",
-  msg(`function(name) {
-  _RemoveSlot(this, name);
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "InstanceOf",
-  msg(`function(other) {
-    let current = this;
-    do {
-        if (current == other) return true;
-        current = current.parent;
-    } while (current)
-    return false;
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core.TopObject",
-  "SetAsCreator",
-  msg(`function(slot) {
-    this[slot].SetCreator(this, slot);
-}`),
-  { module: ref("World.Modules.init") }
-);
-
-slot(
-  "World.Core",
-  "TopObject",
-  (function() {
-    let object = ref("World.Core.TopObject");
-    _SetAnnotation(object, "name", `TopObject`);
-    _SetAnnotation(
-      object,
-      "description",
-      `TopObject at the top of the inheritance heirarchy. All objects should descend from this.`
-    );
-    _SetAnnotation(object, "creator", ref("World.Core"));
-    _SetAnnotation(object, "creatorSlot", `TopObject`);
-
-    return object;
-  })(),
-  { module: ref("World.Modules.init") }
-);
-
-slot("World.Core", "parent", ref("World.Core.Namespace"), {
-  module: ref("World.Modules.init")
-});
-_AddPrototypeSlot(ref("World.Core"), "parent");
-
-slot(
-  "World.Core",
   "Module",
   (function() {
     let object = ref("World.Core.Module");
@@ -402,11 +58,6 @@ slot(
   })(),
   { module: ref("World.Modules.init") }
 );
-
-slot("World.Core.Module", "parent", ref("World.Core.TopObject"), {
-  module: ref("World.Modules.init")
-});
-_AddPrototypeSlot(ref("World.Core.Module"), "parent");
 
 slot(
   "World.Core.Module",
@@ -421,7 +72,11 @@ slot(
     if(visited.has(object)) return;
 
     visited.add(object);
-    for(let slot of object.GetSlotNames()) {
+
+    let objectSlots = object.GetSlotNames();
+    objectSlots.sort();
+
+    for(let slot of objectSlots) {
       if (_GetSlotAnnotation(object, slot, 'module') == this) {
         slots.push({object, slot});
       }
@@ -499,6 +154,27 @@ slot(
 
 slot(
   "World.Core.Module",
+  "GenerateValueExpression",
+  msg(`function(value) {
+    if (_IsMessageHandler(value)) {
+      let handlerCode = _GetMessageHandlerCode(value);
+      let escapedCode = escapeTemplateString(handlerCode);
+      return \`msg(\${escapedCode})\`
+    } else if (_IsProtoObject(value)) {
+      return \`ref("\${this.TracePath(value).join('.')}")\`;
+    } else if (typeof value == "string") {
+        return escapeTemplateString(value);
+    } else if (typeof value == "number") {
+        return JSON.stringify(value);
+    } else {
+      throw new Error(\`Encountered an object of Unknown type.\`);
+    }
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.Module",
   "TracePath",
   msg(`function(object) {
     if (object == World) return ['World'];
@@ -515,6 +191,307 @@ slot(
         return path;
     }
 }`),
+  { module: ref("World.Modules.init") }
+);
+
+slot("World.Core.Module", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.init")
+});
+_AddPrototypeSlot(ref("World.Core.Module"), "parent");
+
+slot(
+  "World.Core.TopObject",
+  "AddMessageHandler",
+  msg(`function(slot) {
+    this.AddSlot(slot, _MakeMessageHandler('function() {\\n}'))
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "AddSlot",
+  msg(`function(name, value) {
+  _AddSlot(this, name, value);
+}`),
+  {
+    description: `Takes in a slot name and value, and creates a slot on this object.`,
+    module: ref("World.Modules.init")
+  }
+);
+
+slot(
+  "World.Core.TopObject",
+  "Extend",
+  msg(`function(name, value) {
+  let child = _EmptyObject();
+  _AddSlot(child, 'parent', this)
+  _AddPrototypeSlot(child, 'parent')
+  return child;
+}`),
+  {
+    description: `Creates a new object with this object as a parent.`,
+    module: ref("World.Modules.init")
+  }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetAnnotation",
+  msg(`
+function(name) {
+	return _GetAnnotation(this, name);
+}
+`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetCreator",
+  msg(`function() {
+    return this.GetAnnotation('creator');
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetDescription",
+  msg(`function() {
+    return this.GetAnnotation('description');
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetName",
+  msg(`function() {
+    return this.GetAnnotation('name');
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetSlotAnnotation",
+  msg(`function(slot, name) {
+    return _GetSlotAnnotation(this, slot, name);
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetSlotAnnotations",
+  msg(`function(slot) {
+    return _GetSlotAnnotations(this, slot)
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetSlotCategory",
+  msg(`function(slot) {
+    return this.GetSlotAnnotation(slot, "category");
+}`),
+  { category: `categories`, module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetSlotDescription",
+  msg(`function(slot) {
+    return this.GetSlotAnnotation(slot, 'description')
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetSlotModule",
+  msg(`function(slot) {
+    return this.GetSlotAnnotation(slot, "module");
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetSlotNames",
+  msg(`
+function() {
+	return _GetSlotNames(this);
+}
+`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "GetSlotsByCategory",
+  msg(`function(cat) {
+    return this.GetSlotNames().filter(slot => this.GetSlotCategory(slot) == cat)
+}`),
+  { category: `categories`, module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "InstanceOf",
+  msg(`function(other) {
+    let current = this;
+    do {
+        if (current == other) return true;
+        current = current.parent;
+    } while (current)
+    return false;
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "ListCategories",
+  msg(`function() {
+    let categories = new Set();
+    for (let slot of this.GetSlotNames()) {
+        let cat = this.GetSlotCategory(slot);
+        if (cat) categories.add(cat);
+    }
+    return categories;
+}`),
+  { category: `categories`, module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "ListModules",
+  msg(`function() {
+    let modules = new Set();
+    for (let slot of this.GetSlotNames()) {
+        let module = this.GetSlotModule(slot);
+        if (module) modules.add(module);
+    }
+    return modules;
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "RemoveSlot",
+  msg(`function(name) {
+  _RemoveSlot(this, name);
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "SetAnnotation",
+  msg(`
+function(name, value) {
+	_SetAnnotation(this, name, value);
+}
+`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "SetAsCreator",
+  msg(`function(slot) {
+    this[slot].SetCreator(this, slot);
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "SetCreator",
+  msg(`function(object, slot) {
+  this.SetAnnotation('creator', object);
+  this.SetAnnotation('creatorSlot', slot);
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "SetDescription",
+  msg(`function(desc) {
+  this.SetAnnotation('description', desc);
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "SetModule",
+  msg(`function(module) {
+    for (let slot of this.GetSlotNames()) {
+        this.SetSlotModule(slot, module);
+    }
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "SetName",
+  msg(`function(name) {
+  this.SetAnnotation('name', name);
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "SetSlotAnnotation",
+  msg(
+    `function(slot, name, value) { _SetSlotAnnotation(this, slot, name, value); }`
+  ),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "SetSlotCategory",
+  msg(`function(slot, category) {
+    this.SetSlotAnnotation(slot, "category", category);
+}`),
+  { category: `categories`, module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "SetSlotDescription",
+  msg(`function(slot, desc) {
+    this.SetSlotAnnotation(slot, "description", desc);
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "SetSlotModule",
+  msg(`function(slot, module) {
+    this.SetSlotAnnotation(slot, 'module', module);
+}`),
+  { module: ref("World.Modules.init") }
+);
+
+slot(
+  "World.Core.TopObject",
+  "ToString",
+  msg(`
+function() {
+	return this.GetAnnotation('name') || 'Unnamed Object';
+}
+`),
   { module: ref("World.Modules.init") }
 );
 
@@ -549,25 +526,52 @@ let msg = function(code) {
 );
 
 slot(
-  "World.Core.Module",
-  "GenerateValueExpression",
-  msg(`function(value) {
-    if (_IsMessageHandler(value)) {
-      let handlerCode = _GetMessageHandlerCode(value);
-      let escapedCode = escapeTemplateString(handlerCode);
-      return \`msg(\${escapedCode})\`
-    } else if (_IsProtoObject(value)) {
-      return \`ref("\${this.TracePath(value).join('.')}")\`;
-    } else if (typeof value == "string") {
-        return escapeTemplateString(value);
-    } else if (typeof value == "number") {
-        return JSON.stringify(value);
-    } else {
-      throw new Error(\`Encountered an object of Unknown type.\`);
-    }
-}`),
+  "World.Core",
+  "Namespace",
+  (function() {
+    let object = ref("World.Core.Namespace");
+    _SetAnnotation(object, "name", `Namespace`);
+    _SetAnnotation(
+      object,
+      "description",
+      `A namespace is a logical grouping of objects. It is a distinct concept from modules.`
+    );
+    _SetAnnotation(object, "creator", ref("World.Core"));
+    _SetAnnotation(object, "creatorSlot", `Namespace`);
+
+    return object;
+  })(),
   { module: ref("World.Modules.init") }
 );
+
+slot("World.Core.Namespace", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.init")
+});
+_AddPrototypeSlot(ref("World.Core.Namespace"), "parent");
+
+slot(
+  "World.Core",
+  "TopObject",
+  (function() {
+    let object = ref("World.Core.TopObject");
+    _SetAnnotation(object, "name", `TopObject`);
+    _SetAnnotation(
+      object,
+      "description",
+      `TopObject at the top of the inheritance heirarchy. All objects should descend from this.`
+    );
+    _SetAnnotation(object, "creator", ref("World.Core"));
+    _SetAnnotation(object, "creatorSlot", `TopObject`);
+
+    return object;
+  })(),
+  { module: ref("World.Modules.init") }
+);
+
+slot("World.Core", "parent", ref("World.Core.Namespace"), {
+  module: ref("World.Modules.init")
+});
+_AddPrototypeSlot(ref("World.Core"), "parent");
 
 slot(
   "World",
@@ -617,11 +621,6 @@ slot("World.Modules", "parent", ref("World.Core.TopObject"), {
 });
 _AddPrototypeSlot(ref("World.Modules"), "parent");
 
-slot("World", "parent", ref("World.Core.Namespace"), {
-  module: ref("World.Modules.init")
-});
-_AddPrototypeSlot(ref("World"), "parent");
-
 slot(
   "World",
   "World",
@@ -640,3 +639,8 @@ slot(
   })(),
   { module: ref("World.Modules.init") }
 );
+
+slot("World", "parent", ref("World.Core.Namespace"), {
+  module: ref("World.Modules.init")
+});
+_AddPrototypeSlot(ref("World"), "parent");
