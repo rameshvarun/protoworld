@@ -584,6 +584,22 @@ _SetSlotAnnotation(
 );
 
 _AddSlot(
+  ref("World.Interface.Window"),
+  "New",
+  _MakeMessageHandler(`function() {
+    let inst = this.Extend();
+    inst.windowID = uuid.v1();
+    return inst;
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Interface.Window"),
+  "New",
+  "module",
+  ref("World.Modules.interface")
+);
+
+_AddSlot(
   ref("World.Interface"),
   "HandlerEditor",
   (function() {
@@ -643,11 +659,10 @@ _AddSlot(
   ref("World.Interface.HandlerEditor"),
   "New",
   _MakeMessageHandler(`function(target, slot) {
-  let inst = this.Extend();
+  let inst = World.Interface.Window.New.call(this);
   inst.AddSlot('target', target);
   inst.AddSlot('slot', slot);
   inst.AddSlot('code', _GetMessageHandlerCode(target[slot]));
-  inst.AddSlot('windowID', uuid.v1());
   return inst;
 }`)
 );
@@ -794,9 +809,8 @@ _AddSlot(
   ref("World.Interface.ObjectEditor"),
   "New",
   _MakeMessageHandler(`function(target) {
-    let inst = this.Extend();
+    let inst = World.Interface.Window.New.call(this);
     inst.AddSlot('target', target);
-    inst.AddSlot('windowID', uuid.v1());
     return inst;
 }`)
 );
@@ -1065,8 +1079,7 @@ _AddSlot(
   ref("World.Interface.CanvasWindow"),
   "New",
   _MakeMessageHandler(`function(target) {
-    let inst = this.Extend();
-    inst.AddSlot('windowID', uuid.v1());
+    let inst = World.Interface.Window.New.call(this);
     return inst;
 }`)
 );

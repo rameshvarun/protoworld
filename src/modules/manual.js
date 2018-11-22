@@ -181,8 +181,7 @@ _AddSlot(
   ref("World.Manual.ManualViewer"),
   "New",
   _MakeMessageHandler(`function(target) {
-    let inst = this.Extend();
-    inst.AddSlot('windowID', uuid.v1());
+    let inst = World.Interface.Window.New.call(this);
     inst.path = "introduction";
     return inst;
 }`)
