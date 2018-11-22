@@ -15,7 +15,19 @@ replicator.addTransforms([
       return type == "object" && val !== null && val.__isProtoObject__;
     },
     toSerializable (val) {
-      return val.__repr__;
+      // First, we filter out slot values that are annotated with "noserialize"
+      let filtered_values = {};
+      for(let slot of _GetSlotNames(val)) {
+        if(_GetSlotAnnotation(val, slot, 'transient') !== true) {
+          filtered_values[slot] = val.__repr__.slot_values[slot];
+        }
+      }
+
+      // Use the existing __repr__, but override slot_values.
+      return {
+        ...val.__repr__,
+        slot_values: filtered_values,
+      };
     },
     fromSerializable (val){
       return _ObjectFromRepr(val);
