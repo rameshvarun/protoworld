@@ -13,7 +13,7 @@ let ref = function(path) {
   return current;
 };
 
-let slot = function(path, name, value, annotations) {
+let slot = function(path, name, value, annotations = {}) {
   _AddSlot(ref(path), name, value);
   for (let annotation in annotations) {
     _SetSlotAnnotation(ref(path), name, annotation, annotations[annotation]);
@@ -532,7 +532,7 @@ let ref = function(path) {
   return current;
 }
 
-let slot = function(path, name, value, annotations) {
+let slot = function(path, name, value, annotations = {}) {
   _AddSlot(ref(path), name, value);
   for (let annotation in annotations) {
     _SetSlotAnnotation(ref(path), name, annotation, annotations[annotation]);
