@@ -7,8 +7,11 @@ let ref = function(path) {
   return current;
 };
 
-let slot = function(path, name, value) {
+let slot = function(path, name, value, annotations) {
   _AddSlot(ref(path), name, value);
+  for (let annotation in annotations) {
+    _SetSlotAnnotation(ref(path), name, annotation, annotations[annotation]);
+  }
 };
 
 let msg = function(code) {
@@ -30,9 +33,9 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Core`);
 
     return object;
-  })()
+  })(),
+  { module: ref("World.Modules.init") }
 );
-_SetSlotAnnotation(ref("World"), "Core", "module", ref("World.Modules.init"));
 
 slot(
   "World.Core",
@@ -49,42 +52,25 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Namespace`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Core"),
-  "Namespace",
-  "module",
-  ref("World.Modules.init")
+  })(),
+  { module: ref("World.Modules.init") }
 );
 
-slot("World.Core.Namespace", "parent", ref("World.Core.TopObject"));
+slot("World.Core.Namespace", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.init")
+});
 _AddPrototypeSlot(ref("World.Core.Namespace"), "parent");
-_SetSlotAnnotation(
-  ref("World.Core.Namespace"),
-  "parent",
-  "module",
-  ref("World.Modules.init")
-);
 
 slot(
   "World.Core.TopObject",
   "AddSlot",
   msg(`function(name, value) {
   _AddSlot(this, name, value);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "AddSlot",
-  "description",
-  `Takes in a slot name and value, and creates a slot on this object.`
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "AddSlot",
-  "module",
-  ref("World.Modules.init")
+}`),
+  {
+    description: `Takes in a slot name and value, and creates a slot on this object.`,
+    module: ref("World.Modules.init")
+  }
 );
 
 slot(
@@ -95,19 +81,11 @@ slot(
   _AddSlot(child, 'parent', this)
   _AddPrototypeSlot(child, 'parent')
   return child;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "Extend",
-  "description",
-  `Creates a new object with this object as a parent.`
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "Extend",
-  "module",
-  ref("World.Modules.init")
+}`),
+  {
+    description: `Creates a new object with this object as a parent.`,
+    module: ref("World.Modules.init")
+  }
 );
 
 slot(
@@ -117,13 +95,8 @@ slot(
 function(name, value) {
 	_SetAnnotation(this, name, value);
 }
-`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetAnnotation",
-  "module",
-  ref("World.Modules.init")
+`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -133,13 +106,8 @@ slot(
 function(name) {
 	return _GetAnnotation(this, name);
 }
-`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetAnnotation",
-  "module",
-  ref("World.Modules.init")
+`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -149,13 +117,8 @@ slot(
 function() {
 	return _GetSlotNames(this);
 }
-`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetSlotNames",
-  "module",
-  ref("World.Modules.init")
+`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -165,13 +128,8 @@ slot(
 function() {
 	return this.GetAnnotation('name') || 'Unnamed Object';
 }
-`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "ToString",
-  "module",
-  ref("World.Modules.init")
+`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -179,13 +137,8 @@ slot(
   "SetName",
   msg(`function(name) {
   this.SetAnnotation('name', name);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetName",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -193,13 +146,8 @@ slot(
   "SetDescription",
   msg(`function(desc) {
   this.SetAnnotation('description', desc);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetDescription",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -207,13 +155,8 @@ slot(
   "SetSlotAnnotation",
   msg(
     `function(slot, name, value) { _SetSlotAnnotation(this, slot, name, value); }`
-  )
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetSlotAnnotation",
-  "module",
-  ref("World.Modules.init")
+  ),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -221,13 +164,8 @@ slot(
   "SetSlotModule",
   msg(`function(slot, module) {
     this.SetSlotAnnotation(slot, 'module', module);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetSlotModule",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -236,13 +174,8 @@ slot(
   msg(`function(object, slot) {
   this.SetAnnotation('creator', object);
   this.SetAnnotation('creatorSlot', slot);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetCreator",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -250,13 +183,8 @@ slot(
   "GetCreator",
   msg(`function() {
     return this.GetAnnotation('creator');
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetCreator",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -264,13 +192,8 @@ slot(
   "GetName",
   msg(`function() {
     return this.GetAnnotation('name');
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetName",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -278,13 +201,8 @@ slot(
   "GetDescription",
   msg(`function() {
     return this.GetAnnotation('description');
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetDescription",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -292,13 +210,8 @@ slot(
   "GetSlotAnnotation",
   msg(`function(slot, name) {
     return _GetSlotAnnotation(this, slot, name);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetSlotAnnotation",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -306,13 +219,8 @@ slot(
   "GetSlotModule",
   msg(`function(slot) {
     return this.GetSlotAnnotation(slot, "module");
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetSlotModule",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -325,13 +233,8 @@ slot(
         if (module) modules.add(module);
     }
     return modules;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "ListModules",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -339,13 +242,8 @@ slot(
   "SetSlotDescription",
   msg(`function(slot, desc) {
     this.SetSlotAnnotation(slot, "description", desc);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetSlotDescription",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -353,13 +251,8 @@ slot(
   "GetSlotDescription",
   msg(`function(slot) {
     return this.GetSlotAnnotation(slot, 'description')
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetSlotDescription",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -367,13 +260,8 @@ slot(
   "AddMessageHandler",
   msg(`function(slot) {
     this.AddSlot(slot, _MakeMessageHandler('function() {\\n}'))
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "AddMessageHandler",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -381,19 +269,8 @@ slot(
   "SetSlotCategory",
   msg(`function(slot, category) {
     this.SetSlotAnnotation(slot, "category", category);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetSlotCategory",
-  "category",
-  `categories`
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetSlotCategory",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { category: `categories`, module: ref("World.Modules.init") }
 );
 
 slot(
@@ -401,19 +278,8 @@ slot(
   "GetSlotCategory",
   msg(`function(slot) {
     return this.GetSlotAnnotation(slot, "category");
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetSlotCategory",
-  "category",
-  `categories`
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetSlotCategory",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { category: `categories`, module: ref("World.Modules.init") }
 );
 
 slot(
@@ -426,19 +292,8 @@ slot(
         if (cat) categories.add(cat);
     }
     return categories;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "ListCategories",
-  "category",
-  `categories`
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "ListCategories",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { category: `categories`, module: ref("World.Modules.init") }
 );
 
 slot(
@@ -446,19 +301,8 @@ slot(
   "GetSlotsByCategory",
   msg(`function(cat) {
     return this.GetSlotNames().filter(slot => this.GetSlotCategory(slot) == cat)
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetSlotsByCategory",
-  "category",
-  `categories`
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetSlotsByCategory",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { category: `categories`, module: ref("World.Modules.init") }
 );
 
 slot(
@@ -466,13 +310,8 @@ slot(
   "GetSlotAnnotations",
   msg(`function(slot) {
     return _GetSlotAnnotations(this, slot)
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "GetSlotAnnotations",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -482,13 +321,8 @@ slot(
     for (let slot of this.GetSlotNames()) {
         this.SetSlotModule(slot, module);
     }
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetModule",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -496,13 +330,8 @@ slot(
   "RemoveSlot",
   msg(`function(name) {
   _RemoveSlot(this, name);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "RemoveSlot",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -515,13 +344,8 @@ slot(
         current = current.parent;
     } while (current)
     return false;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "InstanceOf",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -529,13 +353,8 @@ slot(
   "SetAsCreator",
   msg(`function(slot) {
     this[slot].SetCreator(this, slot);
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.TopObject"),
-  "SetAsCreator",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -553,23 +372,14 @@ slot(
     _SetAnnotation(object, "creatorSlot", `TopObject`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Core"),
-  "TopObject",
-  "module",
-  ref("World.Modules.init")
+  })(),
+  { module: ref("World.Modules.init") }
 );
 
-slot("World.Core", "parent", ref("World.Core.Namespace"));
+slot("World.Core", "parent", ref("World.Core.Namespace"), {
+  module: ref("World.Modules.init")
+});
 _AddPrototypeSlot(ref("World.Core"), "parent");
-_SetSlotAnnotation(
-  ref("World.Core"),
-  "parent",
-  "module",
-  ref("World.Modules.init")
-);
 
 slot(
   "World.Core",
@@ -582,23 +392,14 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Module`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Core"),
-  "Module",
-  "module",
-  ref("World.Modules.init")
+  })(),
+  { module: ref("World.Modules.init") }
 );
 
-slot("World.Core.Module", "parent", ref("World.Core.TopObject"));
+slot("World.Core.Module", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.init")
+});
 _AddPrototypeSlot(ref("World.Core.Module"), "parent");
-_SetSlotAnnotation(
-  ref("World.Core.Module"),
-  "parent",
-  "module",
-  ref("World.Modules.init")
-);
 
 slot(
   "World.Core.Module",
@@ -623,19 +424,11 @@ slot(
 
   findSlots(World);
   return slots;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.Module"),
-  "FindSlots",
-  "module",
-  ref("World.Modules.init")
-);
-_SetSlotAnnotation(
-  ref("World.Core.Module"),
-  "FindSlots",
-  "description",
-  `Find all slots that have been annotated with this module.`
+}`),
+  {
+    module: ref("World.Modules.init"),
+    description: `Find all slots that have been annotated with this module.`
+  }
 );
 
 slot(
@@ -669,16 +462,17 @@ slot(
     } else {
         valueExpr = this.GenerateValueExpression(value)
     }
-    code += \`slot("\${objpath}", "\${slot}", \${valueExpr});\\n\`
-    if(_IsPrototypeSlot(object, slot)) {
-        code += \`_AddPrototypeSlot(ref("\${objpath}"), "\${slot}")\\n\`;
-    }
 
     let annotations = object.GetSlotAnnotations(slot);
-    for (let annotation of annotations) {
-        let value = object.GetSlotAnnotation(slot, annotation);
-        let valueExpr = this.GenerateValueExpression(value);
-        code += \`_SetSlotAnnotation(ref("\${objpath}"), "\${slot}", "\${annotation}", \${valueExpr});\\n\`
+    let annotationObj = '{' + annotations.map(annotation => {
+      let value = object.GetSlotAnnotation(slot, annotation);
+      let valueExpr = this.GenerateValueExpression(value);
+      return \`"\${annotation}": \${valueExpr}\`;
+    }).join(',') + '}';
+
+    code += \`slot("\${objpath}", "\${slot}", \${valueExpr}, \${annotationObj});\\n\`
+    if(_IsPrototypeSlot(object, slot)) {
+        code += \`_AddPrototypeSlot(ref("\${objpath}"), "\${slot}")\\n\`;
     }
 
     code += '\\n';
@@ -686,13 +480,8 @@ slot(
 
   code = Prettier.format(code, {plugins: [PrettierBabylon]});
   return code;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.Module"),
-  "GenerateCode",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -712,13 +501,8 @@ slot(
         path.push(creatorSlot);
         return path;
     }
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.Module"),
-  "TracePath",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -733,21 +517,19 @@ slot(
   return current;
 }
 
-let slot = function(path, name, value) {
+let slot = function(path, name, value, annotations) {
   _AddSlot(ref(path), name, value);
+  for (let annotation in annotations) {
+    _SetSlotAnnotation(ref(path), name, annotation, annotations[annotation]);
+  }
 }
 
 let msg = function(code) {
   return _MakeMessageHandler(code);
 }
 
-`
-);
-_SetSlotAnnotation(
-  ref("World.Core.Module"),
-  "prelude",
-  "module",
-  ref("World.Modules.init")
+`,
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -767,13 +549,8 @@ slot(
     } else {
       throw new Error(\`Encountered an object of Unknown type.\`);
     }
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Core.Module"),
-  "GenerateValueExpression",
-  "module",
-  ref("World.Modules.init")
+}`),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -791,13 +568,8 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Modules`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World"),
-  "Modules",
-  "module",
-  ref("World.Modules.init")
+  })(),
+  { module: ref("World.Modules.init") }
 );
 
 slot(
@@ -810,36 +582,24 @@ slot(
     _SetAnnotation(object, "creatorSlot", `init`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Modules"),
-  "init",
-  "module",
-  ref("World.Modules.init")
+  })(),
+  { module: ref("World.Modules.init") }
 );
 
-slot("World.Modules.init", "parent", ref("World.Core.Module"));
+slot("World.Modules.init", "parent", ref("World.Core.Module"), {
+  module: ref("World.Modules.init")
+});
 _AddPrototypeSlot(ref("World.Modules.init"), "parent");
-_SetSlotAnnotation(
-  ref("World.Modules.init"),
-  "parent",
-  "module",
-  ref("World.Modules.init")
-);
 
-slot("World.Modules", "parent", ref("World.Core.TopObject"));
+slot("World.Modules", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.init")
+});
 _AddPrototypeSlot(ref("World.Modules"), "parent");
-_SetSlotAnnotation(
-  ref("World.Modules"),
-  "parent",
-  "module",
-  ref("World.Modules.init")
-);
 
-slot("World", "parent", ref("World.Core.Namespace"));
+slot("World", "parent", ref("World.Core.Namespace"), {
+  module: ref("World.Modules.init")
+});
 _AddPrototypeSlot(ref("World"), "parent");
-_SetSlotAnnotation(ref("World"), "parent", "module", ref("World.Modules.init"));
 
 slot(
   "World",
@@ -856,6 +616,6 @@ slot(
     _SetAnnotation(object, "creatorSlot", `World`);
 
     return object;
-  })()
+  })(),
+  { module: ref("World.Modules.init") }
 );
-_SetSlotAnnotation(ref("World"), "World", "module", ref("World.Modules.init"));
