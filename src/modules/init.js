@@ -21,6 +21,11 @@ let slot = function(path, name, value, annotations = {}) {
   _SetSlotAnnotation(ref(path), name, "module", mod);
 };
 
+let prototype_slot = function(path, name, value, annotations = {}) {
+  slot(path, name, value, annotations);
+  _AddPrototypeSlot(ref(path), name);
+};
+
 let msg = function(code) {
   return _MakeMessageHandler(code);
 };
@@ -143,11 +148,8 @@ slot(
       annotationArg = \`, \${annotationObj}\`;
     }
 
-    code += \`slot("\${objpath}", "\${slot}", \${valueExpr} \${annotationArg});\\n\`
-    if(_IsPrototypeSlot(object, slot)) {
-        code += \`_AddPrototypeSlot(ref("\${objpath}"), "\${slot}")\\n\`;
-    }
-
+    let func = _IsPrototypeSlot(object, slot) ? 'prototype_slot' : 'slot';
+    code += \`\${func}("\${objpath}", "\${slot}", \${valueExpr} \${annotationArg});\\n\`
     code += '\\n';
   }
 
@@ -196,8 +198,7 @@ slot(
 }`)
 );
 
-slot("World.Core.Module", "parent", ref("World.Core.TopObject"));
-_AddPrototypeSlot(ref("World.Core.Module"), "parent");
+prototype_slot("World.Core.Module", "parent", ref("World.Core.TopObject"));
 
 slot(
   "World.Core.TopObject",
@@ -490,6 +491,11 @@ let slot = function(path, name, value, annotations = {}) {
   _SetSlotAnnotation(ref(path), name, 'module', mod);
 }
 
+let prototype_slot = function(path, name, value, annotations = {}) {
+  slot(path, name, value, annotations);
+  _AddPrototypeSlot(ref(path), name);
+}
+
 let msg = function(code) {
   return _MakeMessageHandler(code);
 }
@@ -516,8 +522,7 @@ slot(
   })()
 );
 
-slot("World.Core.Namespace", "parent", ref("World.Core.TopObject"));
-_AddPrototypeSlot(ref("World.Core.Namespace"), "parent");
+prototype_slot("World.Core.Namespace", "parent", ref("World.Core.TopObject"));
 
 slot(
   "World.Core",
@@ -537,8 +542,7 @@ slot(
   })()
 );
 
-slot("World.Core", "parent", ref("World.Core.Namespace"));
-_AddPrototypeSlot(ref("World.Core"), "parent");
+prototype_slot("World.Core", "parent", ref("World.Core.Namespace"));
 
 slot(
   "World",
@@ -576,11 +580,9 @@ slot(
   })()
 );
 
-slot("World.Modules.init", "parent", ref("World.Core.Module"));
-_AddPrototypeSlot(ref("World.Modules.init"), "parent");
+prototype_slot("World.Modules.init", "parent", ref("World.Core.Module"));
 
-slot("World.Modules", "parent", ref("World.Core.TopObject"));
-_AddPrototypeSlot(ref("World.Modules"), "parent");
+prototype_slot("World.Modules", "parent", ref("World.Core.TopObject"));
 
 slot(
   "World",
@@ -600,5 +602,4 @@ slot(
   })()
 );
 
-slot("World", "parent", ref("World.Core.Namespace"));
-_AddPrototypeSlot(ref("World"), "parent");
+prototype_slot("World", "parent", ref("World.Core.Namespace"));
