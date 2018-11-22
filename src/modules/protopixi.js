@@ -1,3 +1,9 @@
+/*
+ProtoPixiModule - ProtoWorld Module
+undefined
+*/
+
+/* BEGIN MODULE PRELUDE */
 let ref = function(path) {
   var parts = path.split(".");
   var current = window;
@@ -7,9 +13,17 @@ let ref = function(path) {
   return current;
 };
 
-let slot = function(path, name, value) {
+let slot = function(path, name, value, annotations) {
   _AddSlot(ref(path), name, value);
+  for (let annotation in annotations) {
+    _SetSlotAnnotation(ref(path), name, annotation, annotations[annotation]);
+  }
 };
+
+let msg = function(code) {
+  return _MakeMessageHandler(code);
+};
+/* END MODULE PRELUDE */
 
 slot(
   "World.Modules",
@@ -21,23 +35,14 @@ slot(
     _SetAnnotation(object, "creatorSlot", `pixi`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.Modules"),
-  "pixi",
-  "module",
-  ref("World.Modules.pixi")
+  })(),
+  { module: ref("World.Modules.pixi") }
 );
 
-slot("World.Modules.pixi", "parent", ref("World.Core.Module"));
+slot("World.Modules.pixi", "parent", ref("World.Core.Module"), {
+  module: ref("World.Modules.pixi")
+});
 _AddPrototypeSlot(ref("World.Modules.pixi"), "parent");
-_SetSlotAnnotation(
-  ref("World.Modules.pixi"),
-  "parent",
-  "module",
-  ref("World.Modules.pixi")
-);
 
 slot(
   "World",
@@ -48,18 +53,14 @@ slot(
     _SetAnnotation(object, "creatorSlot", `PIXI`);
 
     return object;
-  })()
+  })(),
+  { module: ref("World.Modules.pixi") }
 );
-_SetSlotAnnotation(ref("World"), "PIXI", "module", ref("World.Modules.pixi"));
 
-slot("World.PIXI", "parent", ref("World.Core.Namespace"));
+slot("World.PIXI", "parent", ref("World.Core.Namespace"), {
+  module: ref("World.Modules.pixi")
+});
 _AddPrototypeSlot(ref("World.PIXI"), "parent");
-_SetSlotAnnotation(
-  ref("World.PIXI"),
-  "parent",
-  "module",
-  ref("World.Modules.pixi")
-);
 
 slot(
   "World.PIXI",
@@ -70,23 +71,14 @@ slot(
     _SetAnnotation(object, "creatorSlot", `GameObject`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.PIXI"),
-  "GameObject",
-  "module",
-  ref("World.Modules.pixi")
+  })(),
+  { module: ref("World.Modules.pixi") }
 );
 
-slot("World.PIXI.GameObject", "parent", ref("World.Core.TopObject"));
+slot("World.PIXI.GameObject", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.pixi")
+});
 _AddPrototypeSlot(ref("World.PIXI.GameObject"), "parent");
-_SetSlotAnnotation(
-  ref("World.PIXI.GameObject"),
-  "parent",
-  "module",
-  ref("World.Modules.pixi")
-);
 
 slot(
   "World.PIXI",
@@ -97,23 +89,14 @@ slot(
     _SetAnnotation(object, "creatorSlot", `GameComponent`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.PIXI"),
-  "GameComponent",
-  "module",
-  ref("World.Modules.pixi")
+  })(),
+  { module: ref("World.Modules.pixi") }
 );
 
-slot("World.PIXI.GameComponent", "parent", ref("World.Core.TopObject"));
+slot("World.PIXI.GameComponent", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.pixi")
+});
 _AddPrototypeSlot(ref("World.PIXI.GameComponent"), "parent");
-_SetSlotAnnotation(
-  ref("World.PIXI.GameComponent"),
-  "parent",
-  "module",
-  ref("World.Modules.pixi")
-);
 
 slot(
   "World.PIXI",
@@ -124,23 +107,14 @@ slot(
     _SetAnnotation(object, "creatorSlot", `Scene`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.PIXI"),
-  "Scene",
-  "module",
-  ref("World.Modules.pixi")
+  })(),
+  { module: ref("World.Modules.pixi") }
 );
 
-slot("World.PIXI.Scene", "parent", ref("World.Core.TopObject"));
+slot("World.PIXI.Scene", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.pixi")
+});
 _AddPrototypeSlot(ref("World.PIXI.Scene"), "parent");
-_SetSlotAnnotation(
-  ref("World.PIXI.Scene"),
-  "parent",
-  "module",
-  ref("World.Modules.pixi")
-);
 
 slot(
   "World.PIXI",
@@ -151,65 +125,53 @@ slot(
     _SetAnnotation(object, "creatorSlot", `PIXIWindow`);
 
     return object;
-  })()
-);
-_SetSlotAnnotation(
-  ref("World.PIXI"),
-  "PIXIWindow",
-  "module",
-  ref("World.Modules.pixi")
+  })(),
+  { module: ref("World.Modules.pixi") }
 );
 
-slot("World.PIXI.PIXIWindow", "parent", ref("World.Interface.CanvasWindow"));
+slot("World.PIXI.PIXIWindow", "parent", ref("World.Interface.CanvasWindow"), {
+  module: ref("World.Modules.pixi")
+});
 _AddPrototypeSlot(ref("World.PIXI.PIXIWindow"), "parent");
-_SetSlotAnnotation(
-  ref("World.PIXI.PIXIWindow"),
-  "parent",
-  "module",
-  ref("World.Modules.pixi")
-);
 
 slot(
   "World.PIXI.PIXIWindow",
   "SetCanvas",
-  _MakeMessageHandler(`function(canvas) {
+  msg(`function(canvas) {
     World.Interface.CanvasWindow.SetCanvas.call(this, canvas)
     this.renderer = new PIXI.WebGLRenderer({
         height: 30, width: 30, view: canvas
     });
     this.stage = new PIXI.Container();
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.PIXI.PIXIWindow"),
-  "SetCanvas",
-  "module",
-  ref("World.Modules.pixi")
+}`),
+  { module: ref("World.Modules.pixi") }
 );
 
 slot(
   "World.PIXI.PIXIWindow",
   "GetTitle",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return "PIXI Window"
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.PIXI.PIXIWindow"),
-  "GetTitle",
-  "module",
-  ref("World.Modules.pixi")
+}`),
+  { module: ref("World.Modules.pixi") }
 );
 
 slot(
   "World.PIXI.PIXIWindow",
   "RenderCanvas",
-  _MakeMessageHandler(`function() {
-}`)
+  msg(`function() {
+}`),
+  { module: ref("World.Modules.pixi") }
 );
-_SetSlotAnnotation(
-  ref("World.PIXI.PIXIWindow"),
-  "RenderCanvas",
-  "module",
-  ref("World.Modules.pixi")
+
+slot(
+  "World.PIXI.PIXIWindow",
+  "New",
+  msg(`function() {
+    let inst = World.Interface.CanvasWindow.New.call(this);
+    inst.SetSlotAnnotation('renderer', 'transient', true);
+    inst.SetSlotAnnotation('stage', 'transient', true);
+    return inst;
+}`),
+  { module: ref("World.Modules.pixi") }
 );
