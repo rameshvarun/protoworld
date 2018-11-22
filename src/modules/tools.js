@@ -99,8 +99,7 @@ slot(
   "World.Tools.ModuleScanner",
   "New",
   _MakeMessageHandler(`function() {
-    let inst = this.Extend();
-    inst.AddSlot('windowID', uuid.v1());
+    let inst = World.Interface.Window.New.call(this);
     inst.foundSlots = inst.FindSlots();
     return inst;
 }`)
