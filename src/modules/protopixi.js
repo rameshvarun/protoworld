@@ -64,42 +64,6 @@ _AddPrototypeSlot(ref("World.PIXI"), "parent");
 
 slot(
   "World.PIXI",
-  "GameObject",
-  (function() {
-    let object = ref("World.PIXI.GameObject");
-    _SetAnnotation(object, "creator", ref("World.PIXI"));
-    _SetAnnotation(object, "creatorSlot", `GameObject`);
-
-    return object;
-  })(),
-  { module: ref("World.Modules.pixi") }
-);
-
-slot("World.PIXI.GameObject", "parent", ref("World.Core.TopObject"), {
-  module: ref("World.Modules.pixi")
-});
-_AddPrototypeSlot(ref("World.PIXI.GameObject"), "parent");
-
-slot(
-  "World.PIXI",
-  "GameComponent",
-  (function() {
-    let object = ref("World.PIXI.GameComponent");
-    _SetAnnotation(object, "creator", ref("World.PIXI"));
-    _SetAnnotation(object, "creatorSlot", `GameComponent`);
-
-    return object;
-  })(),
-  { module: ref("World.Modules.pixi") }
-);
-
-slot("World.PIXI.GameComponent", "parent", ref("World.Core.TopObject"), {
-  module: ref("World.Modules.pixi")
-});
-_AddPrototypeSlot(ref("World.PIXI.GameComponent"), "parent");
-
-slot(
-  "World.PIXI",
   "Scene",
   (function() {
     let object = ref("World.PIXI.Scene");
@@ -121,6 +85,28 @@ slot("World.PIXI.Scene", "parent", ref("World.Core.TopObject"), {
   module: ref("World.Modules.pixi")
 });
 _AddPrototypeSlot(ref("World.PIXI.Scene"), "parent");
+
+slot(
+  "World.PIXI.Scene",
+  "Init",
+  msg(`function(stage) {
+    for(let actor of this.actors.GetActors()) {
+        actor.Init(stage);
+    }
+}`),
+  { module: ref("World.Modules.pixi") }
+);
+
+slot(
+  "World.PIXI.Scene",
+  "New",
+  msg(`function() {
+    let inst = this.Extend();
+    inst.actors = World.PIXI.ActorList.Extend();
+    return inst;
+}`),
+  { module: ref("World.Modules.pixi") }
+);
 
 slot(
   "World.PIXI",
@@ -187,3 +173,110 @@ slot(
 }`),
   { module: ref("World.Modules.pixi") }
 );
+
+slot(
+  "World.PIXI",
+  "ActorList",
+  (function() {
+    let object = ref("World.PIXI.ActorList");
+    _SetAnnotation(object, "name", `ActorList`);
+    _SetAnnotation(object, "creator", ref("World.PIXI"));
+    _SetAnnotation(object, "creatorSlot", `ActorList`);
+
+    return object;
+  })(),
+  { module: ref("World.Modules.pixi") }
+);
+
+slot("World.PIXI.ActorList", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.pixi")
+});
+_AddPrototypeSlot(ref("World.PIXI.ActorList"), "parent");
+
+slot(
+  "World.PIXI",
+  "Actor",
+  (function() {
+    let object = ref("World.PIXI.Actor");
+    _SetAnnotation(object, "creator", ref("World.PIXI"));
+    _SetAnnotation(object, "creatorSlot", `Actor`);
+    _SetAnnotation(object, "name", `Actor`);
+
+    return object;
+  })(),
+  { module: ref("World.Modules.pixi") }
+);
+
+slot("World.PIXI.Actor", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.pixi")
+});
+_AddPrototypeSlot(ref("World.PIXI.Actor"), "parent");
+
+slot(
+  "World.PIXI.Actor",
+  "Init",
+  msg(`function(stage) {
+    this.container = new PIXI.Container();
+    for(let component of this.components.GetComponents()) {
+        component.Init(container);
+    }
+}`),
+  { module: ref("World.Modules.pixi") }
+);
+
+slot(
+  "World.PIXI",
+  "Component",
+  (function() {
+    let object = ref("World.PIXI.Component");
+    _SetAnnotation(object, "creator", ref("World.PIXI"));
+    _SetAnnotation(object, "creatorSlot", `Component`);
+    _SetAnnotation(object, "name", `Component`);
+
+    return object;
+  })(),
+  { module: ref("World.Modules.pixi") }
+);
+
+slot("World.PIXI.Component", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.pixi")
+});
+_AddPrototypeSlot(ref("World.PIXI.Component"), "parent");
+
+slot(
+  "World.PIXI",
+  "ComponentList",
+  (function() {
+    let object = ref("World.PIXI.ComponentList");
+    _SetAnnotation(object, "name", `ComponentList`);
+    _SetAnnotation(object, "creator", ref("World.PIXI"));
+    _SetAnnotation(object, "creatorSlot", `ComponentList`);
+
+    return object;
+  })(),
+  { module: ref("World.Modules.pixi") }
+);
+
+slot("World.PIXI.ComponentList", "parent", ref("World.Core.TopObject"), {
+  module: ref("World.Modules.pixi")
+});
+_AddPrototypeSlot(ref("World.PIXI.ComponentList"), "parent");
+
+slot(
+  "World.PIXI",
+  "Components",
+  (function() {
+    let object = ref("World.PIXI.Components");
+    _SetAnnotation(object, "name", `Components`);
+    _SetAnnotation(object, "creator", ref("World.PIXI"));
+    _SetAnnotation(object, "creatorSlot", `Components`);
+
+    return object;
+  })(),
+  { module: ref("World.Modules.pixi") }
+);
+
+slot("World.PIXI.Components", "parent", ref("World.Core.Namespace"), {
+  module: ref("World.Modules.pixi")
+});
+_AddPrototypeSlot(ref("World.PIXI.Components"), "parent");
