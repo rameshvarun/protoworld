@@ -517,6 +517,20 @@ _SetSlotAnnotation(
 );
 
 _AddSlot(
+  ref("World.Core.TopObject"),
+  "SetAsCreator",
+  _MakeMessageHandler(`function(slot) {
+    this[slot].SetCreator(this, slot);
+}`)
+);
+_SetSlotAnnotation(
+  ref("World.Core.TopObject"),
+  "SetAsCreator",
+  "module",
+  ref("World.Modules.init")
+);
+
+_AddSlot(
   ref("World.Core"),
   "TopObject",
   (function() {
