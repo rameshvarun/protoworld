@@ -118,6 +118,50 @@ slot(
 
 slot(
   "World.Interface",
+  "AssetLoaders",
+  (function() {
+    let object = ref("World.Interface.AssetLoaders");
+    _SetAnnotation(object, "name", `AssetLoaders`);
+    _SetAnnotation(
+      object,
+      "description",
+      `An object that stores a bunch of asset loaders. When an asset is uploaded, we try each of these functions to see which Asset (eg: Image, Audio, Video) subclass is actually created.`
+    );
+    _SetAnnotation(object, "creator", ref("World.Interface"));
+    _SetAnnotation(object, "creatorSlot", `AssetLoaders`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Interface.AssetLoaders",
+  "AssetLoader",
+  msg(`function(data, contentType) {
+    return World.Core.Asset.New(data, contentType);
+}`),
+  { priority: 0 }
+);
+
+slot(
+  "World.Interface.AssetLoaders",
+  "ImageLoader",
+  msg(`function(data, contentType) {
+    if (contentType.startsWith("image/")) {
+        return World.Interface.Image.New(data, contentType);
+    }
+}`),
+  { priority: 1 }
+);
+
+prototype_slot(
+  "World.Interface.AssetLoaders",
+  "parent",
+  ref("World.Core.TopObject")
+);
+
+slot(
+  "World.Interface",
   "AssetViewer",
   (function() {
     let object = ref("World.Interface.AssetViewer");
@@ -831,8 +875,20 @@ slot(
           var reader = new FileReader();
 
           reader.onload = function() {
-              let asset = World.Core.Asset.New(reader.result, file.type);
-              asset.OpenEditor();
+             let assetLoaders = World.Interface.AssetLoaders;
+             let loaders = assetLoaders.GetSlotNames();
+             loaders.sort((a, b) =>
+                assetLoaders.GetSlotAnnotation(b, 'priority') - assetLoaders.GetSlotAnnotation(a, 'priority'));
+             console.log(loaders);
+
+             for (let loader of loaders) {
+                 if (loader == "parent") continue;
+                 let asset = assetLoaders[loader](reader.result, file.type);
+                 if (asset) {
+                     asset.OpenEditor();
+                     break;
+                 }
+             }
           };
 
           reader.readAsArrayBuffer(file);
