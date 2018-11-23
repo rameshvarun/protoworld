@@ -154,6 +154,17 @@ slot(
   { priority: 1 }
 );
 
+slot(
+  "World.Interface.AssetLoaders",
+  "VideoLoader",
+  msg(`function(data, contentType) {
+    if (contentType.startsWith("video/")) {
+        return World.Interface.Video.New(data, contentType);
+    }
+}`),
+  { priority: 1 }
+);
+
 prototype_slot(
   "World.Interface.AssetLoaders",
   "parent",
@@ -928,6 +939,79 @@ slot(
 
     return object;
   })()
+);
+
+slot(
+  "World.Interface",
+  "Video",
+  (function() {
+    let object = ref("World.Interface.Video");
+    _SetAnnotation(object, "name", `Video`);
+    _SetAnnotation(object, "description", `Represents a video asset.`);
+    _SetAnnotation(object, "creator", ref("World.Interface"));
+    _SetAnnotation(object, "creatorSlot", `Video`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Interface.Video",
+  "CreateEditor",
+  msg(`function() {
+    if (this.data) {
+       return World.Interface.VideoViewer.New(this);
+    } else {
+       return World.Core.TopObject.CreateEditor.call(this);
+    }
+}`)
+);
+
+prototype_slot("World.Interface.Video", "parent", ref("World.Core.Asset"));
+
+slot(
+  "World.Interface",
+  "VideoViewer",
+  (function() {
+    let object = ref("World.Interface.VideoViewer");
+    _SetAnnotation(object, "creator", ref("World.Interface"));
+    _SetAnnotation(object, "creatorSlot", `VideoViewer`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Interface.VideoViewer",
+  "GetTitle",
+  msg(`function() {
+    return \`\${(this.target.GetAnnotation('name') || "Unnamed Object")} (Video Viewer)\`;
+}`)
+);
+
+slot(
+  "World.Interface.VideoViewer",
+  "RenderContent",
+  msg(`function() {
+  return (
+    <div>
+      {this.RenderDescriptionWidget()}
+      <hr />
+
+      <video controls={true} style={{width: '100%'}} src={this.target.GetObjectURL()}></video>
+
+      <div>Asset Size: {this.target.data.byteLength} bytes.</div>
+      <div>Content Type: {this.target.contentType}</div>
+      <button onClick={() => this.target.Download()}>Download</button>
+    </div>
+  );
+}`)
+);
+
+prototype_slot(
+  "World.Interface.VideoViewer",
+  "parent",
+  ref("World.Interface.AssetViewer")
 );
 
 slot(
