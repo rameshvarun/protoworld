@@ -742,6 +742,7 @@ slot(
     if (!this.image) {
         this.image = new Image();
         this.image.src = this.GetObjectURL();
+        this.SetSlotAnnotation('image', 'transient', true);
     }
     return this.image;
 }`)

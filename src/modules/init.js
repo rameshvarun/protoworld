@@ -75,6 +75,7 @@ slot(
   msg(`function() {
     if (!(this.blob instanceof Blob)) {
         this.blob = new Blob([this.data]);
+        this.SetSlotAnnotation('blob', 'transient', true);
     }
     return this.blob;
 }`)
@@ -86,6 +87,7 @@ slot(
   msg(`function() {
     if (!this.objectURL) {
         this.objectURL = URL.createObjectURL(this.GetBlob());
+        this.SetSlotAnnotation('objectURL', 'transient', true);
     }
     return this.objectURL;
 }`)
