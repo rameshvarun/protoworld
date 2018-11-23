@@ -735,6 +735,18 @@ slot(
 }`)
 );
 
+slot(
+  "World.Interface.Image",
+  "GetImage",
+  msg(`function() {
+    if (!this.image) {
+        this.image = new Image();
+        this.image.src = this.GetObjectURL();
+    }
+    return this.image;
+}`)
+);
+
 prototype_slot("World.Interface.Image", "parent", ref("World.Core.Asset"));
 
 slot(
