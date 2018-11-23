@@ -118,6 +118,14 @@ slot(
 
 slot(
   "World.Math.Vec3",
+  "FromThree",
+  msg(`function(threeVec) {
+    return this.New(threeVec.x, threeVec.y, threeVec.z);
+}`)
+);
+
+slot(
+  "World.Math.Vec3",
   "IsInteger",
   msg(`function() {
     return Number.isInteger(this.x) &&
@@ -146,6 +154,14 @@ slot(
 	    return "Vec3";
 	else
 	    return \`<\${this.x}, \${this.y}, \${this.z}>\`;
+}`)
+);
+
+slot(
+  "World.Math.Vec3",
+  "ToThree",
+  msg(`function() {
+    return new THREE.Vector3(this.x, this.y, this.z);
 }`)
 );
 
