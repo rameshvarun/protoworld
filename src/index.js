@@ -15,7 +15,9 @@ import ErrorBoundary from 'react-error-boundary';
 window.ErrorBoundary = ErrorBoundary;
 
 window.PIXI = require('pixi.js');
+
 window.THREE = require('three');
+require('three/examples/js/controls/OrbitControls.js');
 
 window.Prettier = require("prettier/standalone");
 window.PrettierBabylon = require("prettier/parser-babylon");
