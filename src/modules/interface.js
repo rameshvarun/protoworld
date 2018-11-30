@@ -99,6 +99,45 @@ slot(
 );
 
 slot(
+  "World.Interface.Image",
+  "CreateEditor",
+  msg(`function() {
+    if (this.data) {
+       return World.Interface.ImageViewer.New(this);
+    } else {
+       return World.Core.TopObject.CreateEditor.call(this);
+    }
+}`)
+);
+
+slot(
+  "World.Interface.Image",
+  "GetImage",
+  msg(`function() {
+    if (!this.image) {
+        this.image = new Image();
+        this.image.src = this.GetObjectURL();
+        this.SetSlotAnnotation('image', 'transient', true);
+    }
+    return this.image;
+}`)
+);
+
+slot(
+  "World.Interface.Image",
+  "GetTHREETexture",
+  msg(`function() {
+    if (!this.three) {
+        this.three = new THREE.TextureLoader().load(this.GetObjectURL());
+        this.SetSlotAnnotation('three', 'transient', true);
+    }
+    return this.three;
+}`)
+);
+
+prototype_slot("World.Interface.Image", "parent", ref("World.Core.Asset"));
+
+slot(
   "World.Interface.CanvasWindow",
   "GetTitle",
   msg(`function() {
@@ -275,6 +314,7 @@ slot(
                 }}>{e.stack || e.toString()}</pre>
       </div>;
   }
+  content = content || <div></div>;
 
   return (
     <div
@@ -730,33 +770,6 @@ slot(
     return object;
   })()
 );
-
-slot(
-  "World.Interface.Image",
-  "CreateEditor",
-  msg(`function() {
-    if (this.data) {
-       return World.Interface.ImageViewer.New(this);
-    } else {
-       return World.Core.TopObject.CreateEditor.call(this);
-    }
-}`)
-);
-
-slot(
-  "World.Interface.Image",
-  "GetImage",
-  msg(`function() {
-    if (!this.image) {
-        this.image = new Image();
-        this.image.src = this.GetObjectURL();
-        this.SetSlotAnnotation('image', 'transient', true);
-    }
-    return this.image;
-}`)
-);
-
-prototype_slot("World.Interface.Image", "parent", ref("World.Core.Asset"));
 
 slot(
   "World.Interface",

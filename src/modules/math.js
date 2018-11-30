@@ -69,6 +69,14 @@ slot(
 
 slot(
   "World.Math.Vec2",
+  "DivScalar",
+  msg(`function(s) {
+    return this.New(this.x / s, this.y / s);
+}`)
+);
+
+slot(
+  "World.Math.Vec2",
   "Length",
   msg(`function() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
@@ -83,6 +91,14 @@ slot(
     inst.x = x;
     inst.y = y;
     return inst;
+}`)
+);
+
+slot(
+  "World.Math.Vec2",
+  "Normalize",
+  msg(`function() {
+    return this.DivScalar(this.Length());
 }`)
 );
 
@@ -118,6 +134,17 @@ slot(
 
 slot(
   "World.Math.Vec3",
+  "Add",
+  msg(`function(other) {
+    return this.New(
+        this.x + other.x,
+        this.y + other.y,
+        this.z + other.z);
+}`)
+);
+
+slot(
+  "World.Math.Vec3",
   "FromThree",
   msg(`function(threeVec) {
     return this.New(threeVec.x, threeVec.y, threeVec.z);
@@ -148,6 +175,17 @@ slot(
 
 slot(
   "World.Math.Vec3",
+  "Sub",
+  msg(`function(other) {
+    return this.New(
+        this.x - other.x,
+        this.y - other.y,
+        this.z - other.z);
+}`)
+);
+
+slot(
+  "World.Math.Vec3",
   "ToString",
   msg(`function() {
     if (this === World.Math.Vec3)
@@ -162,6 +200,14 @@ slot(
   "ToThree",
   msg(`function() {
     return new THREE.Vector3(this.x, this.y, this.z);
+}`)
+);
+
+slot(
+  "World.Math.Vec3",
+  "XZ",
+  msg(`function() {
+    return World.Math.Vec2.New(this.x, this.z);
 }`)
 );
 
