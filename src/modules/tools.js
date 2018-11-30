@@ -1,3 +1,9 @@
+/*
+ToolsModule - ProtoWorld Module
+undefined
+*/
+
+/* BEGIN MODULE PRELUDE */
 let ref = function(path) {
   var parts = path.split(".");
   var current = window;
@@ -7,9 +13,25 @@ let ref = function(path) {
   return current;
 };
 
-let slot = function(path, name, value) {
+let slot = function(path, name, value, annotations = {}) {
   _AddSlot(ref(path), name, value);
+  for (let annotation in annotations) {
+    _SetSlotAnnotation(ref(path), name, annotation, annotations[annotation]);
+  }
+  _SetSlotAnnotation(ref(path), name, "module", mod);
 };
+
+let prototype_slot = function(path, name, value, annotations = {}) {
+  slot(path, name, value, annotations);
+  _AddPrototypeSlot(ref(path), name);
+};
+
+let msg = function(code) {
+  return _MakeMessageHandler(code);
+};
+/* END MODULE PRELUDE */
+
+let mod = ref("World.Modules.tools");
 
 slot(
   "World.Modules",
@@ -23,21 +45,8 @@ slot(
     return object;
   })()
 );
-_SetSlotAnnotation(
-  ref("World.Modules"),
-  "tools",
-  "module",
-  ref("World.Modules.tools")
-);
 
-slot("World.Modules.tools", "parent", ref("World.Core.Module"));
-_AddPrototypeSlot(ref("World.Modules.tools"), "parent");
-_SetSlotAnnotation(
-  ref("World.Modules.tools"),
-  "parent",
-  "module",
-  ref("World.Modules.tools")
-);
+prototype_slot("World.Modules.tools", "parent", ref("World.Core.Module"));
 
 slot(
   "World",
@@ -50,16 +59,6 @@ slot(
 
     return object;
   })()
-);
-_SetSlotAnnotation(ref("World"), "Tools", "module", ref("World.Modules.tools"));
-
-slot("World.Tools", "parent", ref("World.Core.Namespace"));
-_AddPrototypeSlot(ref("World.Tools"), "parent");
-_SetSlotAnnotation(
-  ref("World.Tools"),
-  "parent",
-  "module",
-  ref("World.Modules.tools")
 );
 
 slot(
@@ -79,42 +78,11 @@ slot(
     return object;
   })()
 );
-_SetSlotAnnotation(
-  ref("World.Tools"),
-  "ModuleScanner",
-  "module",
-  ref("World.Modules.tools")
-);
-
-slot("World.Tools.ModuleScanner", "parent", ref("World.Interface.Window"));
-_AddPrototypeSlot(ref("World.Tools.ModuleScanner"), "parent");
-_SetSlotAnnotation(
-  ref("World.Tools.ModuleScanner"),
-  "parent",
-  "module",
-  ref("World.Modules.tools")
-);
-
-slot(
-  "World.Tools.ModuleScanner",
-  "New",
-  _MakeMessageHandler(`function() {
-    let inst = World.Interface.Window.New.call(this);
-    inst.foundSlots = inst.FindSlots();
-    return inst;
-}`)
-);
-_SetSlotAnnotation(
-  ref("World.Tools.ModuleScanner"),
-  "New",
-  "module",
-  ref("World.Modules.tools")
-);
 
 slot(
   "World.Tools.ModuleScanner",
   "FindSlots",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
   let visited = new Set();
   let slots = [];
 
@@ -136,31 +104,29 @@ slot(
   return slots;
 }`)
 );
-_SetSlotAnnotation(
-  ref("World.Tools.ModuleScanner"),
-  "FindSlots",
-  "module",
-  ref("World.Modules.tools")
-);
 
 slot(
   "World.Tools.ModuleScanner",
   "GetTitle",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return "Module Scanner";
 }`)
 );
-_SetSlotAnnotation(
-  ref("World.Tools.ModuleScanner"),
-  "GetTitle",
-  "module",
-  ref("World.Modules.tools")
+
+slot(
+  "World.Tools.ModuleScanner",
+  "New",
+  msg(`function() {
+    let inst = World.Interface.Window.New.call(this);
+    inst.foundSlots = inst.FindSlots();
+    return inst;
+}`)
 );
 
 slot(
   "World.Tools.ModuleScanner",
   "RenderContent",
-  _MakeMessageHandler(`function() {
+  msg(`function() {
     return <div>
         <div>The slots below are missing module annotations.</div>
         <button onClick={() => this.foundSlots = this.FindSlots()}>Rescan</button>
@@ -169,9 +135,11 @@ slot(
     </div>
 }`)
 );
-_SetSlotAnnotation(
-  ref("World.Tools.ModuleScanner"),
-  "RenderContent",
-  "module",
-  ref("World.Modules.tools")
+
+prototype_slot(
+  "World.Tools.ModuleScanner",
+  "parent",
+  ref("World.Interface.Window")
 );
+
+prototype_slot("World.Tools", "parent", ref("World.Core.Namespace"));
