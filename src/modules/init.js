@@ -74,7 +74,7 @@ slot(
   "GetBlob",
   msg(`function() {
     if (!(this.blob instanceof Blob)) {
-        this.blob = new Blob([this.data]);
+        this.blob = new Blob([this.data], {type: this.contentType});
         this.SetSlotAnnotation('blob', 'transient', true);
     }
     return this.blob;
@@ -540,6 +540,10 @@ slot(
         return escapeTemplateString(value);
     } else if (typeof value == "number") {
         return JSON.stringify(value);
+    } else if (value instanceof ArrayBuffer) {
+        var view = new Int8Array(value);
+        let array = Array.prototype.slice.call(view);
+        return \`Int8Array.from(\${JSON.stringify(array)}).buffer\`;
     } else {
       throw new Error(\`Encountered an object of Unknown type.\`);
     }
