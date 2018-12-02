@@ -860,8 +860,10 @@ slot(
   let isMobile = MobileDetect.mobile() !== null;
   let barStyle = isMobile ? {
      'backgroundColor': '#285477',
-     width: '100%',
-     display: 'flex'
+     maxWidth: '100%',
+     padding: '5px',
+     whiteSpace: 'nowrap',
+     overflowX: 'scroll'
    } : {
      'backgroundColor': '#285477',
      'position': 'fixed',
@@ -869,7 +871,6 @@ slot(
      left: '0px',
      paddingTop: '2px',
      width: '100%',
-     display: 'flex'
    };
 
   let MenuRoot = World.Interface.MenuRoot;
@@ -898,7 +899,7 @@ slot(
             </Dropdown.default>;
         }
         return <span
-            style={{ cursor: 'pointer', color: 'white', paddingRight: '8px', paddingLeft: '5px', paddingBottom: '2px'}}
+            style={{ whiteSpace: 'nowrap', cursor: 'pointer', color: 'white', paddingRight: '8px', paddingLeft: '5px', paddingBottom: '2px'}}
             onClick={() => MenuRoot[slot]()}><b>{slot}</b></span>})}
   </div>;
 }`)
@@ -1291,7 +1292,7 @@ slot(
   "Render",
   msg(`function() {
   return <>
-    <img style={{position: 'absolute', marginTop: '30px', maxWidth: '400px'}}
+    <img style={{zIndex: -1, position: 'absolute', marginTop: '30px', maxWidth: '400px'}}
         src={World.Interface.logo.GetObjectURL()}></img>
     {World.Interface.MainMenu.Render()}
     {(this.windows || []).map(w => w.Render())}</>

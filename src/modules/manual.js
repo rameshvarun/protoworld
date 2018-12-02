@@ -133,7 +133,7 @@ slot(
         <div style={{minWidth: '150px', borderRight: '1px solid black', padding: '5px'}}>
             {this.RenderNavigation(this.path)}
         </div>
-        <div style={{padding: '10px'}}>
+        <div style={{overflow: 'scroll', padding: '10px'}}>
             {World.Manual.root[this.path].RenderPage()}
         </div>
     </div>;

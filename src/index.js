@@ -44,7 +44,7 @@ require('./modules/random.js')
 require('./modules/manual.js')
 require('./modules/tools.js')
 require('./modules/math.js')
-require('./modules/protopixi.js')
+// require('./modules/protopixi.js')
 RunExternalLoaders();
 
 window.FileSaver = require('file-saver');
