@@ -99,6 +99,23 @@ slot(
 );
 
 slot(
+  "World.ExternalLoaders",
+  "InterfaceLoader",
+  msg(`function() {
+    return new Promise((resolve, reject) => {
+        let link = document.createElement('link');
+        link.rel  = 'stylesheet';
+        link.href = 'https://use.fontawesome.com/releases/v5.0.10/css/all.css';
+        link.crossOrigin = 'anonymous';
+        link.integrity = 'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg';
+
+        link.onload = () => resolve();
+        document.head.appendChild(link);
+    });
+}`)
+);
+
+slot(
   "World",
   "Interface",
   (function() {

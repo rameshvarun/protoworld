@@ -386,6 +386,41 @@ function() {
 
 slot(
   "World.Core",
+  "ExternalHelpers",
+  (function() {
+    let object = ref("World.Core.ExternalHelpers");
+    _SetAnnotation(object, "creator", ref("World.Core"));
+    _SetAnnotation(object, "creatorSlot", `ExternalHelpers`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Core.ExternalHelpers",
+  "LoadCSS",
+  msg(`function(href, integrity) {
+    return new Promise((resolve, reject) => {
+        let link = document.createElement('link');
+        link.rel  = 'stylesheet';
+        link.href = href;
+        link.crossOrigin = 'anonymous';
+        link.integrity = integrity;
+
+        link.onload = () => resolve();
+        document.head.appendChild(link);
+    });
+}`)
+);
+
+prototype_slot(
+  "World.Core.ExternalHelpers",
+  "parent",
+  ref("World.Core.TopObject")
+);
+
+slot(
+  "World.Core",
   "Module",
   (function() {
     let object = ref("World.Core.Module");
@@ -607,6 +642,22 @@ slot(
 );
 
 prototype_slot("World.Core", "parent", ref("World.Core.Namespace"));
+
+slot(
+  "World",
+  "ExternalLoaders",
+  (function() {
+    let object = ref("World.ExternalLoaders");
+    _SetAnnotation(object, "name", `ExternalLoaders`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World"));
+    _SetAnnotation(object, "creatorSlot", `ExternalLoaders`);
+
+    return object;
+  })()
+);
+
+prototype_slot("World.ExternalLoaders", "parent", ref("World.Core.TopObject"));
 
 slot(
   "World",
