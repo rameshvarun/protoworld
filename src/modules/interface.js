@@ -99,324 +99,6 @@ slot(
 );
 
 slot(
-  "World.Interface.Image",
-  "CreateEditor",
-  msg(`function() {
-    if (this.data) {
-       return World.Interface.ImageViewer.New(this);
-    } else {
-       return World.Core.TopObject.CreateEditor.call(this);
-    }
-}`)
-);
-
-slot(
-  "World.Interface.Image",
-  "GetImage",
-  msg(`function() {
-    if (!this.image) {
-        this.image = new Image();
-        this.image.src = this.GetObjectURL();
-        this.SetSlotAnnotation('image', 'transient', true);
-    }
-    return this.image;
-}`)
-);
-
-slot(
-  "World.Interface.Image",
-  "GetTHREETexture",
-  msg(`function() {
-    if (!this.three) {
-        this.three = new THREE.TextureLoader().load(this.GetObjectURL());
-        this.SetSlotAnnotation('three', 'transient', true);
-    }
-    return this.three;
-}`)
-);
-
-prototype_slot("World.Interface.Image", "parent", ref("World.Core.Asset"));
-
-slot(
-  "World.Interface.CanvasWindow",
-  "GetTitle",
-  msg(`function() {
-    return "CanvasWindow"
-}`)
-);
-
-slot(
-  "World.Interface.CanvasWindow",
-  "New",
-  msg(`function(target) {
-    let inst = World.Interface.Window.New.call(this);
-    inst.SetSlotAnnotation('canvas', 'transient', true);
-    return inst;
-}`)
-);
-
-slot(
-  "World.Interface.CanvasWindow",
-  "OnResize",
-  msg(`function() {
-}`)
-);
-
-slot(
-  "World.Interface.CanvasWindow",
-  "RenderCanvas",
-  msg(`function(canvas) {
-    let ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = 'blue';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.stroke();
-}`)
-);
-
-slot(
-  "World.Interface.CanvasWindow",
-  "RenderContent",
-  msg(`function() {
-    if (this.canvas && this.canvas instanceof HTMLElement) {
-        // Handle resizing.
-        const width = this.canvas.clientWidth;
-        const height = this.canvas.clientHeight;
-
-        if (this.canvas.width !== width || this.canvas.height !== height) {
-            this.canvas.width = width;
-            this.canvas.height = height;
-            this.OnResize();
-        }
-
-        this.RenderCanvas(this.canvas);
-    }
-
-    return <div style={{width: "100%", height: "100%", overflow: 'hidden'}}>
-        <canvas ref={(canvas) => {
-            if (canvas && canvas != this.canvas)
-                this.SetCanvas(canvas);
-        }} style={{width: "100%", height: "100%"}}>
-        </canvas>
-    </div>;
-}`)
-);
-
-slot(
-  "World.Interface.CanvasWindow",
-  "SetCanvas",
-  msg(`function(canvas) {
-    this.canvas = canvas;
-}`)
-);
-
-slot("World.Interface.CanvasWindow", "padding", `0px`);
-
-prototype_slot(
-  "World.Interface.CanvasWindow",
-  "parent",
-  ref("World.Interface.Window")
-);
-
-slot(
-  "World.Interface.Window",
-  "Close",
-  msg(`function() { World.Interface.WindowManager.RemoveWindow(this) }`)
-);
-
-slot(
-  "World.Interface.Window",
-  "GetTitle",
-  msg(`function() { return 'Untitled Window'; }`)
-);
-
-slot(
-  "World.Interface.Window",
-  "IsOpen",
-  msg(`function() {
-    return World.Interface.WindowManager.IsOpen(this);
-}`)
-);
-
-slot(
-  "World.Interface.Window",
-  "MoveToFront",
-  msg(`function() {
-    World.Interface.WindowManager.MoveToFront(this);
-}`)
-);
-
-slot(
-  "World.Interface.Window",
-  "New",
-  msg(`function() {
-    let inst = this.Extend();
-    inst.windowID = uuid.v1();
-    inst.SetSlotAnnotation('windowDiv', 'transient', true);
-    return inst;
-}`)
-);
-
-slot(
-  "World.Interface.Window",
-  "Open",
-  msg(`function() { World.Interface.WindowManager.AddWindow(this) }`)
-);
-
-slot(
-  "World.Interface.Window",
-  "Render",
-  msg(`function() {
-  let isMobile = MobileDetect.mobile() !== null;
-
-  let windowStyle = isMobile ? {
-        border: "1px solid black",
-        boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.5)",
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: "#f1f1f1",
-        marginTop: '15px',
-        marginBottom: '10px',
-      } : {
-        resize: "both",
-        overflow: "auto",
-        border: "1px solid black",
-        position: "absolute",
-        backgroundColor: "#f1f1f1",
-        top: this.top + "px",
-        left: this.left + "px",
-        width: this.width + "px",
-        height: this.height + "px",
-        boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.5)",
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        boxSizing: 'border-box',
-        isolation: 'isolate',
-        zIndex: this.zIndex,
-      };
-
-  let contentStyle = isMobile ? {
-      padding: this.padding, flexGrow: 1, overflow: 'auto', height: '500px'}
-    : { padding: this.padding, flexGrow: 1, overflow: 'auto', height: '0px' };
-
-  let content = null;
-
-  try {
-      content = this.RenderContent();
-  } catch(e) {
-      content = <div>
-        An error occurred while rendering window content.
-        <pre style={{
-                    whiteSpace: 'pre-wrap'
-                }}>{e.stack || e.toString()}</pre>
-      </div>;
-  }
-  content = content || <div></div>;
-
-  return (
-    <div
-      key={this.windowID}
-      style={windowStyle}
-      ref={(div) => this.windowDiv = div}
-      onMouseDown={() => this.MoveToFront()}
-    >
-      <div
-        key="topbar"
-        style={{
-          "backgroundColor": this.barColor,
-          padding: "3px",
-          color: "white",
-          cursor: "move",
-          display: "flex",
-          justifyContent: "space-between",
-          flexShrink: 0
-        }}
-        onMouseDown={e => {
-          var x = e.clientX;
-          var y = e.clientY;
-
-          document.onmousemove = e => {
-            var dx = e.clientX - x;
-            var dy = e.clientY - y;
-            x = e.clientX;
-            y = e.clientY;
-
-            this.left = this.left + dx;
-            this.top = this.top + dy;
-          };
-
-          document.onmouseup = () => {
-            document.onmouseup = null;
-            document.onmousemove = null;
-          };
-        }}
-      >
-        <b>{this.GetTitle()}</b>
-        <span>
-          <i
-            className="fas fa-search"
-            title="Inspect Window Object"
-            style={{ cursor: "default", marginRight: "5px" }}
-            onClick={() =>
-              World.Interface.ObjectEditor.New(this).Open()
-            }
-          />
-          <i
-            className="fas fa-times"
-            title="Close Window"
-            style={{ cursor: "default" }}
-            onClick={() => this.Close()}
-          />
-        </span>
-      </div>
-      <div key="content" style={contentStyle}>
-        <ErrorBoundary FallbackComponent={({ componentStack, error }) => {
-            return <div>A React error occurred while rendering this window.
-                <pre style={{
-                    whiteSpace: 'pre-wrap'
-                }}>{error.toString()}</pre>
-            </div>;
-        }}>{content}</ErrorBoundary>
-      </div>
-      <div key="bottombar" style={{backgroundColor: this.barColor, height: '10px'}}></div>
-    </div>
-  );
-}`)
-);
-
-slot("World.Interface.Window", "RenderContent", msg(`function() { }`));
-
-slot(
-  "World.Interface.Window",
-  "Update",
-  msg(`function(dt) {
-    if (this.windowDiv && this.windowDiv instanceof HTMLElement) {
-        this.width = this.windowDiv.offsetWidth;
-        this.height = this.windowDiv.offsetHeight;
-    }
-}`)
-);
-
-slot("World.Interface.Window", "barColor", `#285477`);
-
-slot("World.Interface.Window", "height", 600);
-
-slot("World.Interface.Window", "left", 0);
-
-slot("World.Interface.Window", "padding", `5px`);
-
-prototype_slot("World.Interface.Window", "parent", ref("World.Core.TopObject"));
-
-slot("World.Interface.Window", "top", 0);
-
-slot("World.Interface.Window", "width", 400);
-
-slot("World.Interface.Window", "zIndex", 0);
-
-slot(
   "World",
   "Interface",
   (function() {
@@ -681,6 +363,203 @@ prototype_slot(
 );
 
 slot(
+  "World.Interface.Window",
+  "Close",
+  msg(`function() { World.Interface.WindowManager.RemoveWindow(this) }`)
+);
+
+slot(
+  "World.Interface.Window",
+  "GetTitle",
+  msg(`function() { return 'Untitled Window'; }`)
+);
+
+slot(
+  "World.Interface.Window",
+  "IsOpen",
+  msg(`function() {
+    return World.Interface.WindowManager.IsOpen(this);
+}`)
+);
+
+slot(
+  "World.Interface.Window",
+  "MoveToFront",
+  msg(`function() {
+    World.Interface.WindowManager.MoveToFront(this);
+}`)
+);
+
+slot(
+  "World.Interface.Window",
+  "New",
+  msg(`function() {
+    let inst = this.Extend();
+    inst.windowID = uuid.v1();
+    inst.SetSlotAnnotation('windowDiv', 'transient', true);
+    return inst;
+}`)
+);
+
+slot(
+  "World.Interface.Window",
+  "Open",
+  msg(`function() { World.Interface.WindowManager.AddWindow(this) }`)
+);
+
+slot(
+  "World.Interface.Window",
+  "Render",
+  msg(`function() {
+  let isMobile = MobileDetect.mobile() !== null;
+
+  let windowStyle = isMobile ? {
+        border: "1px solid black",
+        boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.5)",
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: "#f1f1f1",
+        marginTop: '15px',
+        marginBottom: '10px',
+      } : {
+        resize: "both",
+        overflow: "auto",
+        border: "1px solid black",
+        position: "absolute",
+        backgroundColor: "#f1f1f1",
+        top: this.top + "px",
+        left: this.left + "px",
+        width: this.width + "px",
+        height: this.height + "px",
+        boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.5)",
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        boxSizing: 'border-box',
+        isolation: 'isolate',
+        zIndex: this.zIndex,
+      };
+
+  let contentStyle = isMobile ? {
+      padding: this.padding, flexGrow: 1, overflow: 'auto', height: '500px'}
+    : { padding: this.padding, flexGrow: 1, overflow: 'auto', height: '0px' };
+
+  let content = null;
+
+  try {
+      content = this.RenderContent();
+  } catch(e) {
+      content = <div>
+        An error occurred while rendering window content.
+        <pre style={{
+                    whiteSpace: 'pre-wrap'
+                }}>{e.stack || e.toString()}</pre>
+      </div>;
+  }
+  content = content || <div></div>;
+
+  return (
+    <div
+      key={this.windowID}
+      style={windowStyle}
+      ref={(div) => this.windowDiv = div}
+      onMouseDown={() => this.MoveToFront()}
+    >
+      <div
+        key="topbar"
+        style={{
+          "backgroundColor": this.barColor,
+          padding: "3px",
+          color: "white",
+          cursor: "move",
+          display: "flex",
+          justifyContent: "space-between",
+          flexShrink: 0
+        }}
+        onMouseDown={e => {
+          var x = e.clientX;
+          var y = e.clientY;
+
+          document.onmousemove = e => {
+            var dx = e.clientX - x;
+            var dy = e.clientY - y;
+            x = e.clientX;
+            y = e.clientY;
+
+            this.left = this.left + dx;
+            this.top = this.top + dy;
+          };
+
+          document.onmouseup = () => {
+            document.onmouseup = null;
+            document.onmousemove = null;
+          };
+        }}
+      >
+        <b>{this.GetTitle()}</b>
+        <span>
+          <i
+            className="fas fa-search"
+            title="Inspect Window Object"
+            style={{ cursor: "default", marginRight: "5px" }}
+            onClick={() =>
+              World.Interface.ObjectEditor.New(this).Open()
+            }
+          />
+          <i
+            className="fas fa-times"
+            title="Close Window"
+            style={{ cursor: "default" }}
+            onClick={() => this.Close()}
+          />
+        </span>
+      </div>
+      <div key="content" style={contentStyle}>
+        <ErrorBoundary FallbackComponent={({ componentStack, error }) => {
+            return <div>A React error occurred while rendering this window.
+                <pre style={{
+                    whiteSpace: 'pre-wrap'
+                }}>{error.toString()}</pre>
+            </div>;
+        }}>{content}</ErrorBoundary>
+      </div>
+      <div key="bottombar" style={{backgroundColor: this.barColor, height: '10px'}}></div>
+    </div>
+  );
+}`)
+);
+
+slot("World.Interface.Window", "RenderContent", msg(`function() { }`));
+
+slot(
+  "World.Interface.Window",
+  "Update",
+  msg(`function(dt) {
+    if (this.windowDiv && this.windowDiv instanceof HTMLElement) {
+        this.width = this.windowDiv.offsetWidth;
+        this.height = this.windowDiv.offsetHeight;
+    }
+}`)
+);
+
+slot("World.Interface.Window", "barColor", `#285477`);
+
+slot("World.Interface.Window", "height", 600);
+
+slot("World.Interface.Window", "left", 0);
+
+slot("World.Interface.Window", "padding", `5px`);
+
+prototype_slot("World.Interface.Window", "parent", ref("World.Core.TopObject"));
+
+slot("World.Interface.Window", "top", 0);
+
+slot("World.Interface.Window", "width", 400);
+
+slot("World.Interface.Window", "zIndex", 0);
+
+slot(
   "World.Interface",
   "CanvasWindow",
   (function() {
@@ -696,6 +575,88 @@ slot(
 
     return object;
   })()
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "GetTitle",
+  msg(`function() {
+    return "CanvasWindow"
+}`)
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "New",
+  msg(`function(target) {
+    let inst = World.Interface.Window.New.call(this);
+    inst.SetSlotAnnotation('canvas', 'transient', true);
+    return inst;
+}`)
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "OnResize",
+  msg(`function() {
+}`)
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "RenderCanvas",
+  msg(`function(canvas) {
+    let ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.stroke();
+}`)
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "RenderContent",
+  msg(`function() {
+    if (this.canvas && this.canvas instanceof HTMLElement) {
+        // Handle resizing.
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+
+        if (this.canvas.width !== width || this.canvas.height !== height) {
+            this.canvas.width = width;
+            this.canvas.height = height;
+            this.OnResize();
+        }
+
+        this.RenderCanvas(this.canvas);
+    }
+
+    return <div style={{width: "100%", height: "100%", overflow: 'hidden'}}>
+        <canvas ref={(canvas) => {
+            if (canvas && canvas != this.canvas)
+                this.SetCanvas(canvas);
+        }} style={{width: "100%", height: "100%"}}>
+        </canvas>
+    </div>;
+}`)
+);
+
+slot(
+  "World.Interface.CanvasWindow",
+  "SetCanvas",
+  msg(`function(canvas) {
+    this.canvas = canvas;
+}`)
+);
+
+slot("World.Interface.CanvasWindow", "padding", `0px`);
+
+prototype_slot(
+  "World.Interface.CanvasWindow",
+  "parent",
+  ref("World.Interface.Window")
 );
 
 slot(
@@ -770,6 +731,45 @@ slot(
     return object;
   })()
 );
+
+slot(
+  "World.Interface.Image",
+  "CreateEditor",
+  msg(`function() {
+    if (this.data) {
+       return World.Interface.ImageViewer.New(this);
+    } else {
+       return World.Core.TopObject.CreateEditor.call(this);
+    }
+}`)
+);
+
+slot(
+  "World.Interface.Image",
+  "GetImage",
+  msg(`function() {
+    if (!this.image) {
+        this.image = new Image();
+        this.image.src = this.GetObjectURL();
+        this.SetSlotAnnotation('image', 'transient', true);
+    }
+    return this.image;
+}`)
+);
+
+slot(
+  "World.Interface.Image",
+  "GetTHREETexture",
+  msg(`function() {
+    if (!this.three) {
+        this.three = new THREE.TextureLoader().load(this.GetObjectURL());
+        this.SetSlotAnnotation('three', 'transient', true);
+    }
+    return this.three;
+}`)
+);
+
+prototype_slot("World.Interface.Image", "parent", ref("World.Core.Asset"));
 
 slot(
   "World.Interface",
@@ -850,18 +850,109 @@ slot(
      'position': 'fixed',
      top: '0px',
      left: '0px',
+     paddingTop: '2px',
      width: '100%',
      display: 'flex'
    };
 
-  return <div
-    style={barStyle}>
-   <button onClick={() => {
-     var blob = new Blob([_SaveImage(World)], {type: "application/x-protoworld"});
-     FileSaver.saveAs(blob, "image.prw");
-   }}>Save Image</button>
-   <button onClick={() => {
-        var fileInput = document.getElementById('file-input');
+  let MenuRoot = World.Interface.MenuRoot;
+  let MenuCategory = World.Interface.MenuCategory;
+  let menuItems = MenuRoot.GetSlotNames();
+  menuItems.sort((a, b) => MenuRoot.GetSlotAnnotation(b, 'priority') - MenuRoot.GetSlotAnnotation(a, 'priority'));
+  return <div style={barStyle}>
+    {menuItems.map(slot => {
+        if (slot == "parent") return;
+        if (MenuCategory.IsParentOf(MenuRoot[slot])) {
+            return <Dropdown.default>
+                <Dropdown.DropdownTrigger>
+                <span
+                    style={{ cursor: 'pointer', color: 'white', paddingRight: '8px', paddingLeft: '5px', paddingBottom: '2px'}}
+                    ><b>{slot} <i class="fas fa-caret-down"></i></b></span>
+                </Dropdown.DropdownTrigger>
+                <Dropdown.DropdownContent>
+                    <div style={{cursor: 'pointer', padding: '5px', minWidth: '150px', color: 'black', backgroundColor: '#f1f1f1', boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.5)"}}>
+                        {MenuRoot[slot].GetSlotNames().map(subslot => {
+                            if (subslot == "parent") return;
+                            return <div  onClick={() => MenuRoot[slot][subslot]()} >{subslot}</div>;
+
+                        })}
+                    </div>
+                </Dropdown.DropdownContent>
+            </Dropdown.default>;
+        }
+        return <span
+            style={{ cursor: 'pointer', color: 'white', paddingRight: '8px', paddingLeft: '5px', paddingBottom: '2px'}}
+            onClick={() => MenuRoot[slot]()}><b>{slot}</b></span>})}
+  </div>;
+}`)
+);
+
+slot("World.Interface.MainMenu", "left", 0);
+
+prototype_slot(
+  "World.Interface.MainMenu",
+  "parent",
+  ref("World.Interface.Window")
+);
+
+slot("World.Interface.MainMenu", "top", 0);
+
+slot("World.Interface.MainMenu", "windowID", `mainmenu`);
+
+slot(
+  "World.Interface",
+  "MenuCategory",
+  (function() {
+    let object = ref("World.Interface.MenuCategory");
+    _SetAnnotation(object, "name", `MenuCategory`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World.Interface"));
+    _SetAnnotation(object, "creatorSlot", `MenuCategory`);
+
+    return object;
+  })()
+);
+
+prototype_slot(
+  "World.Interface.MenuCategory",
+  "parent",
+  ref("World.Core.TopObject")
+);
+
+slot(
+  "World.Interface",
+  "MenuRoot",
+  (function() {
+    let object = ref("World.Interface.MenuRoot");
+    _SetAnnotation(object, "name", `MenuRoot`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World.Interface"));
+    _SetAnnotation(object, "creatorSlot", `MenuRoot`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Interface.MenuRoot",
+  "File",
+  (function() {
+    let object = ref("World.Interface.MenuRoot.File");
+    _SetAnnotation(object, "name", `FileMenu`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World.Interface.MenuRoot"));
+    _SetAnnotation(object, "creatorSlot", `File`);
+
+    return object;
+  })(),
+  { priority: 10 }
+);
+
+slot(
+  "World.Interface.MenuRoot.File",
+  "Open Image",
+  msg(`function() {
+            var fileInput = document.getElementById('file-input');
         var changeHandler = function() {
           var file = fileInput.files[0];
 
@@ -874,7 +965,7 @@ slot(
 
             reader.readAsArrayBuffer(file);
           } else {
-           alert("File not supported, .txt or .json files only");
+          alert("File not supported, .txt or .json files only");
           }
 
           fileInput.removeEventListener('change', changeHandler);
@@ -883,13 +974,30 @@ slot(
 
         fileInput.addEventListener('change', changeHandler);
 
-       fileInput.click();
-   }}>Open Image</button>
-   <button onClick={() => {
-     World.Interface.ObjectEditor.New(World).Open();
-   }}>Open World</button>
-    <button onClick={() => {
-        var fileInput = document.getElementById('file-input');
+      fileInput.click();
+    }`)
+);
+
+slot(
+  "World.Interface.MenuRoot.File",
+  "Save Image",
+  msg(`function() {
+   var blob = new Blob([_SaveImage(World)], {type: "application/x-protoworld"});
+   FileSaver.saveAs(blob, "image.prw");
+}`)
+);
+
+prototype_slot(
+  "World.Interface.MenuRoot.File",
+  "parent",
+  ref("World.Interface.MenuCategory")
+);
+
+slot(
+  "World.Interface.MenuRoot",
+  "Load Module",
+  msg(`function() {
+            var fileInput = document.getElementById('file-input');
         var changeHandler = function() {
           var file = fileInput.files[0];
 
@@ -902,7 +1010,7 @@ slot(
 
             reader.readAsText(file);
           } else {
-           alert("File not supported, .js files only");
+          alert("File not supported, .js files only");
           }
 
           fileInput.removeEventListener('change', changeHandler);
@@ -911,10 +1019,54 @@ slot(
 
         fileInput.addEventListener('change', changeHandler);
 
-       fileInput.click();
-   }}>Load Module</button>
-   <button onClick={() => {
-        var fileInput = document.getElementById('file-input');
+      fileInput.click();
+}`),
+  { priority: 0 }
+);
+
+slot(
+  "World.Interface.MenuRoot",
+  "Open World",
+  msg(`function() {
+    World.Interface.ObjectEditor.New(World).Open();
+}`),
+  { priority: 0 }
+);
+
+slot(
+  "World.Interface.MenuRoot",
+  "Tools",
+  (function() {
+    let object = ref("World.Interface.MenuRoot.Tools");
+    _SetAnnotation(object, "name", `ToolsMenu`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World.Interface.MenuRoot"));
+    _SetAnnotation(object, "creatorSlot", `Tools`);
+
+    return object;
+  })(),
+  { priority: 9 }
+);
+
+slot(
+  "World.Interface.MenuRoot.Tools",
+  "Module Scanner",
+  msg(`function() {
+    World.Tools.ModuleScanner.New().Open()
+}`)
+);
+
+prototype_slot(
+  "World.Interface.MenuRoot.Tools",
+  "parent",
+  ref("World.Interface.MenuCategory")
+);
+
+slot(
+  "World.Interface.MenuRoot",
+  "Upload Asset",
+  msg(`function() {
+            var fileInput = document.getElementById('file-input');
         var changeHandler = function() {
           var file = fileInput.files[0];
           var reader = new FileReader();
@@ -942,24 +1094,16 @@ slot(
           this.value = null;
         }
 
-       fileInput.addEventListener('change', changeHandler);
-       fileInput.click();
-   }}>Upload Asset</button>
-  </div>;
+      fileInput.addEventListener('change', changeHandler);
+      fileInput.click();
 }`)
 );
 
-slot("World.Interface.MainMenu", "left", 0);
-
 prototype_slot(
-  "World.Interface.MainMenu",
+  "World.Interface.MenuRoot",
   "parent",
-  ref("World.Interface.Window")
+  ref("World.Interface.MenuCategory")
 );
-
-slot("World.Interface.MainMenu", "top", 0);
-
-slot("World.Interface.MainMenu", "windowID", `mainmenu`);
 
 slot(
   "World.Interface",

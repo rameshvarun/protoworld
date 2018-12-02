@@ -46,6 +46,9 @@ window.React = require('react');
 var MobileDetect = require('mobile-detect');
 window.MobileDetect = new MobileDetect(window.navigator.userAgent);
 
+window.Dropdown = require('react-simple-dropdown')
+import 'react-simple-dropdown/styles/Dropdown.css';
+
 window.addEventListener("beforeunload", function (e) {
     var confirmationMessage = 'If you leave before saving, your changes will be lost.';
     (e || window.event).returnValue = confirmationMessage; //Gecko + IE

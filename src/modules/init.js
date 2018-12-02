@@ -246,6 +246,15 @@ slot(
 
 slot(
   "World.Core.TopObject",
+  "IsParentOf",
+  msg(`function(other) {
+    if (!_IsProtoObject(other)) return false;
+    return other.InstanceOf(this);
+}`)
+);
+
+slot(
+  "World.Core.TopObject",
   "ListCategories",
   msg(`function() {
     let categories = new Set();
