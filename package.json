@@ -2,7 +2,6 @@
   "name": "proto-world",
   "main": "index.js",
   "devDependencies": {
-    "chai": "^4.1.2",
     "css-loader": "^0.28.11",
     "react": "^16.6.3",
     "react-console-component": "^0.6.1",
@@ -19,17 +18,13 @@
   },
   "dependencies": {
     "@babel/standalone": "^7.0.0-beta.46",
-    "brace": "^0.11.1",
     "escape-template-string": "git://github.com/rameshvarun/escape-template-string.git#b686f75986428fff58d9cc8ce646f44c24be70f7",
     "mainloop.js": "^1.0.4",
     "pako": "^1.0.6",
-    "pixi.js": "^4.8.2",
     "prettier": "^1.15.2",
-    "react-ace": "^6.2.0",
     "react-error-boundary": "^1.2.3",
     "react-simple-dropdown": "^3.2.3",
     "replicator": "^1.0.2",
-    "three": "^0.98.0",
     "virtual-dom": "^2.1.1"
   }
 }

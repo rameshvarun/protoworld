@@ -105,6 +105,12 @@ slot(
     let External = World.Core.ExternalHelpers;
 
     return Promise.all([
+      External.LoadScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/ace.js',
+        'sha256-rfN9xU0ELcvTsc3WUaKlvSVEfzLvFCyl+ID09aieASo=').then(() =>
+        External.LoadScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/mode-javascript.js',
+        'sha256-9nVHCZW1SuyhaVgqmPk1XutGn+g/ASVBiVAheioldo4=')).then(() =>
+        External.LoadScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/theme-monokai.js',
+        'sha256-Fc4eJOe8KtF8kDLqSR94vUiJ1ohvKDxznSMxI3RavOw=')),
       External.LoadCSS('https://use.fontawesome.com/releases/v5.0.10/css/all.css',
         'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg'),
       External.LoadScript('https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.3/mobile-detect.js',
@@ -714,6 +720,7 @@ slot(
   inst.AddSlot('target', target);
   inst.AddSlot('slot', slot);
   inst.AddSlot('code', _GetMessageHandlerCode(target[slot]));
+  inst.SetSlotAnnotation('editorDiv', 'transient', true);
   return inst;
 }`)
 );
@@ -726,7 +733,17 @@ slot(
     <div style={{display: 'flex'}}>
         <button onClick={() => this.target[this.slot] = _MakeMessageHandler(this.code)}>Save</button>
     </div>
-    <AceEditor style={{width: '100%', flexGrow: 1}} mode="jsx" theme="monokai" value={this.code} onChange={(value) => this.code = value}/>
+    <div style={{width: '100%', flexGrow: 1}} ref={(div) => {
+      if (div && div != this.editorDiv) {
+        this.editorDiv = div;
+        let editor = ace.edit(div);
+
+        editor.setValue(this.code);
+        editor.session.setMode("ace/mode/javascript");
+        editor.setTheme("ace/theme/monokai");
+        editor.on('change', (value) => this.code = editor.getValue());
+      }
+    }} />
   </div>;
 }`)
 );

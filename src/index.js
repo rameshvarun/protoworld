@@ -8,12 +8,6 @@ window.h = React.createElement;
 import ReactDOM from 'react-dom';
 import MainLoop from 'mainloop.js';
 
-import brace from 'brace';
-import 'brace/mode/jsx';
-import 'brace/theme/monokai';
-import AceEditor from 'react-ace';
-window.AceEditor = AceEditor;
-
 import ErrorBoundary from 'react-error-boundary';
 window.ErrorBoundary = ErrorBoundary;
 
@@ -53,8 +47,6 @@ window.addEventListener("beforeunload", function (e) {
     (e || window.event).returnValue = confirmationMessage; //Gecko + IE
     return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
 });
-
-
 
 
 import Console from 'react-console-component';
