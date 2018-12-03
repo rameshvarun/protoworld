@@ -54,6 +54,8 @@ slot(
     let object = ref("World.Math.Vec2");
     _SetAnnotation(object, "creator", ref("World.Math"));
     _SetAnnotation(object, "creatorSlot", `Vec2`);
+    _SetAnnotation(object, "name", `Vec2`);
+    _SetAnnotation(object, "description", `A 2 element vector.`);
 
     return object;
   })()
@@ -69,9 +71,25 @@ slot(
 
 slot(
   "World.Math.Vec2",
+  "AngleTo",
+  msg(`function(other) {
+    return Math.acos(this.Dot(other) / (this.Length() * other.Length()));
+}`)
+);
+
+slot(
+  "World.Math.Vec2",
   "DivScalar",
   msg(`function(s) {
     return this.New(this.x / s, this.y / s);
+}`)
+);
+
+slot(
+  "World.Math.Vec2",
+  "Dot",
+  msg(`function(other) {
+    return this.x * other.x + this.y * other.y;
 }`)
 );
 
@@ -145,14 +163,6 @@ slot(
 
 slot(
   "World.Math.Vec3",
-  "FromThree",
-  msg(`function(threeVec) {
-    return this.New(threeVec.x, threeVec.y, threeVec.z);
-}`)
-);
-
-slot(
-  "World.Math.Vec3",
   "IsInteger",
   msg(`function() {
     return Number.isInteger(this.x) &&
@@ -192,14 +202,6 @@ slot(
 	    return "Vec3";
 	else
 	    return \`<\${this.x}, \${this.y}, \${this.z}>\`;
-}`)
-);
-
-slot(
-  "World.Math.Vec3",
-  "ToThree",
-  msg(`function() {
-    return new THREE.Vector3(this.x, this.y, this.z);
 }`)
 );
 
