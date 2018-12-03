@@ -42,6 +42,14 @@ slot(
 );
 
 slot(
+  "World.Interface.MenuRoot.Tools",
+  "Search",
+  msg(`function() {
+    World.Tools.Search.New().Open();
+}`)
+);
+
+slot(
   "World.Modules",
   "tools",
   (function() {
@@ -233,5 +241,94 @@ prototype_slot(
   "parent",
   ref("World.Interface.Window")
 );
+
+slot(
+  "World.Tools",
+  "Search",
+  (function() {
+    let object = ref("World.Tools.Search");
+    _SetAnnotation(object, "name", `SearchTool`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World.Tools"));
+    _SetAnnotation(object, "creatorSlot", `Search`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Tools.Search",
+  "GetTitle",
+  msg(`function() {
+    return "Search";
+}`)
+);
+
+slot(
+  "World.Tools.Search",
+  "MatchQuery",
+  msg(`function(query, name) {
+    query = (new String(query)).toLowerCase();
+    name = (new String(name)).toLowerCase();
+    return name.search(query) >= 0;
+}`)
+);
+
+slot(
+  "World.Tools.Search",
+  "RenderContent",
+  msg(`function() {
+    return <>
+        <div style={{width: '100%'}}>
+        <input
+            style={{width: '100%', fontSize: '34px'}}
+            ref={input => {
+                this.input = input;
+                this.SetSlotAnnotation('input', 'transient', true);
+            }}
+            defaultValue={this.value}
+            onChange={() => {
+                this.results = this.SearchQuery(this.input.value);
+            }}
+            autoFocus
+            />
+        </div>
+        <hr/>
+
+        <div style={{width: '100%', fontSize: '20px'}}>
+            {(this.results || []).map(result => <div>{result.RenderWidget()}</div>)}
+        </div>
+    </>;
+}`)
+);
+
+slot(
+  "World.Tools.Search",
+  "SearchQuery",
+  msg(`function(query) {
+  let visited = new Set();
+  let objects = [];
+
+  var findObjects = (object) => {
+    if(!_IsProtoObject(object)) return;
+    if(visited.has(object)) return;
+
+    visited.add(object);
+
+    if (this.MatchQuery(query, object.GetName())) {
+        objects.push(object);
+    }
+
+    for(let slot of object.GetSlotNames()) {
+      findObjects(object[slot]);
+    }
+  }
+
+  findObjects(World);
+  return objects;
+}`)
+);
+
+prototype_slot("World.Tools.Search", "parent", ref("World.Interface.Window"));
 
 prototype_slot("World.Tools", "parent", ref("World.Core.Namespace"));
