@@ -14,11 +14,6 @@ window.AceEditor = AceEditor;
 import ErrorBoundary from 'react-error-boundary';
 window.ErrorBoundary = ErrorBoundary;
 
-window.PIXI = require('pixi.js');
-
-window.THREE = require('three');
-require('three/examples/js/controls/OrbitControls.js');
-
 window.Prettier = require("prettier/standalone");
 window.PrettierBabylon = require("prettier/parser-babylon");
 
@@ -46,9 +41,6 @@ require('./modules/tools.js')
 require('./modules/math.js')
 
 
-window.FileSaver = require('file-saver');
-window.React = require('react');
-
 window.Dropdown = require('react-simple-dropdown')
 import 'react-simple-dropdown/styles/Dropdown.css';
 
@@ -59,7 +51,7 @@ window.addEventListener("beforeunload", function (e) {
 });
 
 
-window.h = React.createElement
+
 
 import Console from 'react-console-component';
 import 'react-console-component/main.css';
@@ -68,6 +60,8 @@ window.ReactConsole = Console;
 window.escapeTemplateString = require('escape-template-string');
 
 RunExternalLoaders().then(() => {
+  window.h = React.createElement;
+
   MainLoop.setUpdate(function(dt) {
     World.Interface.WindowManager.Update(dt)
   }).setDraw(function() {
