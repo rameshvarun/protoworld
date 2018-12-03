@@ -192,12 +192,20 @@ slot(
     <div style={{display: 'flex'}}>
         <button onClick={() => {
             try {
-                let result = eval(this.code);
+                let result = eval(this.editor.getValue());
                 console.log(result);
             } catch(e) {
                 console.error(e);
             }
         }}><i style={{color: 'green'}} class="fas fa-play"></i> Run</button>
+        <button onClick={() => {
+            try {
+                let result = eval(this.editor.getSelectedText());
+                console.log(result);
+            } catch(e) {
+                console.error(e);
+            }
+        }}><i class="fas fa-align-justify"></i> Run Selection</button>
     </div>
     <div style={{width: '100%', flexGrow: 1}} ref={(div) => {
       if (div && div != this.editorDiv) {
