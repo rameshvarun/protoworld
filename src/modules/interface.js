@@ -111,14 +111,9 @@ slot(
       External.LoadScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/theme-monokai.js',
       'sha256-Fc4eJOe8KtF8kDLqSR94vUiJ1ohvKDxznSMxI3RavOw='));
 
-    let prettier = External.LoadScript('https://cdn.jsdelivr.net/npm/prettier@1.15.3/standalone.js',
-      'sha384-ju/9Hv5csaunpC4eib9Fp0PCIjaibLt8eJauBQY/t6Dow1gwfLyqxt80o295R6D1').then(() =>
-      External.LoadScript('https://cdn.jsdelivr.net/npm/prettier@1.15.3/parser-babylon.js',
-        'sha384-9J/C6ropo8x4FhHuQEYAlnc0vV4nM17XUYmGyaFcCUMoKT57TZNLncuIGDn6ZOUW'));
 
     return Promise.all([
       aceEditor,
-      prettier,
       External.LoadCSS('https://use.fontawesome.com/releases/v5.0.10/css/all.css',
         'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg'),
       External.LoadScript('https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.3/mobile-detect.js',

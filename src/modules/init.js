@@ -678,6 +678,20 @@ slot(
   })()
 );
 
+slot(
+  "World.ExternalLoaders",
+  "InitLoader",
+  msg(`function() {
+    let External = World.Core.ExternalHelpers;
+    let prettier = External.LoadScript('https://cdn.jsdelivr.net/npm/prettier@1.15.3/standalone.js',
+      'sha384-ju/9Hv5csaunpC4eib9Fp0PCIjaibLt8eJauBQY/t6Dow1gwfLyqxt80o295R6D1').then(() =>
+      External.LoadScript('https://cdn.jsdelivr.net/npm/prettier@1.15.3/parser-babylon.js',
+        'sha384-9J/C6ropo8x4FhHuQEYAlnc0vV4nM17XUYmGyaFcCUMoKT57TZNLncuIGDn6ZOUW'));
+
+    return prettier;
+}`)
+);
+
 prototype_slot("World.ExternalLoaders", "parent", ref("World.Core.TopObject"));
 
 slot(
