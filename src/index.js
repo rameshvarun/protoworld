@@ -2,6 +2,9 @@ import {makeMessageHandler} from './core/MessageHandler';
 require('./core/object');
 import {serialize, deserialize} from './core/serializer';
 
+window.React = require('react');
+window.h = React.createElement;
+
 import ReactDOM from 'react-dom';
 import MainLoop from 'mainloop.js';
 
@@ -60,8 +63,6 @@ window.ReactConsole = Console;
 window.escapeTemplateString = require('escape-template-string');
 
 RunExternalLoaders().then(() => {
-  window.h = React.createElement;
-
   MainLoop.setUpdate(function(dt) {
     World.Interface.WindowManager.Update(dt)
   }).setDraw(function() {

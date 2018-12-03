@@ -105,8 +105,6 @@ slot(
     let External = World.Core.ExternalHelpers;
 
     return Promise.all([
-      External.LoadScript('https://unpkg.com/react@16.6.3/umd/react.development.js',
-        'sha384-zHkyH/cHeRLWVzS7+I74y+1cMs9KGBxWsVCWzoHHXct9Q/erTk2KElocQaGOQ+yk'),
       External.LoadCSS('https://use.fontawesome.com/releases/v5.0.10/css/all.css',
         'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg'),
       External.LoadScript('https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.3/mobile-detect.js',
