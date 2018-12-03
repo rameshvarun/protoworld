@@ -42,6 +42,7 @@ require('./modules/random.js')
 require('./modules/manual.js')
 require('./modules/tools.js')
 require('./modules/math.js')
+require('./modules/protothree.js')
 
 
 window.Dropdown = require('react-simple-dropdown')
