@@ -724,6 +724,7 @@ slot(
   inst.AddSlot('slot', slot);
   inst.AddSlot('code', _GetMessageHandlerCode(target[slot]));
   inst.SetSlotAnnotation('editorDiv', 'transient', true);
+  inst.SetSlotAnnotation('editor', 'transient', true);
   return inst;
 }`)
 );
@@ -739,15 +740,33 @@ slot(
     <div style={{width: '100%', flexGrow: 1}} ref={(div) => {
       if (div && div != this.editorDiv) {
         this.editorDiv = div;
-        let editor = ace.edit(div);
+        this.editor = ace.edit(div);
 
-        editor.setValue(this.code);
-        editor.session.setMode("ace/mode/javascript");
-        editor.setTheme("ace/theme/monokai");
-        editor.on('change', (value) => this.code = editor.getValue());
+        this.editorWidth = this.width;
+        this.editorHeight = this.height;
+
+        this.editor.setValue(this.code);
+        this.editor.session.setMode("ace/mode/javascript");
+        this.editor.setTheme("ace/theme/monokai");
+        this.editor.on('change', (value) =>
+            this.code = this.editor.getValue());
       }
     }} />
   </div>;
+}`)
+);
+
+slot(
+  "World.Interface.HandlerEditor",
+  "Update",
+  msg(`function(dt) {
+    World.Interface.Window.Update.call(this, dt);
+
+    if(this.editorWidth != this.width || this.editorHeight != this.height) {
+        this.editorWidth = this.width;
+        this.editorHeight = this.height;
+        if(this.editor) this.editor.resize();
+    }
 }`)
 );
 
