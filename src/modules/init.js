@@ -538,7 +538,7 @@ slot(
     code += '\\n';
   }
 
-  code = Prettier.format(code, {plugins: [PrettierBabylon]});
+  code = prettier.format(code, {plugins: [prettierPlugins.babylon]});
   return code;
 }`)
 );

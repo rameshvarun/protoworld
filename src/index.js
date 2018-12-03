@@ -11,9 +11,6 @@ import MainLoop from 'mainloop.js';
 import ErrorBoundary from 'react-error-boundary';
 window.ErrorBoundary = ErrorBoundary;
 
-window.Prettier = require("prettier/standalone");
-window.PrettierBabylon = require("prettier/parser-babylon");
-
 function RunExternalLoaders() {
   let promise = Promise.resolve();
   let slots = World.ExternalLoaders.GetSlotNames().filter(s => s != "parent");
