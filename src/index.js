@@ -44,15 +44,10 @@ require('./modules/random.js')
 require('./modules/manual.js')
 require('./modules/tools.js')
 require('./modules/math.js')
-// require('./modules/protopixi.js')
-RunExternalLoaders();
+
 
 window.FileSaver = require('file-saver');
 window.React = require('react');
-
-// MobileDetect
-var MobileDetect = require('mobile-detect');
-window.MobileDetect = new MobileDetect(window.navigator.userAgent);
 
 window.Dropdown = require('react-simple-dropdown')
 import 'react-simple-dropdown/styles/Dropdown.css';
@@ -72,19 +67,16 @@ window.ReactConsole = Console;
 
 window.escapeTemplateString = require('escape-template-string');
 
-window.uuid = {
-  v1: require('uuid/v1'),
-  v4: require('uuid/v4')
-}
+RunExternalLoaders().then(() => {
+  MainLoop.setUpdate(function(dt) {
+    World.Interface.WindowManager.Update(dt)
+  }).setDraw(function() {
+    var tree = World.Interface.WindowManager.Render();
+    ReactDOM.render(tree, document.getElementById('root'));
+  }).start();
 
-MainLoop.setUpdate(function(dt) {
-  World.Interface.WindowManager.Update(dt)
-}).setDraw(function() {
-  var tree = World.Interface.WindowManager.Render();
-  ReactDOM.render(tree, document.getElementById('root'));
-}).start();
-
-let manualViewer = World.Manual.ManualViewer.New();
-manualViewer.left = 60;
-manualViewer.top = 60;
-manualViewer.Open();
+  let manualViewer = World.Manual.ManualViewer.New();
+  manualViewer.left = 60;
+  manualViewer.top = 60;
+  manualViewer.Open();
+});

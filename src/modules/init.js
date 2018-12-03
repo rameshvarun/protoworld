@@ -413,6 +413,23 @@ slot(
 }`)
 );
 
+slot(
+  "World.Core.ExternalHelpers",
+  "LoadScript",
+  msg(`function(href, integrity) {
+    return new Promise((resolve, reject) => {
+        let script = document.createElement('script');
+        script.type  = 'application/javascript';
+        script.src = href;
+        script.crossOrigin = 'anonymous';
+        script.integrity = integrity;
+
+        script.onload = () => resolve();
+        document.head.appendChild(script);
+    });
+}`)
+);
+
 prototype_slot(
   "World.Core.ExternalHelpers",
   "parent",

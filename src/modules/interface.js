@@ -102,16 +102,16 @@ slot(
   "World.ExternalLoaders",
   "InterfaceLoader",
   msg(`function() {
-    return new Promise((resolve, reject) => {
-        let link = document.createElement('link');
-        link.rel  = 'stylesheet';
-        link.href = 'https://use.fontawesome.com/releases/v5.0.10/css/all.css';
-        link.crossOrigin = 'anonymous';
-        link.integrity = 'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg';
+    let External = World.Core.ExternalHelpers;
 
-        link.onload = () => resolve();
-        document.head.appendChild(link);
-    });
+    return Promise.all([
+      External.LoadCSS('https://use.fontawesome.com/releases/v5.0.10/css/all.css',
+        'sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg'),
+      External.LoadScript('https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.3/mobile-detect.js',
+        'sha256-qRwMbhq9rGx6VsrTZu8+Adq4w23C0FzpEhqOo0J147A='),
+      External.LoadScript('https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.js',
+        'sha256-di30dL7N9597Q8UApQWE7AIjWlR2hbVHreqxh7NiX4I=')
+    ]);
 }`)
 );
 
@@ -428,7 +428,7 @@ slot(
   "World.Interface.Window",
   "Render",
   msg(`function() {
-  let isMobile = MobileDetect.mobile() !== null;
+  let isMobile = new MobileDetect(window.navigator.userAgent).mobile() !== null;
 
   let windowStyle = isMobile ? {
         border: "1px solid black",
@@ -857,7 +857,7 @@ slot(
   "World.Interface.MainMenu",
   "Render",
   msg(`function() {
-  let isMobile = MobileDetect.mobile() !== null;
+  let isMobile = new MobileDetect(window.navigator.userAgent).mobile() !== null;
   let barStyle = isMobile ? {
      'backgroundColor': '#285477',
      maxWidth: '100%',

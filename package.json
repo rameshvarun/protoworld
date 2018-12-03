@@ -24,7 +24,6 @@
     "escape-template-string": "git://github.com/rameshvarun/escape-template-string.git#b686f75986428fff58d9cc8ce646f44c24be70f7",
     "file-saver": "^1.3.8",
     "mainloop.js": "^1.0.4",
-    "mobile-detect": "^1.4.1",
     "pako": "^1.0.6",
     "pixi.js": "^4.8.2",
     "prettier": "^1.15.2",
@@ -33,7 +32,6 @@
     "react-simple-dropdown": "^3.2.3",
     "replicator": "^1.0.2",
     "three": "^0.98.0",
-    "uuid": "^3.2.1",
     "virtual-dom": "^2.1.1"
   }
 }
