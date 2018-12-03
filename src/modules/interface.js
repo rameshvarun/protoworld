@@ -745,7 +745,7 @@ slot(
         this.editorWidth = this.width;
         this.editorHeight = this.height;
 
-        this.editor.setValue(this.code);
+        this.editor.session.setValue(this.code);
         this.editor.session.setMode("ace/mode/javascript");
         this.editor.setTheme("ace/theme/monokai");
         this.editor.on('change', (value) =>
