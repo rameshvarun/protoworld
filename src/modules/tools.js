@@ -34,6 +34,14 @@ let msg = function(code) {
 let mod = ref("World.Modules.tools");
 
 slot(
+  "World.Interface.MenuRoot.Tools",
+  "Playground",
+  msg(`function() {
+    World.Tools.Playground.New().Open();
+}`)
+);
+
+slot(
   "World.Modules",
   "tools",
   (function() {
@@ -138,6 +146,82 @@ slot(
 
 prototype_slot(
   "World.Tools.ModuleScanner",
+  "parent",
+  ref("World.Interface.Window")
+);
+
+slot(
+  "World.Tools",
+  "Playground",
+  (function() {
+    let object = ref("World.Tools.Playground");
+    _SetAnnotation(object, "name", `Playground`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World.Tools"));
+    _SetAnnotation(object, "creatorSlot", `Playground`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Tools.Playground",
+  "GetTitle",
+  msg(`function() {
+    return "Playground";
+}`)
+);
+
+slot(
+  "World.Tools.Playground",
+  "New",
+  msg(`function() {
+  let inst = World.Interface.Window.New.call(this);
+  inst.AddSlot('code', "");
+  inst.SetSlotAnnotation('editorDiv', 'transient', true);
+  inst.SetSlotAnnotation('editor', 'transient', true);
+  return inst;
+}`)
+);
+
+slot(
+  "World.Tools.Playground",
+  "RenderContent",
+  msg(`function() {
+  return <div style={{ height: '100%', display: 'flex', flexDirection: 'column'}}>
+    <div style={{display: 'flex'}}>
+        <button onClick={() => {
+            try {
+                let result = eval(this.code);
+                console.log(result);
+            } catch(e) {
+                console.error(e);
+            }
+        }}><i style={{color: 'green'}} class="fas fa-play"></i> Run</button>
+    </div>
+    <div style={{width: '100%', flexGrow: 1}} ref={(div) => {
+      if (div && div != this.editorDiv) {
+        this.editorDiv = div;
+        this.editor = ace.edit(div);
+
+        this.editorWidth = this.width;
+        this.editorHeight = this.height;
+
+        this.editor.session.setValue(this.code);
+        this.editor.session.setMode("ace/mode/javascript");
+        this.editor.setTheme("ace/theme/monokai");
+        this.editor.on('change', (value) =>
+            this.code = this.editor.getValue());
+      }
+    }} />
+  </div>;
+}`)
+);
+
+slot("World.Tools.Playground", "padding", `0px`);
+
+prototype_slot(
+  "World.Tools.Playground",
   "parent",
   ref("World.Interface.Window")
 );
