@@ -53,6 +53,8 @@ window.ReactConsole = Console;
 window.escapeTemplateString = require('escape-template-string');
 
 RunExternalLoaders().then(() => {
+  document.getElementById('root').innerHTML = "";
+
   MainLoop.setUpdate(function(dt) {
     World.Interface.WindowManager.Update(dt)
   }).setDraw(function() {
