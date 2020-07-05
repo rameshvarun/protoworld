@@ -161,6 +161,84 @@ prototype_slot(
 
 slot(
   "World.ProtoGame",
+  "GameWindow",
+  (function() {
+    let object = ref("World.ProtoGame.GameWindow");
+    _SetAnnotation(object, "name", `GameWindow`);
+    _SetAnnotation(
+      object,
+      "description",
+      `A window where you can actually play a scene.`
+    );
+    _SetAnnotation(object, "creator", ref("World.ProtoGame"));
+    _SetAnnotation(object, "creatorSlot", `GameWindow`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.ProtoGame.GameWindow",
+  "New",
+  msg(`function(scene) {
+    let inst = World.Interface.CanvasWindow.New.call(this);
+    inst.scene = scene;
+    return inst;
+}`)
+);
+
+slot(
+  "World.ProtoGame.GameWindow",
+  "OnResize",
+  msg(`function() {
+    this.renderer.setSize(this.canvas.width, this.canvas.height, false);
+    this.camera.aspect = this.canvas.width / this.canvas.height;
+    this.camera.updateProjectionMatrix();
+}`)
+);
+
+slot(
+  "World.ProtoGame.GameWindow",
+  "RenderCanvas",
+  msg(`function() {
+    this.renderer.render(this.scene.GetThreeNode(), this.camera);
+}`)
+);
+
+slot(
+  "World.ProtoGame.GameWindow",
+  "SetCanvas",
+  msg(`function(canvas) {
+    World.Interface.CanvasWindow.SetCanvas.call(this, canvas)
+
+    this.renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
+    this.renderer.setSize(canvas.width, canvas.height, false);
+    this.SetSlotAnnotation('renderer', 'transient', true);
+
+    // this.scene = new THREE.Scene();
+    // this.SetSlotAnnotation('scene', 'transient', true);
+
+    this.camera = new THREE.PerspectiveCamera(60,
+        canvas.width / canvas.height, 1, 1000 );
+    this.SetSlotAnnotation('camera', 'transient', true);
+
+//     var geometry = new THREE.BoxGeometry();
+// var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+// var cube = new THREE.Mesh( geometry, material );
+// this.scene.add( cube );
+
+this.camera.position.z = 5;
+}`)
+);
+
+prototype_slot(
+  "World.ProtoGame.GameWindow",
+  "parent",
+  ref("World.Interface.CanvasWindow")
+);
+
+slot(
+  "World.ProtoGame",
   "Node",
   (function() {
     let object = ref("World.ProtoGame.Node");
@@ -179,10 +257,53 @@ slot(
 
 slot(
   "World.ProtoGame.Node",
+  "AddChild",
+  msg(`function(node) {
+    let id = uuid.v1();
+    this.children[id] = node;
+}`)
+);
+
+slot(
+  "World.ProtoGame.Node",
+  "AddComponent",
+  msg(`function(component) {
+    let id = uuid.v1();
+    this.components[id] = component;
+}`)
+);
+
+slot(
+  "World.ProtoGame.Node",
+  "GetThreeNode",
+  msg(`function() {
+    if (!this.three) {
+        this.three = (this === World.ProtoGame.Scene) ? new THREE.Object3D() : new THREE.Scene();
+        this.SetSlotAnnotation('three', 'transient', true);
+    }
+
+    // Update the transform of this current node.
+    this.three.position.copy(this.position.ToThree());
+    this.three.scale.copy(this.scale.ToThree());
+
+    // Update the list of children.
+    let children = this.children.GetSlotNames().filter(slot => slot !== "parent").map(slot => this.children[slot].GetThreeNode());
+    this.three.children = children;
+
+    return this.three;
+}`)
+);
+
+slot(
+  "World.ProtoGame.Node",
   "Instantiate",
   msg(`function() {
     let inst = this.Extend();
-    inst.children = this.children.Extend();
+    inst.children = World.ProtoGame.ChildrenList.Extend();
+    for (let childID of this.children.GetSlotNames().filter(slot => slot !== "parent")) {
+        inst.children[childID] = this.children[childID].Instantiate();
+    }
+
     inst.components = this.components.Extend();
     return inst;
 }`)
@@ -294,11 +415,11 @@ slot(
 
 prototype_slot("World.ProtoGame.Node.scale", "parent", ref("World.Math.Vec3"));
 
-slot("World.ProtoGame.Node.scale", "x", 0);
+slot("World.ProtoGame.Node.scale", "x", 1);
 
-slot("World.ProtoGame.Node.scale", "y", 0);
+slot("World.ProtoGame.Node.scale", "y", 1);
 
-slot("World.ProtoGame.Node.scale", "z", 0);
+slot("World.ProtoGame.Node.scale", "z", 1);
 
 slot(
   "World.ProtoGame",
@@ -323,6 +444,7 @@ slot(
   "Play",
   msg(`function() {
     let inst = this.Instantiate();
+    World.ProtoGame.GameWindow.New(inst).Open();
 }`)
 );
 
