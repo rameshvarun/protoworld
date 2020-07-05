@@ -43,15 +43,18 @@ slot(
       'sha384-qQhLZ5gRm6yz7WN7KtS80moGWX2kS305Xs6TtHB7j1eybDuFqFNm8w8yN6bVg/Ly');
     await External.LoadScript('https://unpkg.com/three@0.118.3/examples/js/controls/OrbitControls.js',
         'sha384-aHZK0JB6f+K4eOrQ+BIWQa88w82nDxM6oc3CIvIXEv3SXGiqCMkvvDDywH2uUE7E');
-    await External.LoadScript('https://unpkg.com/three@0.118.3/examples/jsm/loaders/GLTFLoader.js',
-        'sha384-mfxWJ8SX+XNW8zN9AcDYAHq/BbyWxVpuCgIN8aEr+U6p5tD25Cf5I7o+SdDSgf/p');
+    await External.LoadScript('https://unpkg.com/three@0.118.3/examples/js/loaders/GLTFLoader.js',
+        'sha384-1T3gvqA6EWz+X9LnoJ/yUf+9YAQUhn/4QTRd0Gsbl1rtn96UlGjB/WsI6sXpT//s');
 }`)
 );
 
 slot(
   "World.Interface.AssetLoaders",
   "GLTFLoader",
-  msg(`function() {
+  msg(`function(data, contentType, filename) {
+    if (filename.endsWith('.glb') || filename.endsWith('.gltf')) {
+      return World.Three.GLTFAsset.New(data, contentType);
+    }
 }`),
   { priority: 1 }
 );
@@ -116,6 +119,96 @@ slot(
   })()
 );
 
+slot(
+  "World.Three.GLTFAsset",
+  "CreateEditor",
+  msg(`function() {
+    if (this.data) {
+       return World.Three.GLTFViewer.New(this);
+    } else {
+       return World.Core.TopObject.CreateEditor.call(this);
+    }
+}`)
+);
+
 prototype_slot("World.Three.GLTFAsset", "parent", ref("World.Core.Asset"));
+
+slot(
+  "World.Three",
+  "GLTFViewer",
+  (function() {
+    let object = ref("World.Three.GLTFViewer");
+    _SetAnnotation(object, "name", `GLTFViewer`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World.Three"));
+    _SetAnnotation(object, "creatorSlot", `GLTFViewer`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Three.GLTFViewer",
+  "RenderContent",
+  msg(`function() {
+    if (this.canvas && this.canvas instanceof HTMLElement) {
+        this.renderer.render(this.scene, this.camera);
+    }
+
+  return (
+    <div>
+      {this.RenderDescriptionWidget()}
+      <hr />
+
+      <canvas ref={(canvas) => {
+            if (canvas && canvas != this.canvas) {
+                this.canvas = canvas;
+                this.scene = new THREE.Scene();
+
+                this.renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
+                this.renderer.setSize(canvas.width, canvas.height, false);
+                this.SetSlotAnnotation('renderer', 'transient', true);
+
+                this.camera = new THREE.PerspectiveCamera(60, canvas.width / canvas.height, 1, 1000);
+                this.SetSlotAnnotation('camera', 'transient', true);
+
+                var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+                this.scene.add(directionalLight);
+
+                this.camera.position.z = 5;
+
+                this.controls = new THREE.OrbitControls(this.camera, this.canvas);
+				this.controls.minDistance = 2;
+				this.controls.maxDistance = 10;
+				this.controls.target.set(0, 0, 0);
+				this.controls.update();
+
+                var loader = new THREE.GLTFLoader();
+                loader.load(
+                	this.target.GetObjectURL(),
+                	 (gltf) => {
+                	 console.log(gltf);
+                		this.scene.add(gltf.scene);
+                	},
+                	(xhr) => {},
+                	(error) => {
+                		console.error(error);
+                	}
+                );
+            }
+        }}></canvas>
+
+      <div>Asset Size: {this.target.data.byteLength} bytes.</div>
+      <button onClick={() => this.target.Download()}>Download</button>
+    </div>
+  );
+}`)
+);
+
+prototype_slot(
+  "World.Three.GLTFViewer",
+  "parent",
+  ref("World.Interface.AssetViewer")
+);
 
 prototype_slot("World.Three", "parent", ref("World.Core.Namespace"));
