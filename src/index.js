@@ -34,7 +34,7 @@ require('./modules/manual.js')
 require('./modules/tools.js')
 require('./modules/math.js')
 require('./modules/protothree.js')
-
+require('./modules/protogame.js')
 
 window.Dropdown = require('react-simple-dropdown')
 import 'react-simple-dropdown/styles/Dropdown.css';

@@ -49,6 +49,52 @@ slot(
 
 slot(
   "World.Math",
+  "Quat",
+  (function() {
+    let object = ref("World.Math.Quat");
+    _SetAnnotation(object, "creator", ref("World.Math"));
+    _SetAnnotation(object, "creatorSlot", `Quat`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Math.Quat",
+  "New",
+  msg(`function(x, y, z, w) {
+    let inst = this.Extend();
+    inst.x = x;
+    inst.y = y;
+    inst.z = z;
+    inst.w = w;
+    return inst;
+}`)
+);
+
+slot(
+  "World.Math.Quat",
+  "ToString",
+  msg(`function() {
+    if (this === World.Math.Quat)
+        return "Quat"
+    else
+        return \`Quat<\${this.x}, \${this.y}, \${this.z}, \${this.w}>\`;
+}`)
+);
+
+prototype_slot("World.Math.Quat", "parent", ref("World.Core.TopObject"));
+
+slot("World.Math.Quat", "w", 0);
+
+slot("World.Math.Quat", "x", 0);
+
+slot("World.Math.Quat", "y", 0);
+
+slot("World.Math.Quat", "z", 0);
+
+slot(
+  "World.Math",
   "Vec2",
   (function() {
     let object = ref("World.Math.Vec2");
@@ -127,7 +173,7 @@ slot(
     if (this === World.Math.Vec2)
 	    return "Vec2";
 	else
-	    return \`<\${this.x}, \${this.y}>\`;
+	    return \`Vec2<\${this.x}, \${this.y}>\`;
 }`)
 );
 
@@ -201,7 +247,7 @@ slot(
     if (this === World.Math.Vec3)
 	    return "Vec3";
 	else
-	    return \`<\${this.x}, \${this.y}, \${this.z}>\`;
+	    return \`Vec3<\${this.x}, \${this.y}, \${this.z}>\`;
 }`)
 );
 
