@@ -49,6 +49,14 @@ slot(
 );
 
 slot(
+  "World.Interface.AssetLoaders",
+  "GLTFLoader",
+  msg(`function() {
+}`),
+  { priority: 1 }
+);
+
+slot(
   "World.Math.Vec3",
   "FromThree",
   msg(`function(threeVec) {
@@ -79,3 +87,35 @@ slot(
 );
 
 prototype_slot("World.Modules.three", "parent", ref("World.Core.Module"));
+
+slot(
+  "World",
+  "Three",
+  (function() {
+    let object = ref("World.Three");
+    _SetAnnotation(object, "name", `Three`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World"));
+    _SetAnnotation(object, "creatorSlot", `Three`);
+
+    return object;
+  })()
+);
+
+slot(
+  "World.Three",
+  "GLTFAsset",
+  (function() {
+    let object = ref("World.Three.GLTFAsset");
+    _SetAnnotation(object, "name", `GLTFAsset`);
+    _SetAnnotation(object, "description", ``);
+    _SetAnnotation(object, "creator", ref("World.Three"));
+    _SetAnnotation(object, "creatorSlot", `GLTFAsset`);
+
+    return object;
+  })()
+);
+
+prototype_slot("World.Three.GLTFAsset", "parent", ref("World.Core.Asset"));
+
+prototype_slot("World.Three", "parent", ref("World.Core.Namespace"));

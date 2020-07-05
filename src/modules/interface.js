@@ -1137,11 +1137,10 @@ slot(
              let loaders = assetLoaders.GetSlotNames();
              loaders.sort((a, b) =>
                 assetLoaders.GetSlotAnnotation(b, 'priority') - assetLoaders.GetSlotAnnotation(a, 'priority'));
-             console.log(loaders);
 
              for (let loader of loaders) {
                  if (loader == "parent") continue;
-                 let asset = assetLoaders[loader](reader.result, file.type);
+                 let asset = assetLoaders[loader](reader.result, file.type, file.name);
                  if (asset) {
                      asset.OpenEditor();
                      break;
