@@ -152,6 +152,8 @@ slot(
   "RenderContent",
   msg(`function() {
     if (this.canvas && this.canvas instanceof HTMLElement) {
+        this.light.position.copy(this.camera.position);
+        this.light.target.position.copy(this.controls.target);
         this.renderer.render(this.scene, this.camera);
     }
 
@@ -172,8 +174,8 @@ slot(
                 this.camera = new THREE.PerspectiveCamera(60, canvas.width / canvas.height, 1, 1000);
                 this.SetSlotAnnotation('camera', 'transient', true);
 
-                var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-                this.scene.add(directionalLight);
+                this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+                this.scene.add(this.light);
 
                 this.camera.position.z = 5;
 
