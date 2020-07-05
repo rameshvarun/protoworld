@@ -36,13 +36,15 @@ let mod = ref("World.Modules.three");
 slot(
   "World.ExternalLoaders",
   "ThreeLoader",
-  msg(`function() {
+  msg(`async function() {
     let External = World.Core.ExternalHelpers;
 
-    return External.LoadScript('https://unpkg.com/three@0.99.0/build/three.js',
-      'sha384-AaWSJ9gZ/BJmNotf51XmRNG+0nXt5E/tK9tN0ZCf/EuL01dGaW72dYsrY/aPlcB8').then(() =>
-      External.LoadScript('https://unpkg.com/three@0.99.0/examples/js/controls/OrbitControls.js',
-        'sha384-vNZUVS0TRz2KyXoSVHFGoCOVFuzxbHJd2HWauLZ9SRslzHhvIj4If9srU3stzFER'));
+    await External.LoadScript('https://unpkg.com/three@0.118.3/build/three.js',
+      'sha384-qQhLZ5gRm6yz7WN7KtS80moGWX2kS305Xs6TtHB7j1eybDuFqFNm8w8yN6bVg/Ly');
+    await External.LoadScript('https://unpkg.com/three@0.118.3/examples/js/controls/OrbitControls.js',
+        'sha384-aHZK0JB6f+K4eOrQ+BIWQa88w82nDxM6oc3CIvIXEv3SXGiqCMkvvDDywH2uUE7E');
+    await External.LoadScript('https://unpkg.com/three@0.118.3/examples/jsm/loaders/GLTFLoader.js',
+        'sha384-mfxWJ8SX+XNW8zN9AcDYAHq/BbyWxVpuCgIN8aEr+U6p5tD25Cf5I7o+SdDSgf/p');
 }`)
 );
 
