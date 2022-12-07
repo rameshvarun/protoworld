@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@babel/standalone": "^7.0.0-beta.46",
-    "escape-template-string": "git://github.com/rameshvarun/escape-template-string.git#b686f75986428fff58d9cc8ce646f44c24be70f7",
+    "escape-template-string": "https://github.com/rameshvarun/escape-template-string.git#b686f75986428fff58d9cc8ce646f44c24be70f7",
     "mainloop.js": "^1.0.4",
     "pako": "^1.0.6",
     "react-error-boundary": "^1.2.3",
